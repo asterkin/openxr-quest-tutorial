@@ -11,6 +11,12 @@ This is a **tutorial and learning repository** containing consolidated OpenXR sa
 **Production development** (InnoVision SDK, customer applications) happens in separate repositories.
 
 ---
+## Interactive Session Guidelines
+To save session context tokens space:
+- Do not provide detailed summary for any change request - only a short one
+- Unless explicitly requested other wise, respond with a mid-size response without going too deeply into details
+- In case of doubt, ask calrifying questions before execution
+---
 
 ## Quick Reference
 
