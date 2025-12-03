@@ -78,40 +78,10 @@ openxr-quest-tutorial/                 # Tutorial/learning mono-repo (Quest-focu
 
 #### A. OpenXR SDK Installation
 
-**Installation Path**: `C:\OpenXR-SDK\` (Windows development machine)
+**Status**: ✅ Documented in [Environment_Setup.md - Step 8](Environment_Setup.md#step-8-install-openxr-sdk)
 
-```
-C:\OpenXR-SDK\
-├── include\openxr\           # Headers (openxr.h, etc.)
-├── lib\
-│   └── android\              # Android libraries (Quest target)
-│       └── arm64-v8a\
-│           └── libopenxr_loader.so
-└── share\openxr\
-    └── cmake\                # OpenXRConfig.cmake
-```
-
-**Note**: Windows/Mac libraries (`windows/`, `darwin/`) not needed for Quest-focused tutorial. Directory structure shown above is for Android development only.
-
-**Environment Variables**:
-```
-OPENXR_SDK_ROOT=C:\OpenXR-SDK
-CMAKE_PREFIX_PATH=%CMAKE_PREFIX_PATH%;C:\OpenXR-SDK
-```
-
-**CMake Usage**:
-```cmake
-find_package(OpenXR REQUIRED)
-target_link_libraries(hello_xr PRIVATE OpenXR::openxr_loader)
-```
-
-**Build Instructions**:
-- **Android (Quest)**: Must build from source (no prebuilt binaries available)
-  - Source: https://github.com/KhronosGroup/OpenXR-SDK-Source
-  - See: [Building OpenXR SDK for Android](#building-openxr-sdk-for-android)
-- **Windows** (future): Prebuilt binaries available from releases OR build from source
-  - URL: https://github.com/KhronosGroup/OpenXR-SDK/releases
-- **Note**: This tutorial focuses on Quest/Android. Windows/Mac development docs are retained for reference but require building the OpenXR SDK for those platforms.
+**Installation Path**: `C:\OpenXR-SDK\`
+**Source**: Build from source (https://github.com/KhronosGroup/OpenXR-SDK-Source)
 
 #### B. Meta XR SDK Installation
 

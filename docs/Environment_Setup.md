@@ -352,7 +352,7 @@ Click **"Apply"** → Accept licenses → Wait for downloads
 
 #### Configure Android SDK Environment Variables
 
-**Important**: Set `ANDROID_HOME` and add platform-tools to PATH (required for Gradle builds and Quest 3 deployment).
+**Important**: Set `ANDROID_HOME` and add platform-tools and CMake to PATH (required for Gradle builds, Quest 3 deployment, and OpenXR SDK building).
 
 ```powershell
 # Set Android SDK location
@@ -361,10 +361,11 @@ $androidSdk = "$env:LOCALAPPDATA\Android\Sdk"
 # Set ANDROID_HOME permanently at system level
 [System.Environment]::SetEnvironmentVariable('ANDROID_HOME', $androidSdk, 'Machine')
 
-# Add platform-tools to PATH permanently
+# Add platform-tools and CMake to PATH permanently
 $currentPath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
 $platformTools = "$androidSdk\platform-tools"
-[System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$platformTools", 'Machine')
+$cmakeBin = "$androidSdk\cmake\3.22.1\bin"
+[System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$platformTools;$cmakeBin", 'Machine')
 
 # Close and reopen PowerShell Admin to refresh environment variables
 ```
@@ -395,6 +396,13 @@ adb --version
 ```
 
 **Expected**: `Android Debug Bridge version 1.x.x`
+
+```powershell
+# Verify cmake is available
+cmake --version
+```
+
+**Expected**: `cmake version 3.22.1` or higher
 
 ---
 
@@ -531,6 +539,117 @@ code --list-extensions --show-versions
 ```
 
 **Expected**: Java, C/C++, CMake, and Claude Code extensions installed
+
+---
+
+### Step 8: Install OpenXR SDK
+
+**Version**: 1.0.34+ (build from source)
+**Installation Path**: `C:\OpenXR-SDK\`
+**Source**: https://github.com/KhronosGroup/OpenXR-SDK-Source
+
+**Target Directory Structure**:
+```
+C:\OpenXR-SDK\
+├── include\openxr\           # Headers (openxr.h, etc.)
+├── lib\
+│   └── android\              # Android libraries (Quest target)
+│       └── arm64-v8a\
+│           └── libopenxr_loader.so
+└── share\openxr\
+    └── cmake\                # OpenXRConfig.cmake
+```
+
+**Note**: This tutorial focuses on Quest/Android development only. Windows/Mac libraries are not needed.
+
+#### Build Instructions
+
+**Prerequisites**:
+- CMake 3.22.1+ (installed with Android Studio)
+- Android NDK r27 (installed in Step 5)
+- Git for Windows (installed in Step 2)
+
+**Build Steps**:
+
+```powershell
+# 1. Clone OpenXR SDK source to Projects directory
+cd ~\Projects
+git clone https://github.com/KhronosGroup/OpenXR-SDK-Source.git
+
+# 2. Create build directory
+cd OpenXR-SDK-Source
+mkdir build-android
+cd build-android
+
+# 3. Configure CMake for Android (arm64-v8a)
+cmake .. `
+  -G "Unix Makefiles" `
+  -DCMAKE_MAKE_PROGRAM="$env:ANDROID_HOME\ndk\27.2.12479018\prebuilt\windows-x86_64\bin\make.exe" `
+  -DCMAKE_TOOLCHAIN_FILE="$env:ANDROID_HOME\ndk\27.2.12479018\build\cmake\android.toolchain.cmake" `
+  -DANDROID_ABI=arm64-v8a `
+  -DANDROID_PLATFORM=android-34 `
+  -DCMAKE_BUILD_TYPE=Release `
+  -DCMAKE_INSTALL_PREFIX="C:\OpenXR-SDK" `
+  -DBUILD_TESTS=OFF `
+  -DBUILD_API_LAYERS=OFF `
+  -DBUILD_CONFORMANCE_TESTS=OFF
+
+# 4. Build OpenXR SDK (loader only)
+cmake --build . --config Release --target openxr_loader
+
+# 5. Install to C:\OpenXR-SDK (copies headers and libraries)
+cmake --install . --config Release
+
+# 6. Clean up - remove source directory
+cd ~\Projects
+Remove-Item -Recurse -Force OpenXR-SDK-Source
+```
+
+#### Verify Installation
+
+```powershell
+# Check OpenXR SDK installation
+Test-Path "C:\OpenXR-SDK\include\openxr\openxr.h"
+Test-Path "C:\OpenXR-SDK\lib\android\arm64-v8a\libopenxr_loader.so"
+Test-Path "C:\OpenXR-SDK\share\openxr\cmake\OpenXRConfig.cmake"
+```
+
+**Expected**: All three paths should return `True`
+
+#### Configure Environment Variables
+
+```powershell
+# Set OPENXR_SDK_ROOT permanently at system level
+[System.Environment]::SetEnvironmentVariable('OPENXR_SDK_ROOT', 'C:\OpenXR-SDK', 'Machine')
+
+# Add to CMAKE_PREFIX_PATH (optional, for CMake find_package)
+$currentCMakePath = [System.Environment]::GetEnvironmentVariable('CMAKE_PREFIX_PATH', 'Machine')
+if ($currentCMakePath) {
+    [System.Environment]::SetEnvironmentVariable('CMAKE_PREFIX_PATH', "$currentCMakePath;C:\OpenXR-SDK", 'Machine')
+} else {
+    [System.Environment]::SetEnvironmentVariable('CMAKE_PREFIX_PATH', 'C:\OpenXR-SDK', 'Machine')
+}
+
+# Close and reopen PowerShell Admin to refresh environment variables
+```
+
+After reopening PowerShell Admin:
+
+```powershell
+# Verify environment variable
+$env:OPENXR_SDK_ROOT
+```
+
+**Expected**: `C:\OpenXR-SDK`
+
+#### CMake Usage in Samples
+
+Samples will use OpenXR SDK in CMakeLists.txt:
+
+```cmake
+find_package(OpenXR REQUIRED)
+target_link_libraries(hello_xr PRIVATE OpenXR::openxr_loader)
+```
 
 ---
 
