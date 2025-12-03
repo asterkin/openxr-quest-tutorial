@@ -1,0 +1,105 @@
+# OpenXR Quest Tutorial - Git Ignore
+# For Quest-focused OpenXR/NDK development
+
+# ============================================
+# Android/Gradle Build Outputs
+# ============================================
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Gradle
+.gradle/
+build/
+*/build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+.externalNativeBuild/
+.cxx/
+captures/
+
+# NDK
+obj/
+libs/
+
+# ============================================
+# CMake Build Outputs
+# ============================================
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Build directories
+build-*/
+out/
+
+# ============================================
+# IDE/Editor Files
+# ============================================
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================
+# Logs and Temporary Files
+# ============================================
+*.log
+*.tmp
+*.temp
+
+# ============================================
+# System Files (Windows)
+# ============================================
+Thumbs.db
+desktop.ini
+
+# ============================================
+# SDK/NDK (not stored in repo)
+# ============================================
+# SDKs are installed system-wide, not in repo
+sdk/
+ndk/
+OpenXR-SDK/
+Meta-XR-SDK/
+
+# ============================================
+# Generated Documentation
+# ============================================
+# Keep source docs, ignore generated HTML/PDF
+docs/generated/
+*.pdf
+
+# ============================================
+# Sample-Specific Build Artifacts
+# ============================================
+samples/*/build/
+samples/*/.gradle/
+samples/*/.cxx/
+samples/*/obj/
+samples/*/libs/
+
+# ============================================
+# Python (for automation scripts)
+# ============================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# ============================================
+# Keep Structure Files
+# ============================================
+!.gitkeep
