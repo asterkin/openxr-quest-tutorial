@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- OpenXR requires Vulkan or OpenGL ES -->
+    <uses-feature android:name="android.hardware.vulkan.version"
+                  android:version="0x401000"
+                  android:required="true" />
+
+    <!-- Quest-specific features -->
+    <uses-feature android:name="android.hardware.vr.headtracking"
+                  android:required="true" />
+
+    <application
+        android:allowBackup="false"
+        android:label="OpenXR Hello World"
+        android:hasCode="false">
+
+        <!-- Quest metadata: Does NOT require controllers (hand tracking) -->
+        <meta-data android:name="com.oculus.handtracking.frequency" android:value="HIGH" />
+        <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0" />
+
+        <!-- Supported input devices: controllers + hands -->
+        <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest2|questpro" />
+
+        <activity
+            android:name="android.app.NativeActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden">
+
+            <!-- Tell NativeActivity the name of our native library -->
+            <meta-data android:name="android.app.lib_name"
+                       android:value="hello_world" />
+
+            <!-- OpenXR category for immersive HMD apps -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="org.khronos.openxr.intent.category.IMMERSIVE_HMD" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

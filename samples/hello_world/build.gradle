@@ -1,0 +1,52 @@
+// OpenXR Hello World - Minimal Quest Sample
+// Following https://openxr-tutorial.com/ approach
+
+plugins {
+    id 'com.android.application' version '8.13.0'
+}
+
+android {
+    compileSdk 34
+    ndkVersion "27.2.12479018"
+    namespace 'com.example.openxr.helloworld'
+
+    defaultConfig {
+        applicationId "com.example.openxr.helloworld"
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared',
+                          '-DANDROID_PLATFORM=android-24'
+                targets "hello_world"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+}
+
+dependencies {
+    // OpenXR loader from Maven Central
+    implementation 'org.khronos.openxr:openxr_loader_for_android:1.1.54'
+}
