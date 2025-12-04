@@ -1,15 +1,13 @@
-# OpenXR Quest Tutorial - Project Architecture & Implementation Plan
+# OpenXR Tutorial & Samples Collection - Architecture Plan
 
-> **Repository**: `openxr-quest-tutorial`
-> **Document Location**: `docs/Project_Plan.md`
+> **DRAFT - Awaiting User Feedback**
+> Please provide corrections and feedback on per-line basis
 
 ---
 
 ## Document Purpose
 
-This document outlines the complete architecture and implementation plan for the **OpenXR Quest Tutorial** repository. This is an **independent tutorial repository** containing consolidated OpenXR samples from multiple sources, focused on **Meta Quest 3 development using NDK+OpenXR**.
-
-This is a learning and reference repository, NOT a production development environment.
+This document outlines the architecture for creating an **independent tutorial repository** containing consolidated OpenXR samples from multiple sources. This is a learning and reference repository, NOT a production development environment.
 
 ---
 
@@ -74,11 +72,46 @@ openxr-quest-tutorial/                 # Tutorial/learning mono-repo (Quest-focu
 
 ### **Phase 0: Computer-Level SDK Installation** (Prerequisites)
 
-**Goal**: Document and verify development tool installation
+**Goal**: Document and verify global SDK installation strategy
 
-**Note**: OpenXR SDK is **no longer installed system-wide**. Samples use Maven Central (`org.khronos.openxr:openxr_loader_for_android`) and CMake FetchContent for headers.
+#### A. OpenXR SDK Installation
 
-#### A. Meta XR SDK Installation
+**Installation Path**: `C:\OpenXR-SDK\` (Windows development machine)
+
+```
+C:\OpenXR-SDK\
+├── include\openxr\           # Headers (openxr.h, etc.)
+├── lib\
+│   └── android\              # Android libraries (Quest target)
+│       └── arm64-v8a\
+│           └── libopenxr_loader.so
+└── share\openxr\
+    └── cmake\                # OpenXRConfig.cmake
+```
+
+**Note**: Windows/Mac libraries (`windows/`, `darwin/`) not needed for Quest-focused tutorial. Directory structure shown above is for Android development only.
+
+**Environment Variables**:
+```
+OPENXR_SDK_ROOT=C:\OpenXR-SDK
+CMAKE_PREFIX_PATH=%CMAKE_PREFIX_PATH%;C:\OpenXR-SDK
+```
+
+**CMake Usage**:
+```cmake
+find_package(OpenXR REQUIRED)
+target_link_libraries(hello_xr PRIVATE OpenXR::openxr_loader)
+```
+
+**Build Instructions**:
+- **Android (Quest)**: Must build from source (no prebuilt binaries available)
+  - Source: https://github.com/KhronosGroup/OpenXR-SDK-Source
+  - See: [Building OpenXR SDK for Android](#building-openxr-sdk-for-android)
+- **Windows** (future): Prebuilt binaries available from releases OR build from source
+  - URL: https://github.com/KhronosGroup/OpenXR-SDK/releases
+- **Note**: This tutorial focuses on Quest/Android. Windows/Mac development docs are retained for reference but require building the OpenXR SDK for those platforms.
+
+#### B. Meta XR SDK Installation
 
 **Current SDK Packages Available**:
 
@@ -135,6 +168,7 @@ python scripts/setup_env.py
 
 **Expected Output**:
 ```
+✅ OpenXR SDK: C:\OpenXR-SDK (version 1.0.34)
 ✅ Meta XR SDK: C:\Meta-XR-SDK (version 81.0)
 ✅ Android NDK: r27
 ✅ Quest 3 Connected: 1WMHH81234567
@@ -142,6 +176,81 @@ python scripts/setup_env.py
 ```
 
 **Documentation Output**: `docs/Environment_Setup.md`
+
+#### D. Building OpenXR SDK for Android
+
+**Prerequisite**: This tutorial requires building OpenXR SDK from source for Android, as no prebuilt Android binaries are available from Khronos.
+
+**Source Repository**: https://github.com/KhronosGroup/OpenXR-SDK-Source
+
+**Build Steps**:
+
+1. **Clone OpenXR-SDK-Source**:
+   ```bash
+   cd C:\
+   git clone https://github.com/KhronosGroup/OpenXR-SDK-Source.git
+   cd OpenXR-SDK-Source
+   ```
+
+2. **Configure CMake for Android**:
+   ```bash
+   mkdir build-android
+   cd build-android
+
+   cmake .. \
+     -G "Ninja" \
+     -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK_ROOT%/build/cmake/android.toolchain.cmake \
+     -DANDROID_ABI=arm64-v8a \
+     -DANDROID_PLATFORM=android-34 \
+     -DCMAKE_BUILD_TYPE=Release \
+     -DCMAKE_INSTALL_PREFIX=C:/OpenXR-SDK
+   ```
+
+3. **Build and Install**:
+   ```bash
+   cmake --build . --config Release
+   cmake --install . --config Release
+   ```
+
+4. **Verify Installation**:
+   ```bash
+   # Check headers
+   dir C:\OpenXR-SDK\include\openxr\openxr.h
+
+   # Check Android loader library
+   dir C:\OpenXR-SDK\lib\android\arm64-v8a\libopenxr_loader.so
+
+   # Check CMake config
+   dir C:\OpenXR-SDK\share\openxr\cmake\OpenXRConfig.cmake
+   ```
+
+**Expected Result**:
+```
+C:\OpenXR-SDK\
+├── include\openxr\
+│   ├── openxr.h
+│   ├── openxr_platform.h
+│   └── openxr_reflection.h
+├── lib\android\arm64-v8a\
+│   └── libopenxr_loader.so
+└── share\openxr\cmake\
+    ├── OpenXRConfig.cmake
+    └── OpenXRConfigVersion.cmake
+```
+
+**Troubleshooting**:
+- If Ninja not found: Install via `choco install ninja` or use Visual Studio generator
+- If NDK not found: Set `ANDROID_NDK_ROOT` environment variable
+- If CMake fails: Ensure CMake 3.22+ installed
+
+**Alternative Build Tools**:
+- **Gradle/AGP**: Can also build using Android Gradle Plugin (slower but more integrated)
+- **Android Studio**: Can import CMakeLists.txt and build from IDE
+
+**Future Platforms** (not needed for this tutorial):
+- **Windows**: Use Visual Studio generator, install to same `C:\OpenXR-SDK`
+- **macOS**: Use Xcode or Ninja, install to `/usr/local/OpenXR-SDK`
+- **Linux**: Use Ninja or Make, install to `/opt/OpenXR-SDK` or `~/.local/OpenXR-SDK`
 
 ---
 
@@ -205,7 +314,6 @@ python scripts/setup_env.py
    ├── build.gradle
    ├── settings.gradle
    ├── AndroidManifest.xml
-   ├── test_run.bat
    └── README.md
    ```
 
@@ -217,18 +325,11 @@ python scripts/setup_env.py
    target_link_libraries(hello_xr PRIVATE openxr_loader)
    ```
 
-   **NEW (Maven + FetchContent)**:
+   **NEW (system SDK)**:
    ```cmake
-   # Fetch OpenXR SDK for headers
-   include(FetchContent)
-   FetchContent_Declare(
-       OpenXR
-       URL https://github.com/KhronosGroup/OpenXR-SDK-Source/archive/refs/tags/release-1.1.54.tar.gz
-   )
-   FetchContent_MakeAvailable(OpenXR)
-
-   # Link OpenXR loader (provided by Maven dependency)
-   target_link_libraries(hello_xr PRIVATE openxr_loader)
+   # Use system-installed OpenXR SDK
+   find_package(OpenXR REQUIRED)
+   target_link_libraries(hello_xr PRIVATE OpenXR::openxr_loader)
    ```
 
 3. **Update build.gradle**
@@ -244,19 +345,15 @@ python scripts/setup_env.py
    }
    ```
 
-   **NEW (Maven dependency)**:
+   **NEW**:
    ```gradle
    android {
        externalNativeBuild {
            cmake {
                path "CMakeLists.txt"
+               arguments "-DCMAKE_PREFIX_PATH=$System.env.OPENXR_SDK_ROOT"
            }
        }
-   }
-
-   dependencies {
-       // OpenXR loader from Maven Central
-       implementation 'org.khronos.openxr:openxr_loader_for_android:1.1.54'
    }
    ```
 
@@ -269,18 +366,14 @@ python scripts/setup_env.py
 5. **Test independent build**
    ```bash
    cd samples/hello_xr
-   gradlew assembleDebug
-   # Should build without any manual SDK installation
+   ./gradlew assembleDebug
+   # Should build without any reference to OpenXR-SDK-Source parent repo
    ```
-
-6. **Add automated testing**
-   - Create `test_run.bat` for Quest deployment
-   - Automated install, launch, log collection
 
 **Expected Result**:
 - `samples/hello_xr/build/outputs/apk/debug/hello_xr-debug.apk`
-- Build succeeds using Maven + FetchContent (no manual SDK installation)
-- Self-contained sample with Gradle wrapper
+- Build succeeds using only system OpenXR SDK
+- No dependency on OpenXR-SDK-Source repository
 
 **Output**: Standalone hello_xr sample with preserved documentation
 
@@ -585,6 +678,7 @@ This will:
 #### C. Environment Verification Script (`scripts/setup_env.py`)
 
 **Features**:
+- Check OPENXR_SDK_ROOT exists and has correct structure
 - Check META_XR_SDK_ROOT exists and has correct structure
 - Verify NDK installation
 - Check adb connectivity to Quest 3
@@ -602,6 +696,11 @@ OpenXR Quest Tutorial - Environment Check
 ========================================
 
 SDK Installations:
+✅ OpenXR SDK: C:\OpenXR-SDK (version 1.0.34)
+   - Headers: C:\OpenXR-SDK\include\openxr\openxr.h
+   - Android Loader: C:\OpenXR-SDK\lib\android\arm64-v8a\libopenxr_loader.so
+   - CMake Config: C:\OpenXR-SDK\share\openxr\cmake\OpenXRConfig.cmake
+
 ✅ Meta XR SDK: C:\Meta-XR-SDK (version 81.0)
    - Extensions: C:\Meta-XR-SDK\OpenXR\Include
    - Framework: C:\Meta-XR-SDK\SampleXrFramework
@@ -622,8 +721,6 @@ Device Connectivity:
 ========================================
 Environment Status: ✅ ALL CHECKS PASSED
 ========================================
-
-Note: OpenXR SDK is managed via Maven Central and CMake FetchContent
 ```
 
 **Implementation Outline**:
@@ -631,6 +728,14 @@ Note: OpenXR SDK is managed via Maven Central and CMake FetchContent
 import os
 import subprocess
 from pathlib import Path
+
+def check_openxr_sdk():
+    """Verify OpenXR SDK installation"""
+    sdk_root = os.getenv('OPENXR_SDK_ROOT')
+    if not sdk_root:
+        return False, "OPENXR_SDK_ROOT not set"
+    # Check for headers, libraries, cmake configs
+    pass
 
 def check_meta_sdk():
     """Verify Meta XR SDK installation"""
@@ -698,9 +803,9 @@ python scripts/setup_env.py
 ```
 
 **Required System Installations**:
-- **Meta XR SDK**: `$META_XR_SDK_ROOT` → `C:\Meta-XR-SDK` (optional, for Meta-specific extensions)
+- **OpenXR SDK**: `$OPENXR_SDK_ROOT` → `C:\OpenXR-SDK`
+- **Meta XR SDK**: `$META_XR_SDK_ROOT` → `C:\Meta-XR-SDK`
 - **Android NDK**: Via Android Studio (NDK r27+)
-- **OpenXR SDK**: Managed via Maven Central (no manual installation)
 
 **Installation Instructions**: See [docs/Environment_Setup.md](docs/Environment_Setup.md)
 
@@ -860,12 +965,11 @@ This repository uses Gradle multi-project configuration.
 **Common Issues**:
 1. **Missing SDK environment variables**
    - Run `python scripts/setup_env.py` to diagnose
-   - Ensure `META_XR_SDK_ROOT` is set (if using Meta samples)
+   - Ensure `OPENXR_SDK_ROOT` and `META_XR_SDK_ROOT` are set
 
-2. **CMake cannot fetch OpenXR headers**
-   - Check internet connectivity
-   - CMake FetchContent may be blocked by firewall
-   - Manually download OpenXR SDK release tarball if needed
+2. **CMake cannot find OpenXR**
+   - Check `CMAKE_PREFIX_PATH` includes OpenXR SDK
+   - Verify `C:\OpenXR-SDK\share\openxr\cmake\OpenXRConfig.cmake` exists
 
 3. **NDK not found**
    - Check `ANDROID_NDK_ROOT` environment variable
@@ -995,11 +1099,11 @@ To add support for a new AI agent:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Phase 0: Computer-Level SDK Setup                          │
-│   Install: Meta XR SDK → C:\Meta-XR-SDK (optional)         │
+│   Install: OpenXR SDK → C:\OpenXR-SDK                      │
+│   Install: Meta XR SDK → C:\Meta-XR-SDK                    │
 │   Install: Android NDK (via Android Studio)                │
-│   Set: Environment variables (META_XR_SDK_ROOT, etc.)      │
+│   Set: Environment variables (OPENXR_SDK_ROOT, etc.)       │
 │   Verify: python scripts/setup_env.py                      │
-│   Note: OpenXR SDK managed via Maven/FetchContent          │
 └─────────────────────────────────────────────────────────────┘
                          ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -1014,10 +1118,10 @@ To add support for a new AI agent:
 │ Phase 2: Extract hello_xr Sample                           │
 │   Source: OpenXR-SDK-Source/src/tests/hello_xr/            │
 │   Copy: All source files → samples/hello_xr/               │
-│   Update: CMakeLists.txt (use FetchContent)                │
-│   Update: build.gradle (add Maven dependency)              │
+│   Update: CMakeLists.txt (use system OpenXR SDK)           │
+│   Update: build.gradle (reference system SDK)              │
 │   Migrate: Documentation → docs/samples/                   │
-│   Test: Independent build (gradlew assembleDebug)          │
+│   Test: Independent build (./gradlew assembleDebug)        │
 └─────────────────────────────────────────────────────────────┘
                          ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -1054,25 +1158,22 @@ To add support for a new AI agent:
 
 ### Decision 1: SDK Installation Location
 
-**Decision**: Use Maven Central + CMake FetchContent for OpenXR; optional system-level Meta XR SDK
+**Decision**: Install OpenXR SDK and Meta XR SDK at computer level (not in repository)
 
 **Rationale**:
-- Maven Central provides pre-built OpenXR loader for Android
-- CMake FetchContent downloads OpenXR headers automatically
-- No manual SDK installation required for basic samples
-- Meta XR SDK only needed for Meta-specific extension samples
-- Reproducible builds (dependencies version-controlled)
+- Tutorial repository stays lean (only source code + docs)
+- SDKs are shared across multiple projects (tutorial + production)
+- Easier to update SDK versions globally
+- Standard practice for system-level libraries
 
 **Implementation**:
-- OpenXR Loader: Maven dependency `org.khronos.openxr:openxr_loader_for_android:1.1.54`
-- OpenXR Headers: CMake FetchContent from OpenXR-SDK-Source GitHub
-- Meta XR SDK (optional): `C:\Meta-XR-SDK` for Meta extension samples
-- Environment variables: `META_XR_SDK_ROOT` (optional)
+- OpenXR SDK → `C:\OpenXR-SDK`
+- Meta XR SDK → `C:\Meta-XR-SDK`
+- Environment variables: `OPENXR_SDK_ROOT`, `META_XR_SDK_ROOT`
 
 **Trade-offs**:
-- ✅ Pro: No manual SDK installation, reproducible builds, easier onboarding
-- ✅ Pro: Samples are self-contained and portable
-- ⚠️ Con: Requires internet connectivity for initial build (headers download)
+- ✅ Pro: Clean repository, faster clones, shared SDK
+- ⚠️ Con: Requires initial setup (documented in `docs/Environment_Setup.md`)
 
 ---
 
@@ -1173,9 +1274,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SampleXrFramework)
 - **Customer App Repos**: Production applications
 
 **Cross-Reference**:
-- Production repos can use same Maven + FetchContent approach
+- Production repos reference same system SDKs (`OPENXR_SDK_ROOT`, `META_XR_SDK_ROOT`)
 - Can reuse build/deploy script patterns from tutorial repo
-- Meta XR SDK only needed for Meta extension samples
 
 **Trade-offs**:
 - ✅ Pro: Clean separation, shareable, different lifecycles
@@ -1309,17 +1409,15 @@ C:\Meta-XR-Unity\           # Meta XR SDK All-in-One UPM
 
 ### 5. Git Repository Location
 
-**Decision**: ✅ **New standalone repository**
-
-**Location**: `C:\Users\PRO\Projects\openxr-quest-tutorial\`
-
-**Rationale**:
+**Option A**: New standalone repository
+- Create fresh repo: `C:\Users\PRO\Projects\openxr-quest-tutorial\`
 - Independent from InnoVision projects
-- Clean separation of tutorial vs production code
-- Can be shared publicly in future if desired
-- Clear focus on learning and reference
 
-**Status**: Repository created with initial structure
+**Option B**: Integrate into existing Projects structure
+- Place alongside existing projects
+- Could reference in master CLAUDE.md
+
+**Your preference?**
 
 ---
 
@@ -1351,11 +1449,11 @@ Please provide feedback on:
 1. ✅ **Repository name** → **CONFIRMED: `openxr-quest-tutorial`** (Quest-focused NDK+OpenXR)
 2. ✅ **OpenXR SDK build** → **CONFIRMED: Build from source** (no Android prebuilts exist)
 3. ✅ **Windows support** → **CONFIRMED: Android/Quest 3 only** (Windows/Mac docs retained for reference)
-4. ✅ **Git location** → **CONFIRMED: Standalone repo** at `C:\Users\PRO\Projects\openxr-quest-tutorial\`
-5. ✅ **Meta SDK strategy** (confirm OVR OpenXR Mobile SDK 81.0?)
-6. ✅ **Unity support** (needed or native-only?)
-7. ✅ **Plugin definition** (SDK packages, custom plugins, or extensions?)
-8. ✅ **Gradle/AGP versions** (match InnoVision: Gradle 8.10, AGP 8.13?)
+4. ✅ **Meta SDK strategy** (confirm OVR OpenXR Mobile SDK 81.0?)
+5. ✅ **Unity support** (needed or native-only?)
+6. ✅ **Plugin definition** (SDK packages, custom plugins, or extensions?)
+7. ✅ **Gradle/AGP versions** (match InnoVision: Gradle 8.10, AGP 8.13?)
+8. ✅ **Git location** (standalone or within existing Projects?)
 9. ✅ **Immediate priority** (Phase 0, Phase 1, or both?)
 
 ---
@@ -1376,12 +1474,10 @@ Please provide feedback on:
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: 1.0 (DRAFT)
 **Created**: 2025-12-03
-**Last Updated**: 2025-12-03
-**Repository**: `C:\Users\PRO\Projects\openxr-quest-tutorial\`
-**Status**: Active - Repository created, beginning Phase 0/1 implementation
+**Status**: Awaiting user feedback for line-by-line corrections
 
 ---
 
-**End of OpenXR Quest Tutorial - Project Architecture & Implementation Plan**
+**End of OpenXR Tutorial Architecture Plan**

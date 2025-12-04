@@ -1,0 +1,108 @@
+// Copyright (c) 2020-2025 The Khronos Group Inc.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+// Open this directory in Android Studio, or build with Gradle,
+// to build the "hello_xr" sample application
+
+plugins {
+    id 'com.android.application' version '8.13.0'
+}
+
+
+// Use Maven Central for OpenXR loader instead of building from source
+
+android {
+    compileSdk 34
+    ndkVersion "27.2.12479018"
+    namespace 'org.khronos.openxr.hello_xr'
+
+    defaultConfig {
+        applicationId "org.khronos.openxr.hello_xr"
+        // for Vulkan, need at least 24
+        minSdkVersion 24
+        targetSdkVersion 34
+
+        versionName "1.0"
+        versionCode 1
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared',
+                          '-DANDROID_PLATFORM=android-24'
+                targets "hello_xr"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            res.srcDir 'android_resources'
+        }
+        Vulkan {
+            res.srcDir 'android_resources/vulkan'
+        }
+        OpenGLES {
+            res.srcDir 'android_resources/opengles'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
+
+    flavorDimensions 'api'
+
+    productFlavors {
+        OpenGLES {
+            dimension 'api'
+            applicationIdSuffix '.opengles'
+            externalNativeBuild.cmake.arguments += '-DHELLOXR_DEFAULT_GRAPHICS_PLUGIN=OpenGLES'
+
+            resValue "string", "app_name", "Hello XR (OpenGL ES)"
+        }
+        Vulkan {
+            dimension 'api'
+            applicationIdSuffix '.vulkan'
+            externalNativeBuild.cmake.arguments += '-DHELLOXR_DEFAULT_GRAPHICS_PLUGIN=Vulkan'
+
+            resValue "string", "app_name", "Hello XR (Vulkan)"
+        }
+    }
+}
+
+dependencies {
+    // OpenXR loader built from source via CMake FetchContent
+}
+
+// For signing of release binaries - env var must contain an absolute path
+// CI always does this.
+def keystorePropertiesFilename = System.getenv("KEYSTORE_PROPERTIES")
+if (keystorePropertiesFilename) {
+    def keystorePropertiesFile = file("${keystorePropertiesFilename}")
+    if (keystorePropertiesFile.exists()) {
+        println("Signing release artifacts for hello_xr")
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+        android.signingConfigs {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file("${project.repoRoot}/" + keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+        android.buildTypes.release.signingConfig android.signingConfigs.release
+    }
+}
+
