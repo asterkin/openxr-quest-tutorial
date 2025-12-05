@@ -29,6 +29,7 @@ Each ADR follows this structure:
 |------------|-------|--------|
 | [ADR-0000](adr-0000-use-adrs-to-document-architecturally-significant-decisions.md) | Use ADRs to Document Architecturally Significant Decisions | Accepted |
 | [ADR-0001](adr-0001-consolidated-tutorial-repository-for-openxr-quest-samples.md) | Consolidated Tutorial Repository for OpenXR Quest Samples | Accepted |
+| [ADR-0002](adr-0002-workstation-level-prerequisite-installation.md) | Workstation-Level Prerequisite Installation | Accepted |
 
 ## Creating New ADRs
 
