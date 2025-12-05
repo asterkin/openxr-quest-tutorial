@@ -33,6 +33,7 @@ Each ADR follows this structure:
 | [ADR-0003](adr-0003-use-ovr-openxr-mobile-sdk-for-meta-extensions.md) | Use OVR OpenXR Mobile SDK for Meta Extensions | Accepted |
 | [ADR-0004](adr-0004-establish-open-ai-code-assistants-structure.md) | Establish Open AI Code Assistants Structure | Accepted |
 | [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) | OpenXR SDK Dependency Management via Maven and FetchContent | Accepted |
+| [ADR-0006](adr-0006-use-ai-assisted-tooling-for-adr-creation.md) | Use AI-Assisted Tooling for ADR Creation | Accepted |
 
 ## Creating New ADRs
 
