@@ -32,6 +32,7 @@ Each ADR follows this structure:
 | [ADR-0002](adr-0002-workstation-level-prerequisite-installation.md) | Workstation-Level Prerequisite Installation | Accepted |
 | [ADR-0003](adr-0003-use-ovr-openxr-mobile-sdk-for-meta-extensions.md) | Use OVR OpenXR Mobile SDK for Meta Extensions | Accepted |
 | [ADR-0004](adr-0004-establish-open-ai-code-assistants-structure.md) | Establish Open AI Code Assistants Structure | Accepted |
+| [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) | OpenXR SDK Dependency Management via Maven and FetchContent | Accepted |
 
 ## Creating New ADRs
 
