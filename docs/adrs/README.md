@@ -28,6 +28,7 @@ Each ADR follows this structure:
 | ADR Number | Title | Status |
 |------------|-------|--------|
 | [ADR-0000](adr-0000-use-adrs-to-document-architecturally-significant-decisions.md) | Use ADRs to Document Architecturally Significant Decisions | Accepted |
+| [ADR-0001](adr-0001-consolidated-tutorial-repository-for-openxr-quest-samples.md) | Consolidated Tutorial Repository for OpenXR Quest Samples | Accepted |
 
 ## Creating New ADRs
 
