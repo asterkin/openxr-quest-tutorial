@@ -12,10 +12,13 @@ openxr-quest-tutorial/
 │   ├── Environment_Setup.md     # SDK installation guide
 │   ├── Build_Deploy_Guide.md    # Build/deploy workflows (TBD)
 │   └── adrs/                    # Architecture Decision Records
-└── samples/                     # Sample projects (TBD)
+└── samples/                     # Sample projects
     ├── hello_world/             # Minimal OpenXR Hello World
     ├── hello_xr/                # Khronos OpenXR sample
-    └── meta/                    # Meta Quest samples
+    ├── openxr-tutorial/         # Progressive tutorial from openxr-tutorial.com
+    │   ├── chapter1/            # Introduction & Setup
+    │   └── ...                  # Additional chapters (planned)
+    └── meta/                    # Meta Quest samples (planned)
 ```
 
 ## Directory Descriptions
@@ -48,4 +51,7 @@ Tutorial samples organized by complexity and source:
 
 - **hello_world/** - Minimal OpenXR application demonstrating basic Quest 3 setup
 - **hello_xr/** - Khronos OpenXR conformance sample adapted for Quest
-- **meta/** - Meta Quest-specific samples from OVR SDK
+- **openxr-tutorial/** - Progressive tutorial series from openxr-tutorial.com adapted for Quest 3
+  - **chapter1/** - Introduction & Setup (project structure, build configuration, Android initialization)
+  - *Additional chapters planned* - Progressive OpenXR concepts and implementation
+- **meta/** - Meta Quest-specific samples from OVR SDK (planned)
