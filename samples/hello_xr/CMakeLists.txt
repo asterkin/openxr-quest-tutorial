@@ -34,6 +34,7 @@ set(LOCAL_HEADERS
     pch.h
     platformdata.h
     platformplugin.h
+    common/gfxwrapper_opengl.h
 )
 
 set(LOCAL_SOURCE
@@ -48,6 +49,7 @@ set(LOCAL_SOURCE
     platformplugin_factory.cpp
     glad/src/egl.c
     glad/src/gl.c
+    common/gfxwrapper_opengl.c
 )
 
 set(VULKAN_SHADERS
@@ -116,6 +118,7 @@ target_compile_definitions(hello_xr PRIVATE
     XR_USE_PLATFORM_ANDROID
     XR_USE_GRAPHICS_API_OPENGL_ES
     XR_USE_GRAPHICS_API_VULKAN
+    GLAD_GLES2  # Enable OpenGL ES 2.0+ loader in GLAD
 )
 
 # Graphics plugin selection (set by Gradle)
@@ -161,3 +164,8 @@ if(HELLOXR_DEFAULT_GRAPHICS_PLUGIN STREQUAL "OpenGLES")
         target_link_libraries(hello_xr PRIVATE ${GLES_LIBRARY} ${EGL_LIBRARY})
     endif()
 endif()
+
+# Set linker flag for native activity
+set_target_properties(hello_xr PROPERTIES
+    LINK_FLAGS "-u ANativeActivity_onCreate"
+)

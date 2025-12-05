@@ -47,6 +47,13 @@
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_helloxr_launcher">
 
+    <!-- Quest metadata: Enable hand tracking (optional, allows controllers OR hands) -->
+    <meta-data android:name="com.oculus.handtracking.frequency" android:value="HIGH" />
+    <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0" />
+
+    <!-- Supported Quest devices -->
+    <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest2|questpro" />
+
     <!-- The activity is the built-in NativeActivity framework class. -->
     <!-- launchMode is set to singleTask because there should never be multiple copies of the app running. -->
     <!-- Theme.Black.NoTitleBar.Fullscreen gives solid black instead of a (bad stereoscopic) gradient on app transition. -->

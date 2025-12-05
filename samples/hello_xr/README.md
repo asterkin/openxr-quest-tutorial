@@ -16,12 +16,13 @@ This is the canonical "hello world" sample from the Khronos OpenXR SDK, adapted 
 
 ## Architecture
 
-**Build Approach**: Maven + CMake FetchContent (no manual SDK installation required)
+**Build Approach**: Self-contained with CMake FetchContent (no manual SDK installation required)
 
-- **OpenXR Loader**: `org.khronos.openxr:openxr_loader_for_android:1.1.54` (Maven Central)
-- **OpenXR Headers**: Downloaded automatically via CMake FetchContent from OpenXR-SDK-Source
+- **OpenXR Loader**: Built from source via CMake FetchContent from OpenXR-SDK-Source
+- **OpenXR Headers**: Downloaded automatically via CMake FetchContent
 - **Build System**: Gradle 8.13 + CMake 3.22.1 + Android NDK r27
 - **Graphics**: Vulkan (default) or OpenGL ES variants
+- **GLAD Loader**: GLAD2 for OpenGL/OpenGL ES function loading
 
 ## Prerequisites
 
@@ -93,6 +94,18 @@ hello_xr: Frame submitted
 
 ## Cleanup
 
+### Automated Cleanup
+```bash
+adb_cleanup.bat
+```
+
+This script will:
+1. Clear logcat buffer
+2. Force-stop running app
+3. Uninstall both Vulkan and OpenGL ES variants
+4. Clear app data/cache
+
+### Manual Cleanup
 ```bash
 # Uninstall Vulkan variant
 adb uninstall org.khronos.openxr.hello_xr.vulkan
@@ -103,13 +116,21 @@ adb uninstall org.khronos.openxr.hello_xr.opengles
 
 ## Key Files
 
-- [main.cpp](main.cpp) - Application entry point
-- [openxr_program.cpp](openxr_program.cpp) - OpenXR session management
-- [graphicsplugin_vulkan.cpp](graphicsplugin_vulkan.cpp) - Vulkan rendering
-- [graphicsplugin_opengles.cpp](graphicsplugin_opengles.cpp) - OpenGL ES rendering
-- [AndroidManifest.xml](AndroidManifest.xml) - Quest metadata and permissions
-- [CMakeLists.txt](CMakeLists.txt) - Native build configuration
-- [build.gradle](build.gradle) - Android build with Vulkan/OpenGLES flavors
+### Source Code
+- [main.cpp](main.cpp) - Application entry point (NativeActivity integration)
+- [openxr_program.cpp](openxr_program.cpp) - OpenXR session lifecycle and rendering loop
+- [graphicsplugin_vulkan.cpp](graphicsplugin_vulkan.cpp) - Vulkan rendering backend
+- [graphicsplugin_opengles.cpp](graphicsplugin_opengles.cpp) - OpenGL ES rendering backend
+- [common/gfxwrapper_opengl.c](common/gfxwrapper_opengl.c) - OpenGL window/context wrapper
+
+### Build Configuration
+- [AndroidManifest.xml](AndroidManifest.xml) - Quest metadata, permissions, hand tracking
+- [CMakeLists.txt](CMakeLists.txt) - Native build with FetchContent for OpenXR SDK
+- [build.gradle](build.gradle) - Android build with Vulkan/OpenGLES product flavors
+
+### Utilities
+- [adb_cleanup.bat](adb_cleanup.bat) - Device cleanup script
+- [test_run.bat](test_run.bat) - Automated build-install-run-log workflow
 
 ## Product Flavors
 
@@ -134,21 +155,42 @@ Both variants can be installed simultaneously on the same device.
 
 ## Documentation
 
-**Detailed Analysis**:
-- [Application_Logic.md](Application_Logic.md) - Complete code walkthrough
-- [Developers_Guidelines.md](Developers_Guidelines.md) - Development best practices
-- [OpenXR_Tutorial.md](OpenXR_Tutorial.md) - Learning guide
+### Upstream Documentation (from OpenXR-SDK-Source)
+- [Application_Logic.md](Application_Logic.md) - Complete walkthrough of hello_xr code flow
+- [Developers_Guidelines.md](Developers_Guidelines.md) - Development best practices for OpenXR
+- [Developers_Guidelines_Windows.md](Developers_Guidelines_Windows.md) - Windows-specific development setup
 
-## Differences from Original
+### Tutorial Repository Documentation
+- See repository root [docs/](../../docs/) for environment setup and architecture guides
 
-This version differs from the upstream OpenXR-SDK-Source hello_xr:
+## Differences from Upstream OpenXR-SDK-Source
 
-1. ✅ **Self-contained build**: Uses Maven + FetchContent instead of parent CMake project
-2. ✅ **NDK r27**: Updated from NDK r23 for Quest 3 compatibility
-3. ✅ **Gradle 8.13**: Updated from Gradle 7.x
-4. ✅ **Simplified CMake**: Removed AAR extraction, uses FetchContent for headers
-5. ✅ **Quest-optimized**: AndroidManifest tuned for Quest 3
-6. ✅ **Test automation**: Added test_run.bat script
+This sample is adapted from the canonical [OpenXR-SDK-Source hello_xr](https://github.com/KhronosGroup/OpenXR-SDK-Source/tree/main/src/tests/hello_xr) with these modifications:
+
+### Build System Changes
+1. ✅ **Self-contained CMake**: Uses FetchContent to download OpenXR SDK instead of parent project
+2. ✅ **Standalone loader build**: Builds `openxr_loader` from source (no Maven AAR dependency)
+3. ✅ **GLAD2 integration**: Includes GLAD2 for OpenGL ES function loading
+4. ✅ **gfxwrapper_opengl.c**: Added missing OpenGL wrapper functions to CMake build
+
+### Tooling Updates
+5. ✅ **NDK r27**: Updated from NDK r23 for Quest 3 / Horizon OS v81 compatibility
+6. ✅ **Gradle 8.13**: Updated from Gradle 7.x with AGP 8.13.0
+7. ✅ **CMake 3.22.1**: Pinned CMake version for reproducible builds
+
+### Quest 3 Optimizations
+8. ✅ **Quest metadata**: Added `com.oculus.handtracking` and `com.oculus.supportedDevices` to manifest
+9. ✅ **ANativeActivity linker flag**: Added `-u ANativeActivity_onCreate` to fix runtime loading
+10. ✅ **GLAD_GLES2 define**: Enabled OpenGL ES 2.0+ support in GLAD loader
+
+### Development Experience
+11. ✅ **Automated testing**: [test_run.bat](test_run.bat) for build-install-run-log workflow
+12. ✅ **Device cleanup**: [adb_cleanup.bat](adb_cleanup.bat) for complete app removal
+
+### Maintained from Upstream
+- ✅ **Source code**: Identical to upstream (main.cpp, openxr_program.cpp, graphics plugins)
+- ✅ **Documentation**: Upstream docs copied as-is ([Application_Logic.md](Application_Logic.md), etc.)
+- ✅ **Controller bindings**: Full support for Oculus Touch, Vive, Index, WMR controllers
 
 ## Next Steps
 

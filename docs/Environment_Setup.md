@@ -22,6 +22,7 @@ This document describes the **workstation prerequisites** for building the OpenX
 | **Gradle** | 8.x | Build automation (via wrapper) |
 | **Android SDK** | Platform 34 | Android build target |
 | **Android NDK** | r27 (27.2.12479018) | Native C/C++ compilation |
+| **Python** | 3.14 | Build scripts, code generation, diagnostics |
 | **Meta XR SDK** | OVR Mobile SDK 81.0 | Quest-specific OpenXR extensions (optional) |
 | **Meta Quest Developer Hub** | 6.1.1 | Device deployment/debugging |
 | **Meta Quest Link** | Cable or Air | Testing (optional) |
@@ -541,7 +542,82 @@ code --list-extensions --show-versions
 
 ---
 
-### Step 8: OpenXR SDK (Managed Automatically)
+### Step 8: Install Python
+
+**Version**: Python 3.14
+**Download**: https://www.python.org/downloads/
+
+**Purpose**: Used for build scripts, code generation, and diagnostic utilities in OpenXR SDK development
+
+#### Why Python is Needed
+
+While the current tutorial samples don't have Python scripts yet, Python is used by:
+- **OpenXR SDK build system**: Code generation scripts for headers and loaders
+- **Investigation and debugging**: Ad-hoc scripts for log analysis, device queries, etc.
+- **Future automation**: Planned build automation and device management scripts
+
+**Note**: On Windows 11, Python is **not** included by default and must be installed separately.
+
+#### Installation
+
+1. Download **Windows installer (64-bit)** from https://www.python.org/downloads/
+2. Run installer
+3. ⚠️ **CRITICAL**: Check **"Add python.exe to PATH"** at the bottom of the first screen
+4. Click **"Install Now"** (recommended for most users)
+5. After installation, click **"Disable path length limit"** if prompted (optional but recommended)
+
+**Installation location**: `C:\Users\<YourName>\AppData\Local\Programs\Python\Python314\`
+
+#### Verification
+
+Close and reopen PowerShell Admin to refresh PATH, then:
+
+```powershell
+# Check Python version
+python --version
+```
+
+**Expected**: `Python 3.14.x`
+
+```powershell
+# Check pip (Python package manager)
+pip --version
+```
+
+**Expected**: `pip 24.x.x from C:\Users\...\site-packages\pip (python 3.14)`
+
+#### Common Issues
+
+**Issue**: `python : The term 'python' is not recognized...`
+
+**Solution**:
+1. Python was not added to PATH during installation
+2. Re-run the installer → Select "Modify" → Check "Add Python to environment variables"
+3. OR manually add to PATH:
+
+```powershell
+# Get Python installation path
+$pythonPath = (Get-Command python -ErrorAction SilentlyContinue).Source | Split-Path
+
+# If found, add to PATH permanently
+if ($pythonPath) {
+    $currentPath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
+    [System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$pythonPath", 'Machine')
+}
+
+# Close and reopen PowerShell Admin
+```
+
+#### Optional: Upgrade pip
+
+```powershell
+# Upgrade pip to latest version
+python -m pip install --upgrade pip
+```
+
+---
+
+### Step 9: OpenXR SDK (Managed Automatically)
 
 **No manual installation required!**
 
@@ -586,6 +662,6 @@ Return to [CLAUDE.md](../CLAUDE.md) for next steps and project navigation.
 
 ---
 
-**Documentation Version**: 1.0
-**Last Updated**: 2025-12-03
+**Documentation Version**: 1.1
+**Last Updated**: 2025-12-04
 **Maintained by**: OpenXR Quest Tutorial Team
