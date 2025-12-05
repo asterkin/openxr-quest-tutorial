@@ -1,4 +1,13 @@
-# Development Environment Setup - Gradle Build
+# Development Environment Setup
+
+## Target Platform Specifications
+
+- **Device**: Meta Quest 3
+- **OS**: Horizon OS v81 (Android API 34)
+- **Graphics**: Vulkan 1.0.3+
+- **XR Runtime**: OpenXR 1.0.34
+
+---
 
 ## Overview
 
