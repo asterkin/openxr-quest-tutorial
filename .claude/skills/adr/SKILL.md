@@ -16,6 +16,8 @@ Invoke this skill when:
 - Resolving technical uncertainty or debate
 - Making decisions that are expensive to change later
 
+**Important**: To avoid extra maintenance burden, include in ADRs only essential architecture decisions. Avoid implementation details and project planning information.
+
 ## ADR Creation Process
 
 ### Step 1: Determine Next ADR Number

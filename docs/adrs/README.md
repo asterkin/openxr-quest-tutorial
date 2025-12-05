@@ -31,6 +31,7 @@ Each ADR follows this structure:
 | [ADR-0001](adr-0001-consolidated-tutorial-repository-for-openxr-quest-samples.md) | Consolidated Tutorial Repository for OpenXR Quest Samples | Accepted |
 | [ADR-0002](adr-0002-workstation-level-prerequisite-installation.md) | Workstation-Level Prerequisite Installation | Accepted |
 | [ADR-0003](adr-0003-use-ovr-openxr-mobile-sdk-for-meta-extensions.md) | Use OVR OpenXR Mobile SDK for Meta Extensions | Accepted |
+| [ADR-0004](adr-0004-establish-open-ai-code-assistants-structure.md) | Establish Open AI Code Assistants Structure | Accepted |
 
 ## Creating New ADRs
 
