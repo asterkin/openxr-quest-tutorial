@@ -63,14 +63,22 @@
 **Goal**: Adapt the progressive tutorial series for Quest 3 with our build system
 
 **Steps**:
-1. Implement and test Chapter 1 on Quest 3 (setup - coordinate with hello_world/hello_xr patterns)
-2. Implement and test Chapter 2 on Quest 3
-3. Implement and test Chapter 3 on Quest 3
-4. Implement and test Chapter 4 on Quest 3
-5. Implement and test Chapter 5 on Quest 3
-6. (Continue for remaining chapters)
-7. Identify duplications between samples
-8. Introduce common infrastructure if applicable
+- [ ] Implement and test Chapter 1 on Quest 3 (setup - coordinate with hello_world/hello_xr patterns)
+  - [ ] Create sample project structure (`samples/openxr-tutorial/chapter1/`)
+  - [ ] Configure CMakeLists.txt with FetchContent for OpenXR-SDK-Source
+  - [ ] Configure build.gradle with Maven dependency for OpenXR loader
+  - [ ] Update AndroidManifest.xml for Quest 3 VR features
+  - [ ] Download/create Common files (DebugOutput, HelperFunctions, OpenXRDebugUtils, GraphicsAPI abstraction)
+  - [ ] Implement main.cpp with OpenXRTutorial class stub
+  - [ ] Implement Android-specific initialization (xrInitializeLoaderKHR, JNI setup)
+  - [ ] Build and verify deployment to Quest 3
+- [ ] Implement and test Chapter 2 on Quest 3
+- [ ] Implement and test Chapter 3 on Quest 3
+- [ ] Implement and test Chapter 4 on Quest 3
+- [ ] Implement and test Chapter 5 on Quest 3
+- [ ] (Continue for remaining chapters)
+- [ ] Identify duplications between samples
+- [ ] Introduce common infrastructure if applicable
 
 **Expected Output**: Progressive tutorial samples in `samples/openxr-tutorial/`
 
