@@ -2,12 +2,16 @@
 
 ```
 openxr-quest-tutorial/
-├── README.md                    # This file
+├── README.md                    # Project overview
 ├── CLAUDE.md                    # AI agent instructions
+├── .claude/                     # Claude Code configuration
+│   └── skills/                  # Claude Code skills
 ├── docs/                        # Detailed documentation
+│   ├── Repository_Structure.md  # This file - directory layout
 │   ├── Project_Plan.md          # Architecture and phase breakdown
 │   ├── Environment_Setup.md     # SDK installation guide
-│   └── Build_Deploy_Guide.md    # Build/deploy workflows (TBD)
+│   ├── Build_Deploy_Guide.md    # Build/deploy workflows (TBD)
+│   └── adrs/                    # Architecture Decision Records
 └── samples/                     # Sample projects (TBD)
     ├── hello_world/             # Minimal OpenXR Hello World
     ├── hello_xr/                # Khronos OpenXR sample
@@ -21,6 +25,13 @@ openxr-quest-tutorial/
 - **README.md** - Human-readable project overview and quick navigation
 - **CLAUDE.md** - AI agent instructions and development guidelines
 
+### .claude/
+
+Claude Code configuration and extensions:
+
+- **skills/** - Custom Claude Code skills for project workflows
+  - **adr/** - Architecture Decision Record creation skill
+
 ### docs/
 
 Detailed documentation for developers and AI agents:
@@ -29,6 +40,7 @@ Detailed documentation for developers and AI agents:
 - **Project_Plan.md** - Complete architecture, phase breakdown, and implementation roadmap
 - **Environment_Setup.md** - SDK installation and development environment configuration
 - **Build_Deploy_Guide.md** - Build system documentation and deployment workflows
+- **adrs/** - Architecture Decision Records documenting significant technical decisions
 
 ### samples/
 
