@@ -92,48 +92,48 @@
 - [x] Update `settings.gradle` in root to include chapter2
 - [x] Create chapter2-specific `README.md`
 
-**2. Main Application Code (`main.cpp`)**
+**2. Main Application Code (`main.cpp`)** ✅
 
 Adapt from reference file `temp_chapter2/Chapter2/main.cpp` (465 lines)
 
-**2.1. Update OpenXRTutorial Class Constructor**
-- [ ] Add `m_apiType` member variable initialization
-- [ ] Add graphics API validation call: `CheckGraphicsAPI_TypeIsValidForPlatform()`
-- [ ] Update constructor to handle API type parameter
+**2.1. Update OpenXRTutorial Class Constructor** ✅
+- [x] Add `m_apiType` member variable initialization
+- [x] Add graphics API validation call: `CheckGraphicsAPI_TypeIsValidForPlatform()`
+- [x] Update constructor to handle API type parameter
 
-**2.2. Implement Instance Management**
-- [ ] Add `CreateInstance()` method with:
+**2.2. Implement Instance Management** ✅
+- [x] Add `CreateInstance()` method with:
   - `XrApplicationInfo` structure population
   - API layer enumeration via `xrEnumerateApiLayerProperties()`
   - Instance extension enumeration via `xrEnumerateInstanceExtensionProperties()`
   - Extension validation (required: `XR_EXT_DEBUG_UTILS_EXTENSION_NAME`, graphics API extension)
   - `xrCreateInstance()` call with validated layers/extensions
-- [ ] Update `DestroyInstance()` method
-- [ ] Add `GetInstanceProperties()` method to log runtime information
+- [x] Update `DestroyInstance()` method
+- [x] Add `GetInstanceProperties()` method to log runtime information
 
-**2.3. Implement Debug Utilities**
-- [ ] Add `CreateDebugMessenger()` method
+**2.3. Implement Debug Utilities** ✅
+- [x] Add `CreateDebugMessenger()` method
   - Check for `XR_EXT_debug_utils` in active extensions
   - Call `CreateOpenXRDebugUtilsMessenger()` from OpenXRDebugUtils.h
-- [ ] Add `DestroyDebugMessenger()` method
+- [x] Add `DestroyDebugMessenger()` method
   - Call `DestroyOpenXRDebugUtilsMessenger()` from OpenXRDebugUtils.h
 
-**2.4. Implement System Identification**
-- [ ] Add `GetSystemID()` method with:
+**2.4. Implement System Identification** ✅
+- [x] Add `GetSystemID()` method with:
   - `XrSystemGetInfo` structure (form factor: `XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY`)
   - `xrGetSystem()` call to obtain `XrSystemId`
   - `xrGetSystemProperties()` call to retrieve hardware capabilities
 
-**2.5. Implement Session Management**
-- [ ] Add `CreateSession()` method with:
+**2.5. Implement Session Management** ✅
+- [x] Add `CreateSession()` method with:
   - Graphics API instantiation (Vulkan for Android/Quest)
   - `std::unique_ptr<GraphicsAPI_Vulkan>` creation
   - `XrSessionCreateInfo` structure with graphics binding
   - `xrCreateSession()` call
-- [ ] Add `DestroySession()` method with `xrDestroySession()` call
+- [x] Add `DestroySession()` method with `xrDestroySession()` call
 
-**2.6. Implement Event Polling**
-- [ ] Add `PollEvents()` method with event loop handling:
+**2.6. Implement Event Polling** ✅
+- [x] Add `PollEvents()` method with event loop handling:
   - `XR_TYPE_EVENT_DATA_EVENTS_LOST` - log lost event count
   - `XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING` - trigger shutdown
   - `XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED` - log profile changes
@@ -144,8 +144,8 @@ Adapt from reference file `temp_chapter2/Chapter2/main.cpp` (465 lines)
     - `XR_SESSION_STATE_EXITING` → shutdown application
     - `XR_SESSION_STATE_LOSS_PENDING` → shutdown application
 
-**2.7. Update Main Application Loop**
-- [ ] Update `Run()` method sequence:
+**2.7. Update Main Application Loop** ✅
+- [x] Update `Run()` method sequence:
   ```cpp
   CreateInstance();
   CreateDebugMessenger();
@@ -166,8 +166,8 @@ Adapt from reference file `temp_chapter2/Chapter2/main.cpp` (465 lines)
   DestroyInstance();
   ```
 
-**2.8. Add Required Member Variables**
-- [ ] Add to OpenXRTutorial class private section:
+**2.8. Add Required Member Variables** ✅
+- [x] Add to OpenXRTutorial class private section:
   ```cpp
   // Instance & Extensions
   XrInstance m_xrInstance = XR_NULL_HANDLE;
@@ -195,8 +195,8 @@ Adapt from reference file `temp_chapter2/Chapter2/main.cpp` (465 lines)
   bool m_sessionRunning = false;
   ```
 
-**2.9. Android Platform Integration**
-- [ ] Keep existing Android-specific code from chapter1:
+**2.9. Android Platform Integration** ✅
+- [x] Keep existing Android-specific code from chapter1:
   - `static android_app *androidApp`
   - `struct AndroidAppState`
   - `static void AndroidAppHandleCmd()`
