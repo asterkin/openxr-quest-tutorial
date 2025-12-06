@@ -54,8 +54,8 @@ target_include_directories(native_app_glue PUBLIC
     ${ANDROID_NDK}/sources/android/native_app_glue
 )
 
-# Build as shared library for Android
-add_library(openxr_tutorial_ch1 MODULE
+# Build as shared library for Android (SHARED, not MODULE, for NativeActivity)
+add_library(openxr_tutorial_ch1 SHARED
     ${APP_SOURCE}
     ${APP_HEADERS}
     ${COMMON_SOURCE}
@@ -77,6 +77,7 @@ target_compile_definitions(openxr_tutorial_ch1 PRIVATE
     XR_USE_PLATFORM_ANDROID
     XR_USE_GRAPHICS_API_VULKAN
     XR_TUTORIAL_USE_VULKAN
+    XR_TUTORIAL_GRAPHICS_API=VULKAN
 )
 
 # Include directories

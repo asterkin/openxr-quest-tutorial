@@ -29,6 +29,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:hasCode="false"> <!-- There is no Java or Kotlin code in the application. -->
 
+        <!-- Quest metadata: Hand tracking support -->
+        <meta-data android:name="com.oculus.handtracking.frequency" android:value="HIGH" />
+        <meta-data android:name="com.oculus.handtracking.version" android:value="V2.0" />
+
+        <!-- Supported devices -->
+        <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest2|questpro" />
+
         <activity
             android:name="android.app.NativeActivity"
             android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode"

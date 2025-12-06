@@ -70,6 +70,14 @@ android {
         prefab true
     }
 
+    // CRITICAL: Override extractNativeLibs from OpenXR AAR
+    // NativeActivity REQUIRES native libs to be extracted
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

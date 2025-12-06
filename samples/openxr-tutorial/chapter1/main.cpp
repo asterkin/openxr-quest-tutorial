@@ -5,11 +5,24 @@
 // OpenXR Tutorial for Khronos Group
 
 #include <DebugOutput.h>
+
+// Include only the graphics API for this platform
+#if defined(XR_USE_GRAPHICS_API_D3D11)
 #include <GraphicsAPI_D3D11.h>
+#endif
+#if defined(XR_USE_GRAPHICS_API_D3D12)
 #include <GraphicsAPI_D3D12.h>
+#endif
+#if defined(XR_USE_GRAPHICS_API_OPENGL)
 #include <GraphicsAPI_OpenGL.h>
+#endif
+#if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
 #include <GraphicsAPI_OpenGL_ES.h>
+#endif
+#if defined(XR_USE_GRAPHICS_API_VULKAN)
 #include <GraphicsAPI_Vulkan.h>
+#endif
+
 #include <OpenXRDebugUtils.h>
 
 #define XR_DOCS_CHAPTER_VERSION XR_DOCS_CHAPTER_1_4
@@ -136,33 +149,44 @@ android_app *OpenXRTutorial::androidApp = nullptr;
 OpenXRTutorial::AndroidAppState OpenXRTutorial::androidAppState = {};
 
 void android_main(struct android_app *app) {
+    // Debug logging to verify we entered android_main
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "===== android_main() started =====");
+
     // Allow interaction with JNI and the JVM on this thread.
     // https://developer.android.com/training/articles/perf-jni#threads
     JNIEnv *env;
     app->activity->vm->AttachCurrentThread(&env, nullptr);
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "JNI thread attached");
 
     // https://registry.khronos.org/OpenXR/specs/1.1/html/xrspec.html#XR_KHR_loader_init
     // Load xrInitializeLoaderKHR() function pointer. On Android, the loader must be initialized with variables from android_app *.
     // Without this, there's is no loader and thus our function calls to OpenXR would fail.
     XrInstance m_xrInstance = XR_NULL_HANDLE;  // Dummy XrInstance variable for OPENXR_CHECK macro.
     PFN_xrInitializeLoaderKHR xrInitializeLoaderKHR = nullptr;
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "Getting xrInitializeLoaderKHR proc address...");
     OPENXR_CHECK(xrGetInstanceProcAddr(XR_NULL_HANDLE, "xrInitializeLoaderKHR", (PFN_xrVoidFunction *)&xrInitializeLoaderKHR), "Failed to get InstanceProcAddr for xrInitializeLoaderKHR.");
     if (!xrInitializeLoaderKHR) {
+        __android_log_print(ANDROID_LOG_ERROR, "OpenXR_Ch1", "xrInitializeLoaderKHR is NULL - EXITING");
         return;
     }
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "xrInitializeLoaderKHR obtained successfully");
 
     // Fill out an XrLoaderInitInfoAndroidKHR structure and initialize the loader for Android.
     XrLoaderInitInfoAndroidKHR loaderInitializeInfoAndroid{XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR};
     loaderInitializeInfoAndroid.applicationVM = app->activity->vm;
     loaderInitializeInfoAndroid.applicationContext = app->activity->clazz;
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "Initializing OpenXR loader for Android...");
     OPENXR_CHECK(xrInitializeLoaderKHR((XrLoaderInitInfoBaseHeaderKHR *)&loaderInitializeInfoAndroid), "Failed to initialize Loader for Android.");
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "OpenXR loader initialized successfully");
 
     // Set userData and Callback for PollSystemEvents().
     app->userData = &OpenXRTutorial::androidAppState;
     app->onAppCmd = OpenXRTutorial::AndroidAppHandleCmd;
 
     OpenXRTutorial::androidApp = app;
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "Calling OpenXRTutorial_Main() with graphics API: VULKAN");
     OpenXRTutorial_Main(XR_TUTORIAL_GRAPHICS_API);
+    __android_log_print(ANDROID_LOG_INFO, "OpenXR_Ch1", "===== android_main() finished =====");
 }
 /*
     OpenXRTutorial_Main(OPENGL_ES);
