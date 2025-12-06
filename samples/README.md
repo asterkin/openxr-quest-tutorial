@@ -57,7 +57,37 @@ Official Khronos OpenXR conformance sample adapted for Quest 3, demonstrating st
 
 ---
 
-### 3. meta - Meta Quest Samples Collection
+### 3. openxr-tutorial - Progressive OpenXR Tutorial Series
+
+**Path**: [openxr-tutorial/](openxr-tutorial/)
+
+**Complexity**: ⭐⭐ Intermediate (Progressive)
+
+**Description**:
+Step-by-step tutorial series adapted from openxr-tutorial.com, teaching OpenXR concepts progressively from basic setup to advanced rendering.
+
+**Chapters**:
+- **Chapter 1**: Introduction & Setup - Project structure and build configuration
+- **Chapter 2**: [Setup](openxr-tutorial/chapter2/) - OpenXR instance, session, and event handling (🔧 In Progress)
+- **Chapter 3**: Graphics (Planned)
+- **Chapter 4**: Rendering (Planned)
+- **Chapter 5**: Advanced Topics (Planned)
+
+**What You'll Learn**:
+- OpenXR instance and extension management
+- Session lifecycle and state machine
+- Event polling and handling
+- Graphics API integration (Vulkan)
+- Swapchain and frame rendering
+- Reference spaces and view configuration
+
+**Prerequisites**: Understanding of basic C++ and OpenXR concepts
+
+**Build Time**: ~2-3 minutes per chapter
+
+---
+
+### 4. meta - Meta Quest Samples Collection
 
 **Path**: [meta/](meta/)
 
@@ -159,8 +189,12 @@ See [docs/Build_Deploy_Guide.md](../docs/Build_Deploy_Guide.md) for deployment w
 **Recommended progression**:
 
 1. **Start**: [hello_world/](hello_world/) - Understand minimal OpenXR setup
-2. **Next**: [hello_xr/](hello_xr/) - Learn standard OpenXR patterns
-3. **Advanced**: [meta/](meta/) - Explore Quest-specific features
+2. **Foundation**: [hello_xr/](hello_xr/) - Learn standard OpenXR patterns
+3. **Progressive**: [openxr-tutorial/](openxr-tutorial/) - Step-by-step tutorial series
+   - Begin with Chapter 1 (setup)
+   - Progress through Chapter 2 (session & events)
+   - Continue with subsequent chapters
+4. **Advanced**: [meta/](meta/) - Explore Quest-specific features
 
 Each sample builds on concepts from previous samples.
 
