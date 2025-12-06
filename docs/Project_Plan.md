@@ -65,12 +65,13 @@
 **Steps**:
 - [ ] Implement and test Chapter 1 on Quest 3 (setup - coordinate with hello_world/hello_xr patterns)
   - [x] Create sample project structure (`samples/openxr-tutorial/chapter1/`)
-  - [ ] Configure CMakeLists.txt with FetchContent for OpenXR-SDK-Source
-  - [ ] Configure build.gradle with Maven dependency for OpenXR loader
-  - [ ] Update AndroidManifest.xml for Quest 3 VR features
-  - [ ] Download/create Common files (DebugOutput, HelperFunctions, OpenXRDebugUtils, GraphicsAPI abstraction)
-  - [ ] Implement main.cpp with OpenXRTutorial class stub
-  - [ ] Implement Android-specific initialization (xrInitializeLoaderKHR, JNI setup)
+  - [x] Configure CMakeLists.txt with FetchContent for OpenXR-SDK-Source
+  - [x] Configure build.gradle with Maven dependency for OpenXR loader
+  - [x] Update AndroidManifest.xml for Quest 3 VR features
+  - [x] Download/create Common files (DebugOutput, HelperFunctions, OpenXRDebugUtils, GraphicsAPI abstraction)
+  - [x] Implement main.cpp with OpenXRTutorial class stub
+  - [x] Implement Android-specific initialization (xrInitializeLoaderKHR, JNI setup)
+  - [x] Eliminate duplication with chapter1_reference (merged and deleted reference)
   - [ ] Build and verify deployment to Quest 3
 - [ ] Implement and test Chapter 2 on Quest 3
 - [ ] Implement and test Chapter 3 on Quest 3
