@@ -8,6 +8,12 @@
 #include <GraphicsAPI_Vulkan.h>
 #include <OpenXRDebugUtils.h>
 
+// Android asset manager (for loading shaders from APK assets)
+#if defined(__ANDROID__)
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#endif
+
 // include xr linear algebra for XrVector and XrMatrix classes.
 #include <xr_linear_algebra.h>
 // Declare some useful operators for vectors:
@@ -352,31 +358,37 @@ private:
         m_uniformBuffer_Camera = m_graphicsAPI->CreateBuffer({GraphicsAPI::BufferCreateInfo::Type::UNIFORM, 0, sizeof(CameraConstants) * numberOfCuboids, nullptr});
         m_uniformBuffer_Normals = m_graphicsAPI->CreateBuffer({GraphicsAPI::BufferCreateInfo::Type::UNIFORM, 0, sizeof(normals), &normals});
 
+#if defined(__ANDROID__)
+        // Get AAssetManager through JNI (androidApp->activity->assetManager doesn't exist)
+        JNIEnv *env;
+        androidApp->activity->vm->AttachCurrentThread(&env, nullptr);
+        jobject javaAssetManager = env->CallObjectMethod(androidApp->activity->clazz, env->GetMethodID(env->GetObjectClass(androidApp->activity->clazz), "getAssets", "()Landroid/content/res/AssetManager;"));
+        AAssetManager *assetManager = AAssetManager_fromJava(env, javaAssetManager);
+
+        if (m_apiType == VULKAN) {
+            std::vector<char> vertexSource = ReadBinaryFile("shaders/VertexShader.spv", assetManager);
+            m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
+            std::vector<char> fragmentSource = ReadBinaryFile("shaders/PixelShader.spv", assetManager);
+            m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
+        }
+        if (m_apiType == OPENGL_ES) {
+            std::string vertexSource = ReadTextFile("shaders/VertexShader_GLES.glsl", assetManager);
+            m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
+            std::string fragmentSource = ReadTextFile("shaders/PixelShader_GLES.glsl", assetManager);
+            m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
+        }
+#else
+        // Desktop platforms (Windows, Linux, macOS)
         if (m_apiType == OPENGL) {
             std::string vertexSource = ReadTextFile("VertexShader.glsl");
             m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
-
             std::string fragmentSource = ReadTextFile("PixelShader.glsl");
             m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
         }
         if (m_apiType == VULKAN) {
             std::vector<char> vertexSource = ReadBinaryFile("VertexShader.spv");
             m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
-
             std::vector<char> fragmentSource = ReadBinaryFile("PixelShader.spv");
-            m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
-        }
-#if defined(__ANDROID__)
-        if (m_apiType == VULKAN) {
-            std::vector<char> vertexSource = ReadBinaryFile("shaders/VertexShader.spv", androidApp->activity->assetManager);
-            m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
-            std::vector<char> fragmentSource = ReadBinaryFile("shaders/PixelShader.spv", androidApp->activity->assetManager);
-            m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
-        }
-        if (m_apiType == OPENGL_ES) {
-            std::string vertexSource = ReadTextFile("shaders/VertexShader_GLES.glsl", androidApp->activity->assetManager);
-            m_vertexShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::VERTEX, vertexSource.data(), vertexSource.size()});
-            std::string fragmentSource = ReadTextFile("shaders/PixelShader_GLES.glsl", androidApp->activity->assetManager);
             m_fragmentShader = m_graphicsAPI->CreateShader({GraphicsAPI::ShaderCreateInfo::Type::FRAGMENT, fragmentSource.data(), fragmentSource.size()});
         }
 #endif

@@ -188,35 +188,42 @@ Using shared `../Shaders/` directory from OpenXR tutorial:
   - Generates `.spv` files at build time in CMake binary directory
   - Gradle configured to package shaders into APK assets
 
-**Step 6: Frame Rendering Logic**
+**Step 6: Frame Rendering Logic** - ✅ **Complete**
 
 Main loop changes:
-- [ ] Call `xrWaitFrame()` to get frame timing and `shouldRender`
-- [ ] Call `xrBeginFrame()` to signal render start
-- [ ] If `shouldRender`:
-  - [ ] Call `xrLocateViews()` to get per-view poses and FOVs
-  - [ ] Acquire swapchain images (color + depth)
-  - [ ] Wait for swapchain image availability
-  - [ ] Render each view to its swapchain
-  - [ ] Release swapchain images
-  - [ ] Build `XrCompositionLayerProjection` with projection views
-- [ ] Call `xrEndFrame()` with composition layers
+- [x] Call `xrWaitFrame()` to get frame timing and `shouldRender`
+- [x] Call `xrBeginFrame()` to signal render start
+- [x] If `shouldRender`:
+  - [x] Call `xrLocateViews()` to get per-view poses and FOVs
+  - [x] Acquire swapchain images (color + depth)
+  - [x] Wait for swapchain image availability
+  - [x] Render each view to its swapchain
+  - [x] Release swapchain images
+  - [x] Build `XrCompositionLayerProjection` with projection views
+- [x] Call `xrEndFrame()` with composition layers
 
-**Step 7: Build System Updates**
+**Step 7: Build System Updates** - ✅ **Complete**
 
 CMakeLists.txt additions:
-- [ ] Add shader compilation custom commands
-- [ ] Link additional Vulkan utilities if needed
-- [ ] Include shader output directory in APK assets
+- [x] Add shader compilation custom commands (lines 109-202)
+  - Finds `glslc` from NDK shader-tools or Vulkan SDK
+  - Compiles VertexShader.glsl and PixelShader.glsl to SPIR-V
+  - Creates custom target `compile_shaders` with dependency chain
+- [x] Link additional Vulkan utilities if needed (lines 96-102)
+- [x] Include shader output directory in APK assets (configured via build.gradle)
 
 build.gradle updates:
-- [ ] Ensure `assets/` directory included in APK
-- [ ] Verify shader `.spv` files packaged correctly
+- [x] Ensure `assets/` directory included in APK (lines 83-93)
+  - Configures sourceSets to include CMake build output
+- [x] Verify shader `.spv` files packaged correctly (lines 106-112)
+  - Added afterEvaluate hook to ensure CMake runs before asset merge
 
-**Step 8: Testing Infrastructure**
-- [ ] Create `test_run.bat` (adapted from Chapter 2)
-- [ ] Create `adb_cleanup.bat` (adapted from Chapter 2)
-- [ ] Update package ID in scripts to `com.example.openxr_tutorial_ch3`
+**Step 8: Testing Infrastructure** - ✅ **Complete**
+- [x] Create `test_run.bat` (adapted from Chapter 2)
+- [x] Create `adb_cleanup.bat` (adapted from Chapter 2)
+- [x] Update package ID in scripts to `com.example.openxr_tutorial_ch3`
+- [x] Fix asset manager initialization for shader loading (added JNI code to get AAssetManager)
+- [x] Correct build.gradle asset paths for APK packaging (changed to `.cxx/Debug/.../arm64-v8a`)
 
 **Step 9: Documentation**
 

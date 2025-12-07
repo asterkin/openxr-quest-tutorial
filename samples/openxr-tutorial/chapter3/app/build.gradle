@@ -85,8 +85,8 @@ android {
             assets {
                 // Include shaders compiled by CMake (SPIR-V files)
                 srcDirs += [
-                    "$buildDir/intermediates/cxx/Debug/344h44l6/obj/arm64-v8a/shaders",
-                    "$buildDir/intermediates/cxx/Release/344h44l6/obj/arm64-v8a/shaders"
+                    "$projectDir/.cxx/Debug/344h44l6/arm64-v8a",
+                    "$projectDir/.cxx/Release/344h44l6/arm64-v8a"
                 ]
             }
         }

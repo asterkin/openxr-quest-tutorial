@@ -36,9 +36,6 @@
         <!-- Supported devices -->
         <meta-data android:name="com.oculus.supportedDevices" android:value="quest3|quest2|questpro" />
 
-        <!-- Chapter 3 doesn't use input - allow launch without controllers -->
-        <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
-
         <activity
             android:name="android.app.NativeActivity"
             android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode"
