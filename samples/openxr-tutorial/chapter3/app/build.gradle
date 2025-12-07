@@ -68,6 +68,7 @@ android {
     // Enable prefab support for OpenXR AAR
     buildFeatures {
         prefab true
+        buildConfig true
     }
 
     // CRITICAL: Override extractNativeLibs from OpenXR AAR

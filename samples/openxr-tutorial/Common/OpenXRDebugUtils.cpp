@@ -4,6 +4,7 @@
 
 // OpenXR Tutorial for Khronos Group
 
+#include <GraphicsAPI.h>
 #include <OpenXRDebugUtils.h>
 
 XrBool32 OpenXRMessageCallbackFunction(XrDebugUtilsMessageSeverityFlagsEXT messageSeverity, XrDebugUtilsMessageTypeFlagsEXT messageType, const XrDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData) {
