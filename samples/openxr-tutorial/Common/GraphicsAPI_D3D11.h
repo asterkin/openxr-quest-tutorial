@@ -7,12 +7,12 @@
 #pragma once
 #include <GraphicsAPI.h>
 
-#if defined(XR_USE_GRAPHICS_API_VULKAN)
-class GraphicsAPI_Vulkan : public GraphicsAPI {
+#if defined(XR_USE_GRAPHICS_API_D3D11)
+class GraphicsAPI_D3D11 : public GraphicsAPI {
 public:
-    GraphicsAPI_Vulkan();
-    GraphicsAPI_Vulkan(XrInstance m_xrInstance, XrSystemId systemId);
-    ~GraphicsAPI_Vulkan();
+    GraphicsAPI_D3D11();
+    GraphicsAPI_D3D11(XrInstance m_xrInstance, XrSystemId systemId);
+    ~GraphicsAPI_D3D11();
 
     virtual void* CreateDesktopSwapchain(const SwapchainCreateInfo& swapchainCI) override;
     virtual void DestroyDesktopSwapchain(void*& swapchain) override;
@@ -20,7 +20,7 @@ public:
     virtual void AcquireDesktopSwapchanImage(void* swapchain, uint32_t& index) override;
     virtual void PresentDesktopSwapchainImage(void* swapchain, uint32_t index) override;
 
-    virtual int64_t GetDepthFormat() override { return (int64_t)VK_FORMAT_D32_SFLOAT; }
+    virtual int64_t GetDepthFormat() override { return (int64_t)DXGI_FORMAT_D32_FLOAT; }
 
     virtual void* GetGraphicsBinding() override;
     virtual XrSwapchainImageBaseHeader* AllocateSwapchainImageData(XrSwapchain swapchain, SwapchainType type, uint32_t count) override;
@@ -29,12 +29,7 @@ public:
         swapchainImagesMap.erase(swapchain);
     }
     virtual XrSwapchainImageBaseHeader* GetSwapchainImageData(XrSwapchain swapchain, uint32_t index) override { return (XrSwapchainImageBaseHeader*)&swapchainImagesMap[swapchain].second[index]; }
-    virtual void* GetSwapchainImage(XrSwapchain swapchain, uint32_t index) override {
-        VkImage image = swapchainImagesMap[swapchain].second[index].image;
-        VkImageLayout layout = swapchainImagesMap[swapchain].first == SwapchainType::COLOR ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        imageStates[image] = layout;
-        return (void *)image;
-    }
+    virtual void* GetSwapchainImage(XrSwapchain swapchain, uint32_t index) override { return swapchainImagesMap[swapchain].second[index].texture; }
 
     virtual void* CreateImage(const ImageCreateInfo& imageCI) override;
     virtual void DestroyImage(void*& image) override;
@@ -59,8 +54,8 @@ public:
 
     virtual void SetBufferData(void* buffer, size_t offset, size_t size, void* data) override;
 
-    virtual void ClearColor(void* imageView, float r, float g, float b, float a) override;
-    virtual void ClearDepth(void* imageView, float d) override;
+    virtual void ClearColor(void* image, float r, float g, float b, float a) override;
+    virtual void ClearDepth(void* image, float d) override;
 
     virtual void SetRenderAttachments(void** colorViews, size_t colorViewCount, void* depthStencilView, uint32_t width, uint32_t height, void* pipeline) override;
     virtual void SetViewports(Viewport* viewports, size_t count) override;
@@ -75,60 +70,26 @@ public:
     virtual void Draw(uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t firstVertex = 0, uint32_t firstInstance = 0) override;
 
 private:
-    void LoadPFN_XrFunctions(XrInstance m_xrInstance);
-    std::vector<std::string> GetInstanceExtensionsForOpenXR(XrInstance m_xrInstance, XrSystemId systemId);
-    std::vector<std::string> GetDeviceExtensionsForOpenXR(XrInstance m_xrInstance, XrSystemId systemId);
-
     virtual const std::vector<int64_t> GetSupportedColorSwapchainFormats() override;
     virtual const std::vector<int64_t> GetSupportedDepthSwapchainFormats() override;
 
 private:
-    VkInstance instance{};
-    VkPhysicalDevice physicalDevice{};
-    VkDevice device{};
-    uint32_t queueFamilyIndex = 0xFFFFFFFF;
-    uint32_t queueIndex = 0xFFFFFFFF;
-    VkQueue queue{};
-    VkFence fence{};
+    IDXGIFactory4* factory = nullptr;
+    ID3D11Device* device = nullptr;
 
-    VkCommandPool cmdPool{};
-    VkCommandBuffer cmdBuffer{};
-    VkDescriptorPool descriptorPool;
+	ID3D11Debug *d3dDebug=nullptr;
+	ID3D11InfoQueue *infoQueue=nullptr;
+    ID3D11DeviceContext* immediateContext = nullptr;
 
-    std::vector<const char*> activeInstanceLayers{};
-    std::vector<const char*> activeInstanceExtensions{};
-    std::vector<const char*> activeDeviceLayer{};
-    std::vector<const char*> activeDeviceExtensions{};
+    PFN_xrGetD3D11GraphicsRequirementsKHR xrGetD3D11GraphicsRequirementsKHR = nullptr;
+    XrGraphicsBindingD3D11KHR graphicsBinding{};
 
-    PFN_xrGetVulkanGraphicsRequirementsKHR xrGetVulkanGraphicsRequirementsKHR = nullptr;
-    PFN_xrGetVulkanInstanceExtensionsKHR xrGetVulkanInstanceExtensionsKHR = nullptr;
-    PFN_xrGetVulkanDeviceExtensionsKHR xrGetVulkanDeviceExtensionsKHR = nullptr;
-    PFN_xrGetVulkanGraphicsDeviceKHR xrGetVulkanGraphicsDeviceKHR = nullptr;
-    XrGraphicsBindingVulkanKHR graphicsBinding{};
+    std::unordered_map<XrSwapchain, std::pair<SwapchainType, std::vector<XrSwapchainImageD3D11KHR>>> swapchainImagesMap{};
 
-    std::unordered_map<XrSwapchain, std::pair<SwapchainType, std::vector<XrSwapchainImageVulkanKHR>>> swapchainImagesMap{};
+    std::unordered_map<ID3D11Buffer*, BufferCreateInfo> buffers;
 
-    VkImage currentDesktopSwapchainImage = VK_NULL_HANDLE;
-
-    std::unordered_map<VkSwapchainKHR, VkSurfaceKHR> surfaces;
-    VkSemaphore acquireSemaphore{};
-    VkSemaphore submitSemaphore{};
-
-    std::unordered_map<VkImage, VkImageLayout> imageStates;
-    std::unordered_map<VkImage, std::pair<VkDeviceMemory, ImageCreateInfo>> imageResources;
-    std::unordered_map<VkImageView, ImageViewCreateInfo> imageViewResources;
-
-    std::unordered_map<VkBuffer, std::pair<VkDeviceMemory, BufferCreateInfo>> bufferResources;
-
-    std::unordered_map<VkShaderModule, ShaderCreateInfo> shaderResources;
-    std::unordered_map<VkPipeline, std::tuple<VkPipelineLayout, VkDescriptorSetLayout, VkRenderPass, PipelineCreateInfo>> pipelineResources;
-
-    std::unordered_map<VkCommandBuffer, std::vector<VkFramebuffer>> cmdBufferFramebuffers;
-    bool inRenderPass = false;
-
-    VkPipeline setPipeline = VK_NULL_HANDLE;
-    std::unordered_map<VkCommandBuffer, std::vector<VkDescriptorSet>> cmdBufferDescriptorSets;
-    std::vector<std::tuple<VkWriteDescriptorSet, VkDescriptorBufferInfo, VkDescriptorImageInfo>> writeDescSets;
-
+    std::unordered_map<ID3D11DeviceChild*, std::vector<char>> shaderCompiledBinaries;
+    std::unordered_map<UINT64, PipelineCreateInfo> pipelines;
+    UINT64 setPipeline = 0;
 };
 #endif

@@ -6,7 +6,6 @@
 
 #include <OpenXRDebugUtils.h>
 
-// XR_DOCS_TAG_BEGIN_OpenXRMessageCallbackFunction
 XrBool32 OpenXRMessageCallbackFunction(XrDebugUtilsMessageSeverityFlagsEXT messageSeverity, XrDebugUtilsMessageTypeFlagsEXT messageType, const XrDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData) {
     // Lambda to covert an XrDebugUtilsMessageSeverityFlagsEXT to std::string. Bitwise check to concatenate multiple severities to the output string.
     auto GetMessageSeverityString = [](XrDebugUtilsMessageSeverityFlagsEXT messageSeverity) -> std::string {
@@ -82,9 +81,7 @@ XrBool32 OpenXRMessageCallbackFunction(XrDebugUtilsMessageSeverityFlagsEXT messa
     }
     return XrBool32();
 }
-// XR_DOCS_TAG_END_OpenXRMessageCallbackFunction
 
-// XR_DOCS_TAG_BEGIN_Create_DestroyDebugMessenger
 XrDebugUtilsMessengerEXT CreateOpenXRDebugUtilsMessenger(XrInstance m_xrInstance) {
     // Fill out a XrDebugUtilsMessengerCreateInfoEXT structure specifying all severities and types.
     // Set the userCallback to OpenXRMessageCallbackFunction().
@@ -112,4 +109,3 @@ void DestroyOpenXRDebugUtilsMessenger(XrInstance m_xrInstance, XrDebugUtilsMesse
     // Destroy the provided XrDebugUtilsMessengerEXT.
     OPENXR_CHECK(xrDestroyDebugUtilsMessengerEXT(debugUtilsMessenger), "Failed to destroy DebugUtilsMessenger.");
 }
-// XR_DOCS_TAG_END_Create_DestroyDebugMessenger

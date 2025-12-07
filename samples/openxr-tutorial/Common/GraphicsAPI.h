@@ -53,14 +53,12 @@
 
 #if defined(__ANDROID__)
 #include <android_native_app_glue.h>
-#ifndef XR_USE_PLATFORM_ANDROID
 #define XR_USE_PLATFORM_ANDROID
-#endif
 
-#if defined(XR_TUTORIAL_USE_OPENGL_ES) && !defined(XR_USE_GRAPHICS_API_OPENGL_ES)
+#if defined(XR_TUTORIAL_USE_OPENGL_ES)
 #define XR_USE_GRAPHICS_API_OPENGL_ES
 #endif
-#if defined(XR_TUTORIAL_USE_VULKAN) && !defined(XR_USE_GRAPHICS_API_VULKAN)
+#if defined(XR_TUTORIAL_USE_VULKAN)
 #define XR_USE_GRAPHICS_API_VULKAN
 #endif
 #endif  // __ANDROID__

@@ -18,9 +18,9 @@ Each chapter builds upon the previous one, introducing new OpenXR concepts and i
 
 | Chapter | Title | Status | Key Concepts |
 |---------|-------|--------|--------------|
-| [Chapter 1](chapter1/) | Introduction & Setup | 🔧 In Progress | Project structure, build configuration, Android initialization |
+| [Chapter 1](chapter1/) | Introduction & Setup | ✅ Complete | Project structure, build configuration, Android initialization |
 | Chapter 2 | TBD | ⏳ Planned | TBD |
-| Chapter 3 | TBD | ⏳ Planned | TBD |
+| [Chapter 3](chapter3/) | GraphicsAPI & Swapchains | ✅ Complete | GraphicsAPI enhancements, swapchain creation, Vulkan formats |
 | Chapter 4 | TBD | ⏳ Planned | TBD |
 | Chapter 5 | TBD | ⏳ Planned | TBD |
 
@@ -35,9 +35,22 @@ These tutorials follow the same build patterns as other samples in this reposito
 
 See [Build & Deploy Guide](../../docs/Build_Deploy_Guide.md) for details.
 
+## Repository Structure
+
+The `openxr-tutorial/` directory uses a **shared resources + standalone chapters** pattern:
+
+**Key Design Decisions:**
+- Each chapter is a **standalone Gradle project** (can build independently)
+- Each chapter has its **own Gradle wrapper** (matches hello_world/hello_xr pattern)
+- Chapters **share** Common/ and thirdparty/ via CMake relative paths (`../Common/`)
+- No parent-level Gradle build (openxr-tutorial/ is just a container)
+- Build command: `cd chapter1 && gradlew assembleVulkanDebug`
+
+> **Note**: These design decisions are subject to change as part of removing duplications (see [Project_Plan.md](../../docs/Project_Plan.md) lines 72-73).
+
 ## Common Files
 
-The tutorial series uses shared utility files located in each chapter's directory:
+The tutorial series uses shared utility files located in the `Common/` directory:
 
 - **DebugOutput.h/cpp**: Console output redirection to Android logcat
 - **HelperFunctions.h**: Platform-specific macros and utilities

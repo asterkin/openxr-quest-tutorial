@@ -1,5 +1,5 @@
-# OpenXR Tutorial Chapter 3 - Graphics
-# Adapted from: https://openxr-tutorial.com/android/vulkan/3-graphics.html
+# OpenXR Tutorial Chapter 3 - GraphicsAPI & Swapchains
+# Adapted from: https://openxr-tutorial.com/android/vulkan/3-graphics-api.html
 # Modified for Quest 3 with Maven OpenXR loader + CMake FetchContent
 
 cmake_minimum_required(VERSION 3.22.1)
@@ -39,7 +39,7 @@ set(COMMON_SOURCE
 
 # Main application files
 set(APP_HEADERS
-    # Chapter 3: OpenXRTutorial class is defined inline in main.cpp
+    # Main headers will be added here
 )
 
 set(APP_SOURCE

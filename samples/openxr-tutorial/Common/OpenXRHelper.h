@@ -7,20 +7,6 @@
 #pragma once
 // Define any XR_USE_PLATFORM_... / XR_USE_GRAPHICS_API_... before this header file.
 
-// Include platform-specific headers before OpenXR platform headers
-#if defined(XR_USE_PLATFORM_ANDROID)
-#include <jni.h>
-#endif
-
-// Include graphics API headers before OpenXR headers
-#if defined(XR_USE_GRAPHICS_API_VULKAN)
-#include <vulkan/vulkan.h>
-#endif
-
-#if defined(XR_USE_GRAPHICS_API_OPENGL) || defined(XR_USE_GRAPHICS_API_OPENGL_ES)
-#include <gfxwrapper_opengl.h>
-#endif
-
 // OpenXR Headers
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
@@ -28,7 +14,6 @@
 // For DEBUG_BREAK
 #include <HelperFunctions.h>
 
-// XR_DOCS_TAG_BEGIN_Helper_Functions0
 inline void OpenXRDebugBreak() {
     std::cerr << "Breakpoint here to debug." << std::endl;
     DEBUG_BREAK;
@@ -48,4 +33,3 @@ inline const char* GetXRErrorString(XrInstance xrInstance, XrResult result) {
             OpenXRDebugBreak();                                                                                                                             \
         }                                                                                                                                                   \
     }
-// XR_DOCS_TAG_END_Helper_Functions0

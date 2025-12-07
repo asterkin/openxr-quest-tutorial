@@ -137,12 +137,12 @@
 - [x] Create symlink to `Common/` directory (uses relative paths in CMakeLists.txt)
 - [x] Copy `AndroidManifest.xml` with appropriate package name (`com.example.openxr_tutorial_ch3`)
 
-**Step 2: GraphicsAPI Enhancements**
-- [ ] Add `GetDepthFormat()` method to GraphicsAPI_Vulkan
-- [ ] Add `GetViewConfigurationViews()` support
-- [ ] Add swapchain creation with proper Vulkan formats
-- [ ] Implement image view creation for swapchain images
-- [ ] Add `SelectSwapchainFormat()` with priority: `VK_FORMAT_B8G8R8A8_SRGB` → `VK_FORMAT_R8G8B8A8_SRGB` → UNORM variants
+**Step 2: GraphicsAPI Enhancements** - ✅ **Complete**
+- [x] Add `GetDepthFormat()` method to GraphicsAPI_Vulkan
+- [x] Add `GetViewConfigurationViews()` support
+- [x] Add swapchain creation with proper Vulkan formats
+- [x] Implement image view creation for swapchain images
+- [x] Add `SelectSwapchainFormat()` with priority: `VK_FORMAT_B8G8R8A8_SRGB` → `VK_FORMAT_R8G8B8A8_SRGB` → UNORM variants
 
 **Step 3: OpenXRTutorial Class Extensions**
 
