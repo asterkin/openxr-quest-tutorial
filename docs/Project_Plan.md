@@ -225,29 +225,41 @@ build.gradle updates:
 - [x] Fix asset manager initialization for shader loading (added JNI code to get AAssetManager)
 - [x] Correct build.gradle asset paths for APK packaging (changed to `.cxx/Debug/.../arm64-v8a`)
 
-**Step 9: Documentation**
+**Step 9: Documentation** - ✅ **Complete**
 
-Create comprehensive documentation:
-- [ ] `README.md`:
-  - Overview of graphics features
-  - Build and deployment instructions
-  - Expected behavior (colored cube rendering in stereo)
-  - Troubleshooting (shader compilation, swapchain errors)
-  - Differences from original tutorial
+Created comprehensive documentation:
+- [x] `README.md` ([samples/openxr-tutorial/chapter3/README.md](../samples/openxr-tutorial/chapter3/README.md)):
+  - Overview of graphics features (Vulkan, swapchains, stereo rendering, shaders)
+  - Build and deployment instructions (gradlew commands, test scripts)
+  - Expected behavior (colored cubes at floor and table height, stereo vision with cyan/magenta tints)
+  - Comprehensive troubleshooting section:
+    - Controller popup / launch rejection issue
+    - SIGSEGV crash from null AAssetManager
+    - Shaders not in APK (build.gradle paths)
+    - No logs in test_run.bat
+    - Shader compilation failures
+    - Vulkan validation errors
+  - Differences from original Khronos tutorial (Android adaptations, Quest manifest, shader paths, build system)
+  - File structure reference
+  - Next steps (Chapter 4-6 preview)
 
-- [ ] `INTEGRATION_NOTES.md`:
-  - Build system changes from original
-  - Quest 3 platform adaptations
-  - Shader compilation process
-  - Swapchain format selection rationale
-  - Vulkan-specific considerations (image layouts, synchronization)
-  - Known differences (Vulkan-only, no D3D/OpenGL)
-  - Verification checklist
+- [x] `INTEGRATION_NOTES.md` ([samples/openxr-tutorial/chapter3/INTEGRATION_NOTES.md](../samples/openxr-tutorial/chapter3/INTEGRATION_NOTES.md)):
+  - Build system: CMake shader compilation, Gradle asset packaging, dependency tracking
+  - Quest 3 adaptations: AAssetManager JNI access, manifest configuration, shader loading paths
+  - Shader compilation: GLSL → glslc → SPIR-V → Vulkan shader modules
+  - Swapchain format selection: sRGB preference, Quest native formats
+  - Vulkan considerations: synchronization (acquire/wait/release), projection layer setup, rendering pipeline
+  - Known differences: asset loading (AAssetManager vs fopen), shader paths, build system, platform ifdefs, testing workflow
+  - Verification checklist (7 items)
+  - Debug tips (shader compilation, asset packaging, runtime loading, validation)
+  - Performance notes (Quest 3 specs, optimization opportunities)
 
-- [ ] Code comments:
-  - Document swapchain acquisition flow
-  - Explain view pose transformation
-  - Clarify projection layer submission
+- [x] Code comments ([main.cpp:731-829](../samples/openxr-tutorial/chapter3/main.cpp)):
+  - Swapchain acquisition flow (lines 731-746): Acquire → Wait → Render → Release lifecycle
+  - View pose transformation (lines 784-804): Projection matrix from asymmetric FOV, view matrix inversion, combined view-projection
+  - Projection view setup (lines 756-767): Compositor configuration with pose, FOV, swapchain reference
+  - Projection layer submission (lines 823-829): Layer construction for xrEndFrame()
+  - Swapchain release (lines 814-820): Return images to compositor after rendering
 
 ##### Platform-Specific Considerations
 

@@ -723,14 +723,17 @@ private:
         // Resize the layer projection views to match the view count. The layer projection views are used in the layer projection.
         renderLayerInfo.layerProjectionViews.resize(viewCount, {XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW});
 
-        // Per view in the view configuration:
+        // Per view in the view configuration (typically left and right eye for stereo):
         for (uint32_t i = 0; i < viewCount; i++) {
             SwapchainInfo &colorSwapchainInfo = m_colorSwapchainInfos[i];
             SwapchainInfo &depthSwapchainInfo = m_depthSwapchainInfos[i];
 
-            // Acquire and wait for an image from the swapchains.
-            // Get the image index of an image in the swapchains.
-            // The timeout is infinite.
+            // SWAPCHAIN ACQUISITION FLOW:
+            // Step 1: Acquire an available image index from the swapchain.
+            //         This reserves an image for rendering but doesn't wait for it to be ready.
+            // Step 2: Wait for the image to be ready for rendering.
+            //         The runtime may still be compositing the previous frame using this image.
+            //         XR_INFINITE_DURATION means we'll block until the image is available.
             uint32_t colorImageIndex = 0;
             uint32_t depthImageIndex = 0;
             XrSwapchainImageAcquireInfo acquireInfo{XR_TYPE_SWAPCHAIN_IMAGE_ACQUIRE_INFO};
@@ -750,17 +753,18 @@ private:
             float nearZ = 0.05f;
             float farZ = 100.0f;
 
-            // Fill out the XrCompositionLayerProjectionView structure specifying the pose and fov from the view.
-            // This also associates the swapchain image with this layer projection view.
+            // PROJECTION VIEW SETUP:
+            // Configure how this eye's view will be composited by the OpenXR runtime.
+            // The compositor uses this info to display the rendered image with correct perspective.
             renderLayerInfo.layerProjectionViews[i] = {XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW};
-            renderLayerInfo.layerProjectionViews[i].pose = views[i].pose;
-            renderLayerInfo.layerProjectionViews[i].fov = views[i].fov;
-            renderLayerInfo.layerProjectionViews[i].subImage.swapchain = colorSwapchainInfo.swapchain;
+            renderLayerInfo.layerProjectionViews[i].pose = views[i].pose;  // Eye position/orientation in reference space
+            renderLayerInfo.layerProjectionViews[i].fov = views[i].fov;    // Asymmetric FOV for this eye
+            renderLayerInfo.layerProjectionViews[i].subImage.swapchain = colorSwapchainInfo.swapchain;  // Which swapchain contains the rendered image
             renderLayerInfo.layerProjectionViews[i].subImage.imageRect.offset.x = 0;
             renderLayerInfo.layerProjectionViews[i].subImage.imageRect.offset.y = 0;
             renderLayerInfo.layerProjectionViews[i].subImage.imageRect.extent.width = static_cast<int32_t>(width);
             renderLayerInfo.layerProjectionViews[i].subImage.imageRect.extent.height = static_cast<int32_t>(height);
-            renderLayerInfo.layerProjectionViews[i].subImage.imageArrayIndex = 0;  // Useful for multiview rendering.
+            renderLayerInfo.layerProjectionViews[i].subImage.imageArrayIndex = 0;  // Index in texture array (0 for single-pass rendering, useful for multiview)
 
             // Rendering code to clear the color and depth image views.
             m_graphicsAPI->BeginRendering();
@@ -778,15 +782,26 @@ private:
             m_graphicsAPI->SetViewports(&viewport, 1);
             m_graphicsAPI->SetScissors(&scissor, 1);
 
-            // Compute the view-projection transform.
+            // VIEW POSE TRANSFORMATION:
+            // Compute the view-projection matrix for this eye to transform world-space vertices to clip-space.
             // All matrices (including OpenXR's) are column-major, right-handed.
+            //
+            // Step 1: Create projection matrix from asymmetric FOV (accounts for lens distortion).
+            //         views[i].fov contains angleLeft, angleRight, angleUp, angleDown.
             XrMatrix4x4f proj;
             XrMatrix4x4f_CreateProjectionFov(&proj, m_apiType, views[i].fov, nearZ, farZ);
+
+            // Step 2: Create view matrix from eye pose.
+            //         views[i].pose is the position/orientation of the eye in world space.
+            //         We need to invert this to get the transform FROM world TO eye space.
             XrMatrix4x4f toView;
             XrVector3f scale1m{1.0f, 1.0f, 1.0f};
             XrMatrix4x4f_CreateTranslationRotationScale(&toView, &views[i].pose.position, &views[i].pose.orientation, &scale1m);
             XrMatrix4x4f view;
             XrMatrix4x4f_InvertRigidBody(&view, &toView);
+
+            // Step 3: Combine projection and view matrices into view-projection matrix.
+            //         This will be used to transform each cuboid's model matrix.
             XrMatrix4x4f_Multiply(&cameraConstants.viewProj, &proj, &view);
 
             renderCuboidIndex = 0;
@@ -797,17 +812,22 @@ private:
 
             m_graphicsAPI->EndRendering();
 
-            // Give the swapchain image back to OpenXR, allowing the compositor to use the image.
+            // SWAPCHAIN RELEASE:
+            // Return the swapchain images to OpenXR now that rendering is complete.
+            // The compositor will use these images to display the frame on the headset.
+            // After release, we cannot access these images until we acquire them again.
             XrSwapchainImageReleaseInfo releaseInfo{XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO};
             OPENXR_CHECK(xrReleaseSwapchainImage(colorSwapchainInfo.swapchain, &releaseInfo), "Failed to release Image back to the Color Swapchain");
             OPENXR_CHECK(xrReleaseSwapchainImage(depthSwapchainInfo.swapchain, &releaseInfo), "Failed to release Image back to the Depth Swapchain");
         }
 
-        // Fill out the XrCompositionLayerProjection structure for usage with xrEndFrame().
+        // PROJECTION LAYER SUBMISSION:
+        // Construct the projection layer that will be submitted to the compositor via xrEndFrame().
+        // This layer references all the per-view projection data (pose, FOV, swapchain images).
         renderLayerInfo.layerProjection.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT | XR_COMPOSITION_LAYER_CORRECT_CHROMATIC_ABERRATION_BIT;
-        renderLayerInfo.layerProjection.space = m_localSpace;
+        renderLayerInfo.layerProjection.space = m_localSpace;  // The reference space for the layer poses
         renderLayerInfo.layerProjection.viewCount = static_cast<uint32_t>(renderLayerInfo.layerProjectionViews.size());
-        renderLayerInfo.layerProjection.views = renderLayerInfo.layerProjectionViews.data();
+        renderLayerInfo.layerProjection.views = renderLayerInfo.layerProjectionViews.data();  // Array of per-view data
 
         return true;
     }

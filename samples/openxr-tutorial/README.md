@@ -19,8 +19,8 @@ Each chapter builds upon the previous one, introducing new OpenXR concepts and i
 | Chapter | Title | Status | Key Concepts |
 |---------|-------|--------|--------------|
 | [Chapter 1](chapter1/) | Introduction & Setup | ✅ Complete | Project structure, build configuration, Android initialization |
-| Chapter 2 | TBD | ⏳ Planned | TBD |
-| [Chapter 3](chapter3/) | GraphicsAPI & Swapchains | ✅ Complete | GraphicsAPI enhancements, swapchain creation, Vulkan formats |
+| [Chapter 2](chapter2/) | OpenXR Fundamentals | ✅ Complete | Instance creation, session management, reference spaces, event handling |
+| [Chapter 3](chapter3/) | GraphicsAPI & Swapchains | ✅ Complete | Vulkan rendering, swapchain management, stereo projection, shader compilation |
 | Chapter 4 | TBD | ⏳ Planned | TBD |
 | Chapter 5 | TBD | ⏳ Planned | TBD |
 
@@ -130,5 +130,5 @@ For questions about OpenXR concepts, consult the [original tutorial](https://ope
 
 ---
 
-**Last Updated**: 2025-12-05
-**Tutorial Series Status**: Phase 4 - In Progress
+**Last Updated**: 2025-12-07
+**Tutorial Series Status**: Chapter 3 Complete - Vulkan Rendering & Swapchains
