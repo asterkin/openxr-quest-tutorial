@@ -6,7 +6,7 @@
 
 This chapter implements the core OpenXR infrastructure including instance creation, system identification, session management, and event handling. The application establishes a functional OpenXR session with Vulkan graphics binding but does not yet render frames (that's Chapter 3).
 
-**Status**: 🔧 In Progress
+**Status**: ✅ Complete
 
 ## Original Tutorial
 
@@ -41,15 +41,44 @@ This sample is adapted from:
 
 ## Build & Deploy
 
+### Quick Test (Recommended)
+
 ```bash
-# Build from chapter2 directory
-gradlew assembleVulkanDebug
+# From chapter2 directory
+.\test_run.bat
+```
+
+This automated script:
+1. Checks for connected Quest device
+2. Verifies APK exists
+3. Installs APK via ADB
+4. Launches application
+5. Collects and displays logs
+
+### Manual Build & Deploy
+
+```bash
+# Build from repository root
+gradlew :samples:openxr-tutorial:chapter2:assembleVulkanDebug
+
+# Or from chapter2 directory
+..\..\..\gradlew.bat assembleVulkanDebug
 
 # Deploy to Quest 3
-adb install -r app/build/outputs/apk/vulkanDebug/*.apk
+adb install -r app\build\outputs\apk\vulkan\debug\app-vulkan-debug.apk
 
-# Or use test script
-test_run.bat
+# Launch
+adb shell am start -n com.example.openxr_tutorial_ch2/android.app.NativeActivity
+
+# View logs
+adb logcat -s openxr_tutorial:*
+```
+
+### Cleanup
+
+```bash
+# Uninstall and clear logs
+.\adb_cleanup.bat
 ```
 
 ## Expected Behavior
@@ -61,11 +90,22 @@ When running on Quest 3:
 - Application exits cleanly when user quits via Quest menu
 - No rendering occurs yet (placeholder in main loop)
 
-Check logcat for:
-- OpenXR runtime name/version (Meta/Oculus runtime)
-- System properties (Quest 3 hardware info)
-- Session state transitions
-- Event processing messages
+### Expected Logs
+
+```
+openxr_tutorial: redirected cout
+openxr_tutorial: Testing cout redirect.
+openxr_tutorial: OpenXR Tutorial Chapter 2
+openxr_tutorial: OpenXR Runtime: Oculus - 83.281.0
+openxr_tutorial: xrCreateDebugUtilsMessengerEXT(VERBOSE / GEN): ...
+openxr_tutorial: OPENXR: Reference Space Change pending for Session: 0x3
+```
+
+Key indicators:
+- **Runtime**: Oculus 83.281.0 (or newer)
+- **Session ID**: e.g., `Session: 0x3`
+- **Debug messenger**: Loader trampoline/terminator messages
+- **Events**: Reference space changes indicate tracking is active
 
 ## Implementation Details
 
@@ -97,14 +137,28 @@ bool m_sessionRunning;
 
 ## Differences from Original
 
-This adaptation differs from the original tutorial in:
-- Uses Maven for OpenXR loader dependency
-- Uses CMake FetchContent for OpenXR SDK headers
-- Configured for Quest 3 (Horizon OS v81, API 34)
-- Integrated with repository-wide build system
+This Quest 3 adaptation includes:
+
+### Build System
+- Maven dependency for OpenXR loader (`org.khronos.openxr:openxr_loader_for_android:1.1.54`)
+- CMake FetchContent for OpenXR SDK headers (release-1.1.54)
+- Android Gradle Plugin configuration for NativeActivity
+- Prefab support for native library integration
+
+### Platform Configuration
+- Target: Horizon OS v81 (Android API 34)
+- Vulkan 1.0.3+ requirement
+- Quest-specific metadata (`com.oculus.supportedDevices`)
+- Hand tracking metadata (HIGH frequency, V2.0)
+- **Focus-aware flag** (`com.oculus.vr.focusaware`) to bypass controller requirement dialog
+
+### Code Adaptations
+- Android logging via `__android_log_write` with `openxr_tutorial` tag
+- Stream redirection for `std::cout`/`std::cerr`
+- Fixed `VK_MAKE_API_VERSION` macro guard (was causing redefinition warning)
 - Vulkan-only (no D3D11/D3D12/OpenGL variants in this sample)
 
-See `INTEGRATION_NOTES.md` for detailed changes.
+See `INTEGRATION_NOTES.md` for detailed implementation changes.
 
 ## Prerequisites
 
@@ -114,20 +168,34 @@ See `INTEGRATION_NOTES.md` for detailed changes.
 
 ## Troubleshooting
 
+### No logs appearing
+- Ensure native library name matches in `AndroidManifest.xml` (`openxr_tutorial_ch2`)
+- Check CMakeLists.txt library name matches
+- Verify APK contains `libopenxr_tutorial_ch2.so`:
+  ```bash
+  unzip -l app\build\outputs\apk\vulkan\debug\app-vulkan-debug.apk | grep libopenxr
+  ```
+
+### Controller warning dialog appears
+- The app includes `com.oculus.vr.focusaware` metadata to bypass this
+- If dialog still appears, dismiss it manually - Chapter 2 doesn't use input
+- Alternatively, connect controllers before launching
+
 ### Application crashes on launch
-- Check logcat for OpenXR error messages
+- Check `adb logcat` for native crashes or OpenXR errors
 - Verify Quest developer mode is enabled
-- Ensure OpenXR runtime is available
+- Ensure OpenXR runtime is available (Quest system software up to date)
 
 ### Session never reaches READY state
-- Check Quest headset is being worn (proximity sensor)
+- Check Quest headset is being worn (proximity sensor active)
 - Verify permissions in AndroidManifest.xml
-- Check logcat for session state events
+- Check logcat for session state transition events
 
 ### Build errors
 - Verify NDK r27 is installed
-- Check CMakeLists.txt paths to Common directory
-- Ensure OpenXR loader AAR is resolved from Maven
+- Check CMakeLists.txt paths to Common directory (symlink valid)
+- Ensure OpenXR loader AAR is resolved from Maven Central
+- Run `gradlew --refresh-dependencies` if dependency resolution fails
 
 ## Next Chapter
 
