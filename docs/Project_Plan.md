@@ -170,46 +170,23 @@ New methods:
 - [x] `RenderLayer()` - Render single projection layer
 - [x] `RenderCuboid()` - Render cube geometry
 
-**Step 4: Rendering Resources**
-- [ ] Vertex buffer with cube positions (8 vertices, 3 floats each)
-- [ ] Index buffer with cube triangles (36 indices for 12 triangles)
-- [ ] Uniform buffer for `CameraConstants` (view-projection matrix, model matrix, color)
-- [ ] Pipeline state object (shaders + vertex layout + rasterization state)
-- [ ] Descriptor sets for uniform buffer binding
+**Step 4: Rendering Resources** - ✅ **Complete**
+- [x] Vertex buffer with cube positions (8 vertices, 3 floats each)
+- [x] Index buffer with cube triangles (36 indices for 12 triangles)
+- [x] Uniform buffer for `CameraConstants` (view-projection matrix, model matrix, color)
+- [x] Pipeline state object (shaders + vertex layout + rasterization state)
+- [x] Descriptor sets for uniform buffer binding
 
-**Step 5: Shader Implementation**
+**Step 5: Shader Implementation** - ✅ **Complete**
 
-Create `shaders/` directory with:
-- [ ] `VertexShader.glsl`:
-  ```glsl
-  layout(binding = 0) uniform CameraConstants {
-      mat4 viewProj;
-      mat4 model;
-      vec4 color;
-  };
-  layout(location = 0) in vec3 inPosition;
-  layout(location = 0) out vec4 outColor;
-
-  void main() {
-      gl_Position = viewProj * model * vec4(inPosition, 1.0);
-      outColor = color;
-  }
-  ```
-
-- [ ] `PixelShader.glsl` (Fragment Shader):
-  ```glsl
-  layout(location = 0) in vec4 inColor;
-  layout(location = 0) out vec4 outColor;
-
-  void main() {
-      outColor = inColor;
-  }
-  ```
-
-- [ ] CMake integration for GLSL → SPIR-V compilation
-  - Use `glslangValidator` or `glslc` compiler
-  - Generate `.spv` files at build time
-  - Package into APK assets
+Using shared `../Shaders/` directory from OpenXR tutorial:
+- [x] `VertexShader.glsl` - Official Khronos shader with std140 uniform buffers (CameraConstants, Normals)
+- [x] `PixelShader.glsl` - Official fragment shader with lighting calculations
+- [x] CMake integration for GLSL → SPIR-V compilation
+  - Uses `glslc` compiler from Android NDK shader-tools
+  - Compiles from shared Shaders directory
+  - Generates `.spv` files at build time in CMake binary directory
+  - Gradle configured to package shaders into APK assets
 
 **Step 6: Frame Rendering Logic**
 
