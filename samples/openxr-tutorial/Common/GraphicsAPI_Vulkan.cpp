@@ -20,7 +20,7 @@
         }                                                                                          \
     }
 
-#if defined(__ANDROID__) && !defined(VK_API_MAKE_VERSION)
+#if defined(__ANDROID__) && !defined(VK_MAKE_API_VERSION)
 #define VK_MAKE_API_VERSION(variant, major, minor, patch) VK_MAKE_VERSION(major, minor, patch)
 #endif
 
