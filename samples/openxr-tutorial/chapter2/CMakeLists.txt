@@ -1,5 +1,5 @@
-# OpenXR Tutorial Chapter 2 - Setup
-# Adapted from: https://openxr-tutorial.com/android/vulkan/2-setup.html
+# OpenXR Tutorial Chapter 2 - OpenXR Fundamentals
+# Adapted from: https://openxr-tutorial.com/android/vulkan/2-openxr-fundamentals.html
 # Modified for Quest 3 with Maven OpenXR loader + CMake FetchContent
 
 cmake_minimum_required(VERSION 3.22.1)
@@ -39,7 +39,7 @@ set(COMMON_SOURCE
 
 # Main application files
 set(APP_HEADERS
-    # Main headers will be added here
+    # Chapter 2: OpenXRTutorial class is defined inline in main.cpp
 )
 
 set(APP_SOURCE
