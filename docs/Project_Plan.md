@@ -144,31 +144,31 @@
 - [x] Implement image view creation for swapchain images
 - [x] Add `SelectSwapchainFormat()` with priority: `VK_FORMAT_B8G8R8A8_SRGB` → `VK_FORMAT_R8G8B8A8_SRGB` → UNORM variants
 
-**Step 3: OpenXRTutorial Class Extensions**
+**Step 3: OpenXRTutorial Class Extensions** - ✅ **Complete**
 
 New member variables:
-- [ ] `std::vector<XrViewConfigurationView> m_viewConfigurationViews`
-- [ ] `XrSpace m_localSpace` (reference space)
-- [ ] `std::vector<SwapchainInfo> m_colorSwapchains` (per view)
-- [ ] `std::vector<SwapchainInfo> m_depthSwapchains` (per view)
-- [ ] `XrEnvironmentBlendMode m_environmentBlendMode`
+- [x] `std::vector<XrViewConfigurationView> m_viewConfigurationViews`
+- [x] `XrSpace m_localSpace` (reference space)
+- [x] `std::vector<SwapchainInfo> m_colorSwapchains` (per view)
+- [x] `std::vector<SwapchainInfo> m_depthSwapchains` (per view)
+- [x] `XrEnvironmentBlendMode m_environmentBlendMode`
 
 New data structures:
-- [ ] `SwapchainInfo` struct (XrSwapchain, format, std::vector<void*> imageViews)
-- [ ] `RenderLayerInfo` struct (XrCompositionLayerProjection, std::vector<XrCompositionLayerProjectionView>)
+- [x] `SwapchainInfo` struct (XrSwapchain, format, std::vector<void*> imageViews)
+- [x] `RenderLayerInfo` struct (XrCompositionLayerProjection, std::vector<XrCompositionLayerProjectionView>)
 
 New methods:
-- [ ] `GetViewConfigurationViews()` - Query stereo view specs
-- [ ] `GetEnvironmentBlendModes()` - Get blend mode support
-- [ ] `CreateSwapchains()` - Create color/depth swapchains
-- [ ] `DestroySwapchains()` - Cleanup swapchains
-- [ ] `CreateReferenceSpace()` - Create LOCAL space
-- [ ] `DestroyReferenceSpace()` - Destroy space
-- [ ] `CreateResources()` - Initialize rendering resources
-- [ ] `DestroyResources()` - Cleanup rendering resources
-- [ ] `RenderFrame()` - Main rendering function
-- [ ] `RenderLayer()` - Render single projection layer
-- [ ] `RenderCuboid()` - Render cube geometry
+- [x] `GetViewConfigurationViews()` - Query stereo view specs
+- [x] `GetEnvironmentBlendModes()` - Get blend mode support
+- [x] `CreateSwapchains()` - Create color/depth swapchains
+- [x] `DestroySwapchains()` - Cleanup swapchains
+- [x] `CreateReferenceSpace()` - Create LOCAL space
+- [x] `DestroyReferenceSpace()` - Destroy space
+- [x] `CreateResources()` - Initialize rendering resources
+- [x] `DestroyResources()` - Cleanup rendering resources
+- [x] `RenderFrame()` - Main rendering function
+- [x] `RenderLayer()` - Render single projection layer
+- [x] `RenderCuboid()` - Render cube geometry
 
 **Step 4: Rendering Resources**
 - [ ] Vertex buffer with cube positions (8 vertices, 3 floats each)
