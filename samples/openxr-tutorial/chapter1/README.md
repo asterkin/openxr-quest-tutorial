@@ -6,7 +6,7 @@
 
 This chapter introduces OpenXR fundamentals and establishes the project structure for Android/Vulkan development on Quest 3.
 
-**Status**: 🔧 In Progress
+**Status**: ✅ Complete
 
 ## Original Tutorial
 
@@ -40,7 +40,7 @@ This adaptation differs from the original tutorial in:
 - Configured for Quest 3 (Horizon OS v81, API 34)
 - Integrated with repository-wide build system
 
-See `INTEGRATION_NOTES.md` (when available) for detailed changes.
+See [INTEGRATION_NOTES.md](INTEGRATION_NOTES.md) for detailed implementation changes.
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ See `INTEGRATION_NOTES.md` (when available) for detailed changes.
 
 ## Next Chapter
 
-After completing this chapter, proceed to Chapter 2 (coming soon).
+After completing this chapter, proceed to [Chapter 2](../chapter2/) - OpenXR Fundamentals (instance, session, events).
 
 ---
 
