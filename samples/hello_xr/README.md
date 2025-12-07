@@ -167,6 +167,8 @@ Both variants can be installed simultaneously on the same device.
 
 This sample is adapted from the canonical [OpenXR-SDK-Source hello_xr](https://github.com/KhronosGroup/OpenXR-SDK-Source/tree/main/src/tests/hello_xr) with these modifications:
 
+**For detailed implementation changes, see [INTEGRATION_NOTES.md](INTEGRATION_NOTES.md)**
+
 ### Build System Changes
 1. ✅ **Self-contained CMake**: Uses FetchContent to download OpenXR SDK instead of parent project
 2. ✅ **Standalone loader build**: Builds `openxr_loader` from source (no Maven AAR dependency)
