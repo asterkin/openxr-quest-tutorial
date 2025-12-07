@@ -20,9 +20,8 @@
         }                                                                                          \
     }
 
-#if defined(__ANDROID__) && !defined(VK_API_MAKE_VERSION)
-#define VK_MAKE_API_VERSION(variant, major, minor, patch) VK_MAKE_VERSION(major, minor, patch)
-#endif
+// VK_MAKE_API_VERSION is already defined in newer Vulkan headers
+// Only define it if not present to avoid redefinition warnings
 
 static bool MemoryTypeFromProperties(VkPhysicalDeviceMemoryProperties memoryProperties, uint32_t typeBits, VkMemoryPropertyFlags requirementsMask, uint32_t *typeIndex) {
     // Search memory types to find first index with those properties
