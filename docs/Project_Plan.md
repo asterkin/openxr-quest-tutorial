@@ -66,7 +66,7 @@
 - [x] Implement and test Chapter 1 on Quest 3 (setup - coordinate with hello_world/hello_xr patterns)
 - [x] Implement and test Chapter 2 on Quest 3 (OpenXR instance, session, events) - **Complete 2024-12-07**
 - [x] Implement and test Chapter 3 on Quest 3 (graphics rendering, swapchains, Vulkan) - **Complete 2024-12-07**
-- [ ] Migrate and test Chapter 4 on Quest 3 (actions, interactions) - [Detailed Plan](#chapter-4-actions--interactions-migration-plan)
+- [ ] Migrate and test Chapter 4 on Quest 3 (actions, interactions) - **In Progress** - [Detailed Plan](#chapter-4-actions--interactions-migration-plan)
 - [ ] Implement and test Chapter 5 on Quest 3
 - [ ] (Continue for remaining chapters)
 - [ ] Identify duplications between samples
@@ -82,7 +82,7 @@
 
 #### Chapter 4: Actions & Interactions (Migration Plan)
 
-**Status**: ⏳ Planned
+**Status**: 🔧 In Progress
 
 **Source**: [OpenXR-Tutorials Chapter 4](https://github.com/KhronosGroup/OpenXR-Tutorials/releases/download/v1.0.13/Chapter4.zip)
 
@@ -129,9 +129,9 @@
 ##### Implementation Steps
 
 **Step 1: Source Download & Extraction**
-- [ ] Download Chapter 4 source: `https://github.com/KhronosGroup/OpenXR-Tutorials/releases/download/v1.0.13/Chapter4.zip`
-- [ ] Extract to temporary location
-- [ ] Review source structure:
+- [x] Download Chapter 4 source: `https://github.com/KhronosGroup/OpenXR-Tutorials/releases/download/v1.0.13/Chapter4.zip`
+- [x] Extract to temporary location
+- [x] Review source structure:
   - `Chapter4/main.cpp` (main application with action system)
   - `Chapter4/GraphicsAPI_Vulkan.cpp` (existing from Chapter 3)
   - `Chapter4/Common/` (shared utilities)
