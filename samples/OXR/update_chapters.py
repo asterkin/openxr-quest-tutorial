@@ -15,6 +15,30 @@ GRADLE_SNIPPET = """plugins {
 apply from: "${rootDir}/../Common/app/build.gradle"
 """
 
+OLD_UNINSTALL_SNIPPET = """// Restart vrshell after uninstall to clear stale icon
+tasks.matching { it.name.startsWith("uninstall") }.configureEach {
+    doLast {
+        exec { commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell' }
+        exec { commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1' }
+    }
+}
+"""
+
+NEW_UNINSTALL_SNIPPET = """// Restart vrshell after uninstall to clear stale icon
+def execOps = project.services.get(org.gradle.process.ExecOperations)
+
+tasks.matching { it.name.startsWith("uninstall") }.configureEach {
+    doLast {
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell'
+        }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1'
+        }
+    }
+}
+"""
+
 
 def extract_chapter(chapter_dir: Path, zip_path: Path) -> bool:
     """Remove existing chapter dir and extract only its contents from the zip."""
@@ -93,6 +117,26 @@ def update_app_gradle(app_gradle: Path) -> None:
     print(f"Updated {app_gradle}")
 
 
+def update_common_uninstall_block(common_gradle: Path) -> None:
+    """Swap deprecated exec closures for ExecOperations in the shared Gradle file."""
+    if not common_gradle.exists():
+        print(f"Skipped (missing): {common_gradle}")
+        return
+
+    content = common_gradle.read_text(encoding="utf-8")
+
+    if "project.services.get(org.gradle.process.ExecOperations)" in content:
+        print(f"No changes needed in {common_gradle}")
+        return
+
+    if OLD_UNINSTALL_SNIPPET not in content:
+        print(f"Uninstall task block not found in {common_gradle}")
+        return
+
+    common_gradle.write_text(content.replace(OLD_UNINSTALL_SNIPPET, NEW_UNINSTALL_SNIPPET), encoding="utf-8")
+    print(f"Updated uninstall task block in {common_gradle}")
+
+
 def remove_gradle_properties(gradle_props: Path) -> None:
     """Remove chapter-level gradle.properties so top-level one is used."""
     if gradle_props.exists():
@@ -144,6 +188,8 @@ def main() -> None:
     if not targets:
         print("No Chapter*.zip files found.")
         return
+
+    update_common_uninstall_block(root / "Common" / "app" / "build.gradle")
 
     for chapter_dir, zip_path in targets:
         process_chapter(chapter_dir, zip_path)

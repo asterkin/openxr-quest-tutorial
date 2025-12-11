@@ -72,9 +72,15 @@ dependencies {
 
 
 // Restart vrshell after uninstall to clear stale icon
+def execOps = project.services.get(org.gradle.process.ExecOperations)
+
 tasks.matching { it.name.startsWith("uninstall") }.configureEach {
     doLast {
-        exec { commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell' }
-        exec { commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1' }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell'
+        }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1'
+        }
     }
 }
