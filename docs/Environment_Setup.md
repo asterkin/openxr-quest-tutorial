@@ -26,6 +26,7 @@ This document describes the **workstation prerequisites** for building the OpenX
 | **Git for Windows** | 2.x+ | Version control, repository cloning |
 | **GitHub CLI** | 2.x+ | GitHub authentication (`gh auth login`), PR/issues management |
 | **Claude Code CLI** | Latest | AI-powered development assistant |
+| **Codex CLI** (optional) | Latest | Backup AI assistant for reviews/troubleshooting when Claude limits are reached |
 | **VSCode** | Latest | Primary IDE for this repository |
 | **Java/JDK** | 17 (LTS) | Gradle build system |
 | **Gradle** | 8.x | Build automation (via wrapper) |
@@ -273,7 +274,38 @@ claude "Why is Gradle not finding NDK r27?"
 
 ---
 
-### Step 4: Install Java Development Kit (JDK) 17
+### Step 4: Install Codex CLI (Optional)
+
+**Purpose**: Complementary assistant for code reviews, troubleshooting, and work continuation when Claude Code CLI hits hourly/weekly limits.
+**Prerequisite**: Node.js via nvm (recommended) or a standard Node.js install.
+
+**If you need nvm on Windows**
+1. Download the latest `nvm-setup.exe` from https://github.com/coreybutler/nvm-windows/releases
+2. Run the installer (accept defaults), then open a new terminal.
+3. `nvm-setup` often installs Node v25.2.1 by default; if present, activate it with `nvm use 25.2.1`. Otherwise install/select your preferred version (e.g., `nvm install 22.11.0` then `nvm use 22.11.0`).
+4. Verify: `node -v` shows the selected version (e.g., v25.2.1) and `npm -v` returns a matching npm version.
+
+#### Installation
+
+```powershell
+# With Node.js already installed (e.g., via nvm)
+npm install -g @openai/codex
+```
+
+#### Verification
+
+```powershell
+codex --version
+codex --help
+```
+
+#### Notes
+- Keep both Claude Code CLI and Codex CLI available; switch if one hits usage limits.
+- Codex respects the same project workspace; run it from your repo root for best context.
+
+---
+
+### Step 5: Install Java Development Kit (JDK) 17
 
 **Version**: JDK 17 (LTS)
 **Download**: https://adoptium.net/temurin/releases/?version=17
@@ -317,7 +349,7 @@ $env:JAVA_HOME
 
 ---
 
-### Step 5: Install Android Studio (SDK/NDK Manager)
+### Step 6: Install Android Studio (SDK/NDK Manager)
 
 **Version**: Narwhal 4 Feature Drop (2025.1.4)
 **Build**: AI-251.27812.49.2514.14217341
@@ -415,7 +447,7 @@ cmake --version
 
 ---
 
-### Step 6: Install Meta Quest Developer Hub (MQDH)
+### Step 7: Install Meta Quest Developer Hub (MQDH)
 
 **Version**: 6.1.1
 **Download**: https://developers.meta.com/horizon/downloads/package/oculus-developer-hub-win
@@ -480,7 +512,7 @@ List of devices attached
 
 ---
 
-### Step 7: Configure Visual Studio Code
+### Step 8: Configure Visual Studio Code
 
 **Version**: Latest stable
 **Download**: https://code.visualstudio.com/
@@ -551,7 +583,7 @@ code --list-extensions --show-versions
 
 ---
 
-### Step 8: Install Python
+### Step 9: Install Python
 
 **Version**: Python 3.14
 **Download**: https://www.python.org/downloads/
@@ -626,7 +658,7 @@ python -m pip install --upgrade pip
 
 ---
 
-### Step 9: OpenXR SDK (Managed Automatically)
+### Step 10: OpenXR SDK (Managed Automatically)
 
 **No manual installation required!**
 
@@ -669,8 +701,13 @@ After completing environment setup, you're ready to start working with OpenXR Qu
 
 Return to [CLAUDE.md](../CLAUDE.md) for next steps and project navigation.
 
----
+## Troubleshooting
 
-**Documentation Version**: 1.1
-**Last Updated**: 2025-12-04
-**Maintained by**: OpenXR Quest Tutorial Team
+If previously working utilities (e.g., Python, Git, adb) start opening the Microsoft Store or show "not recognized", Windows may have moved `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps` to the top of your PATH during an update. That alias can shadow the real executables.
+
+**Fix**
+1. Open *System Properties* -> *Environment Variables* -> select your user `Path` -> **Edit**.
+2. Select `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps` and click **Move Down** until it sits near the bottom, below your actual tool paths (as shown in the screenshot above).
+3. Click **OK/Apply**, restart terminals/IDEs, and re-run the affected command (e.g., `python --version`) to confirm it resolves.
+
+---

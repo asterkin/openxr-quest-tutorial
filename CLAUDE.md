@@ -13,7 +13,7 @@ This is a **tutorial and learning repository** containing consolidated OpenXR sa
 ---
 ## Interactive Session Guidelines
 To save session context tokens space:
-- Do not provide detailed summary for any change request - only a short one
+- Do not provide detailed summary for any request - only a short one
 - Unless explicitly requested otherwise, respond with a mid-size text without going too deeply into details
 - In case of doubt, ask calrifying questions before execution
 - Do not jump to changes right after a problem investigation. Present your findings first.
@@ -25,16 +25,6 @@ To save session context tokens space:
 - **Project Plan**: [docs/Project_Plan.md](docs/Project_Plan.md) - Complete phase breakdown and current status
 - **Environment Setup**: [docs/Environment_Setup.md](docs/Environment_Setup.md) - Target platform specs and SDK installation
 - **Build/Deploy Guide**: [docs/Build_Deploy_Guide.md](docs/Build_Deploy_Guide.md) - Detailed workflows (TBD)
-
----
-**TODO**: extract into ADRs 
-## Key Architecture Decisions
-
-1. **Quest-Focused**: Primary target is Meta Quest 3 with NDK+OpenXR
-2. **System-Level SDKs**: OpenXR and Meta XR SDKs installed globally, not in repo
-3. **Build from Source**: OpenXR SDK must be built for Android (no prebuilts)
-4. **Documentation-Driven**: AI agent instructions at root, detailed docs in `docs/`
-5. **Separate Production**: InnoVision SDK and customer apps in separate repositories
 
 ---
 

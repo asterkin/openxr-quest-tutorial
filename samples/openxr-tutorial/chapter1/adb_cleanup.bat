@@ -41,4 +41,6 @@ echo.
 echo ADB cleanup completed - Quest 3 ready for clean installation
 echo.
 echo Next step: Build and install with gradlew assembleVulkanDebug
+adb shell am force-stop com.oculus.vrshell
+adb shell monkey -p com.oculus.vrshell 1
 exit /b 0
