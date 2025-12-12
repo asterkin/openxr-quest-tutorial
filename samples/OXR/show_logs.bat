@@ -11,10 +11,32 @@ if "%NUM%"=="%BASE%" (
 )
 
 set "PATTERN=OpenXR Tutorial Chapter %NUM%"
-echo Filtering logcat for "%PATTERN%"...
 
-if exist "%SystemRoot%\\System32\\findstr.exe" (
-    adb logcat -d | "%SystemRoot%\\System32\\findstr.exe" /I /C:"%PATTERN%"
+rem Parse arguments
+set "MODE=dump"
+if /i "%~1"=="-f" set "MODE=follow"
+if /i "%~1"=="--follow" set "MODE=follow"
+if /i "%~1"=="-c" set "MODE=clear"
+if /i "%~1"=="--clear" set "MODE=clear"
+
+if "%MODE%"=="clear" (
+    echo Clearing logcat buffer...
+    adb logcat -c
+    echo Done. Run again without -c to view logs.
+    exit /b 0
+)
+
+if "%MODE%"=="follow" (
+    echo Streaming logcat for "%PATTERN%" (Ctrl+C to stop^)...
+    adb logcat | "%SystemRoot%\System32\findstr.exe" /I /C:"%PATTERN%"
+    exit /b %ERRORLEVEL%
+)
+
+echo Filtering logcat for "%PATTERN%"...
+echo (Use -f to stream live, -c to clear buffer^)
+
+if exist "%SystemRoot%\System32\findstr.exe" (
+    adb logcat -d | "%SystemRoot%\System32\findstr.exe" /I /C:"%PATTERN%"
     exit /b %ERRORLEVEL%
 )
 

@@ -9,6 +9,15 @@ from pathlib import Path
 
 VULKAN_INCLUDE = "GraphicsAPI_Vulkan.h"
 COMMON_CMAKE_INCLUDE = 'include("../Common/CMakeLists.txt")'
+SHADERS_CMAKE_INCLUDE = 'include("../Shaders/CMakeLists.txt")'
+
+# Patterns that indicate shader compilation in original CMakeLists.txt
+SHADER_PATTERNS = [
+    "GLSL_SHADERS",
+    "glsl_spv_shader",
+    "../Shaders/",
+    "SHADER_DEST",
+]
 GRADLE_SNIPPET = """plugins {
     id 'com.android.application'
 }
@@ -87,14 +96,26 @@ def clean_main_includes(main_cpp: Path) -> None:
         print(f"No changes needed in {main_cpp}")
 
 
+def has_shader_compilation(content: str) -> bool:
+    """Check if CMakeLists.txt content includes shader compilation."""
+    return any(pattern in content for pattern in SHADER_PATTERNS)
+
+
 def update_cmake(cmake_file: Path) -> None:
     """Standardize CMakeLists to minimal chapter stub."""
     if not cmake_file.exists():
         print(f"Skipped (missing): {cmake_file}")
         return
 
-    template = """cmake_minimum_required(VERSION 3.22.1)
-project("${PROJECT_NAME}")
+    # Check original content for shader compilation before overwriting
+    original_content = cmake_file.read_text(encoding="utf-8")
+    needs_shaders = has_shader_compilation(original_content)
+
+    # Build template with optional shader include
+    shader_line = f"{SHADERS_CMAKE_INCLUDE}\n" if needs_shaders else ""
+
+    template = f"""cmake_minimum_required(VERSION 3.22.1)
+project("${{PROJECT_NAME}}")
 
 # Main application files
 set(APP_HEADERS
@@ -105,9 +126,11 @@ set(APP_SOURCE
     main.cpp
 )
 include("../Common/CMakeLists.txt")
-"""
+{shader_line}"""
     cmake_file.write_text(template, encoding="utf-8")
-    print(f"Updated {cmake_file}")
+
+    shader_status = " (with shaders)" if needs_shaders else ""
+    print(f"Updated {cmake_file}{shader_status}")
 
 
 def update_app_gradle(app_gradle: Path) -> None:

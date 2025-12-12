@@ -84,3 +84,11 @@ tasks.matching { it.name.startsWith("uninstall") }.configureEach {
         }
     }
 }
+
+// Ensure CMake builds complete before merging assets
+// Required for chapters that compile shaders via CMake (Chapter 3+)
+afterEvaluate {
+    tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Assets') }.configureEach { mergeTask ->
+        mergeTask.dependsOn tasks.matching { it.name.startsWith('buildCMake') }
+    }
+}

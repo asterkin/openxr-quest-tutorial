@@ -1,0 +1,4 @@
+plugins {
+    id 'com.android.application'
+}
+apply from: "${rootDir}/../Common/app/build.gradle"

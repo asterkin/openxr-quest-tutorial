@@ -71,6 +71,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     XR_TUTORIAL_GRAPHICS_API=VULKAN
 )
 
+# Suppress cast-calling-convention warnings (matches original tutorial CMakeLists)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cast-calling-convention)
+
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
