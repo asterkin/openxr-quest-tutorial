@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #version 450
-#extension GL_KHR_vulkan_glsl : enable
 layout(std140, binding = 0) uniform CameraConstants {
     mat4 viewProj;
     mat4 modelViewProj;
