@@ -20,11 +20,18 @@ set(SHADER_DEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main/assets/shaders")
 # Ensure output directory exists
 file(MAKE_DIRECTORY "${SHADER_DEST_DIR}")
 
-# Vulkan GLSL shaders to compile
-set(GLSL_SHADERS
-    "${SHADER_SRC_DIR}/VertexShader.glsl"
-    "${SHADER_SRC_DIR}/PixelShader.glsl"
-)
+# Vulkan GLSL shaders to compile (select multiview variants if enabled)
+if(XR_TUTORIAL_ENABLE_MULTIVIEW)
+    set(GLSL_SHADERS
+        "${SHADER_SRC_DIR}/VertexShader_Multiview.glsl"
+        "${SHADER_SRC_DIR}/PixelShader_Multiview.glsl"
+    )
+else()
+    set(GLSL_SHADERS
+        "${SHADER_SRC_DIR}/VertexShader.glsl"
+        "${SHADER_SRC_DIR}/PixelShader.glsl"
+    )
+endif()
 
 # Compile each shader to SPIR-V
 foreach(SHADER ${GLSL_SHADERS})
@@ -33,11 +40,14 @@ foreach(SHADER ${GLSL_SHADERS})
     # Determine shader stage from filename
     if(SHADER_NAME MATCHES "Vertex")
         set(SHADER_STAGE "vert")
+        set(OUTPUT_NAME "VertexShader")
     else()
         set(SHADER_STAGE "frag")
+        set(OUTPUT_NAME "PixelShader")
     endif()
 
-    set(SHADER_OUTPUT "${SHADER_DEST_DIR}/${SHADER_NAME}.spv")
+    # Output always uses standard names (VertexShader.spv, PixelShader.spv)
+    set(SHADER_OUTPUT "${SHADER_DEST_DIR}/${OUTPUT_NAME}.spv")
 
     glsl_spv_shader(
         INPUT "${SHADER}"

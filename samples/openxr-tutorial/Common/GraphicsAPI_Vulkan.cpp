@@ -343,7 +343,10 @@ GraphicsAPI_Vulkan::GraphicsAPI_Vulkan(XrInstance m_xrInstance, XrSystemId syste
     deviceExtensionProperties.resize(deviceExtensionCount);
 
     VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, 0, &deviceExtensionCount, deviceExtensionProperties.data()), "Failed to enumerate DeviceExtensionProperties.");
-    const std::vector<std::string> &openXrDeviceExtensionNames = GetDeviceExtensionsForOpenXR(m_xrInstance, systemId);
+    std::vector<std::string> openXrDeviceExtensionNames = GetDeviceExtensionsForOpenXR(m_xrInstance, systemId);
+#if XR_TUTORIAL_ENABLE_MULTIVIEW
+    openXrDeviceExtensionNames.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
+#endif
     for (const std::string &requestExtension : openXrDeviceExtensionNames) {
         for (const VkExtensionProperties &extensionProperty : deviceExtensionProperties) {
             if (strcmp(requestExtension.c_str(), extensionProperty.extensionName))
@@ -353,6 +356,12 @@ GraphicsAPI_Vulkan::GraphicsAPI_Vulkan(XrInstance m_xrInstance, XrSystemId syste
             break;
         }
     }
+#if XR_TUTORIAL_ENABLE_MULTIVIEW
+    if (!IsStringInVector(activeDeviceExtensions, VK_KHR_MULTIVIEW_EXTENSION_NAME)) {
+        std::cerr << "ERROR: VULKAN: Unable to find VK_KHR_multiview extension." << std::endl;
+        DEBUG_BREAK;
+    }
+#endif
 
     VkPhysicalDeviceFeatures features;
     vkGetPhysicalDeviceFeatures(physicalDevice, &features);
@@ -807,10 +816,26 @@ void *GraphicsAPI_Vulkan::CreatePipeline(const PipelineCreateInfo &pipelineCI) {
     subpassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
     subpassDependency.dependencyFlags = VkDependencyFlagBits(0);
 
+    bool multiview = false;
+    VkRenderPassMultiviewCreateInfoKHR multiviewCreateInfo;
+#if XR_TUTORIAL_ENABLE_MULTIVIEW
+    if (pipelineCI.viewMask != 0) {
+        multiviewCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
+        multiviewCreateInfo.pNext = nullptr;
+        multiviewCreateInfo.subpassCount = 1;
+        multiviewCreateInfo.pViewMasks = &pipelineCI.viewMask;
+        multiviewCreateInfo.dependencyCount = 0;
+        multiviewCreateInfo.pViewOffsets = nullptr;
+        multiviewCreateInfo.correlationMaskCount = 1;
+        multiviewCreateInfo.pCorrelationMasks = &pipelineCI.viewMask;
+        multiview = true;
+    }
+#endif
+
     VkRenderPass renderPass{};
     VkRenderPassCreateInfo renderPassCI;
     renderPassCI.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassCI.pNext = nullptr;
+    renderPassCI.pNext = multiview ? &multiviewCreateInfo : nullptr;
     renderPassCI.flags = 0;
     renderPassCI.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
     renderPassCI.pAttachments = attachmentDescriptions.data();

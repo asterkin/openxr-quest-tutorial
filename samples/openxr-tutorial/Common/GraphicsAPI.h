@@ -352,6 +352,7 @@ public:
         std::vector<int64_t> colorFormats;
         int64_t depthFormat;
         std::vector<DescriptorInfo> layout;
+        uint32_t viewMask = 0;
     };
 
     struct SwapchainCreateInfo {
