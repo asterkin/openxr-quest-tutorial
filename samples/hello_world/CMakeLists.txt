@@ -10,6 +10,12 @@ FetchContent_Declare(
     OpenXR
     URL https://github.com/KhronosGroup/OpenXR-SDK-Source/archive/refs/tags/release-1.1.54.tar.gz
 )
+
+# Disable building OpenXR tests and samples (they use deprecated APIs in NDK 27+)
+set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_CONFORMANCE_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_API_LAYERS OFF CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(OpenXR)
 
 # Import android_native_app_glue

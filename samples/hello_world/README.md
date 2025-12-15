@@ -24,6 +24,14 @@ This sample verifies your OpenXR development environment by:
 - **OpenXR Headers**: Downloaded automatically via CMake FetchContent from OpenXR-SDK-Source
 - **Build System**: Gradle 8.13 + CMake 3.22.1 + Android NDK r27
 
+## Launch the Application 
+For samples like `hello_world` that don't require immediate visual interaction, you can launch the application directly from your development machine without wearing the Quest headset. This is particularly useful for verifying logs.
+To launch, use the Android Debug Bridge (ADB):
+```powershell
+adb shell am start -n com.example.openxr.helloworld/android.app.NativeActivity
+```
+The application will automatically exit after 5 seconds.
+
 ## Expected Log Output
 
 When you run the sample and view the logs (`adb logcat -s "OpenXR_HelloWorld:*"`), you should see the following output:

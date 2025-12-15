@@ -10,6 +10,21 @@
     <uses-feature android:name="android.hardware.vr.headtracking"
                   android:required="true" />
 
+    <!-- OpenXR permissions for automatic launch without controller approval -->
+    <uses-permission android:name="org.khronos.openxr.permission.OPENXR" />
+    <uses-permission android:name="org.khronos.openxr.permission.OPENXR_SYSTEM" />
+
+    <!-- OpenXR runtime broker queries -->
+    <queries>
+        <provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
+        <intent>
+            <action android:name="org.khronos.openxr.OpenXRRuntimeService" />
+        </intent>
+        <intent>
+            <action android:name="org.khronos.openxr.OpenXRApiLayerService" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="false"
         android:label="OpenXR Hello World"
