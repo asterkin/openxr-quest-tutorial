@@ -26,7 +26,8 @@ This document describes the **workstation prerequisites** for building the OpenX
 | **Git for Windows** | 2.x+ | Version control, repository cloning |
 | **GitHub CLI** | 2.x+ | GitHub authentication (`gh auth login`), PR/issues management |
 | **Claude Code CLI** | Latest | AI-powered development assistant |
-| **Codex CLI** (optional) | Latest | Backup AI assistant for reviews/troubleshooting when Claude limits are reached |
+| **Codex CLI** (optional) | Latest | Backup AI assistant |
+| **Gemini CLI** (optional) | Latest | Google AI assistant for code generation and analysis |
 | **VSCode** | Latest | Primary IDE for this repository |
 | **Java/JDK** | 17 (LTS) | Gradle build system |
 | **Gradle** | 8.x | Build automation (via wrapper) |
@@ -216,13 +217,39 @@ ls
 
 ---
 
-### Step 3: Install Claude Code CLI
+### Step 3: Install AI Code Assistants
 
-**Purpose**: AI-powered assistant for development tasks, troubleshooting, and documentation navigation
+The verbosity of OpenXR and MetaXR C/C++ code, combined with complex build systems like CMake and Android Gradle, can present a formidable obstacle for newcomers. When used effectively, AI Code Assistants can significantly speed up the onboarding process and flatten the learning curve. Each assistant has unique strengths and limitations; some excel at complex coding tasks, while others are better for generating clear documentation. The underlying models are frequently updated, requiring them to be re-evaluated periodically. This section provides installation instructions for several leading AI Code Assistant CLI tools, empowering developers to find a combination of AI tools most suitable for their development workflow.
+
+#### 3.1 Install Node.js and npm (via nvm-windows)
+
+Some AI assistants (Codex, Gemini) require Node.js and its package manager, npm. We recommend using `nvm-windows` to install and manage Node.js versions to avoid potential conflicts.
+
+1. Download the latest `nvm-setup.exe` from [https://github.com/coreybutler/nvm-windows/releases](https://github.com/coreybutler/nvm-windows/releases)
+2. Run the installer (accept defaults), then open a new PowerShell Admin terminal.
+3. Install and use the latest LTS (Long-Term Support) version of Node.js:
+   ```powershell
+   nvm install lts
+   nvm use lts
+   ```
+4. Verify the installation:
+   ```powershell
+   node -v
+   # Expected: v20.x.x or higher (LTS)
+
+   npm -v
+   # Expected: 10.x.x or higher
+   ```
+
+---
+
+#### 3.2 Claude Code CLI
+
+**Purpose**: The primary AI assistant recommended for core development tasks, including code generation, troubleshooting, and navigating the repository's documentation.
 
 **Documentation**: https://github.com/anthropics/claude-code
 
-#### Installation
+##### Installation
 
 ```powershell
 # Install Claude Code CLI (downloads and runs installer)
@@ -231,7 +258,7 @@ irm https://claude.ai/install.ps1 | iex
 
 Follow the installer prompts to complete the installation.
 
-#### Verification
+##### Verification
 
 ```powershell
 # Check Claude Code CLI version
@@ -241,7 +268,7 @@ claude --version
 claude --help
 ```
 
-#### Authentication
+##### Authentication
 
 **Note**: Authentication happens automatically on first use. If you have a Claude web chat account, you can use it to authenticate.
 
@@ -255,57 +282,56 @@ The CLI will guide you through the authentication process:
 - Complete authentication in your browser
 - Return to the terminal to continue
 
-#### Why Install Early?
-
-Claude Code CLI can assist during the rest of the setup process:
-- Troubleshoot installation issues
-- Navigate documentation in `docs/` directory
-- Answer questions about build configuration
-- Debug environment problems
-
-**Example usage during setup**:
-```powershell
-# Ask Claude about Android Studio installation
-claude "Where should I install Android SDK?"
-
-# Get help with build errors
-claude "Why is Gradle not finding NDK r27?"
-```
-
 ---
 
-### Step 4: Install Codex CLI (Optional)
+#### 3.3 Codex CLI (Optional)
 
-**Purpose**: Complementary assistant for code reviews, troubleshooting, and work continuation when Claude Code CLI hits hourly/weekly limits.
-**Prerequisite**: Node.js via nvm (recommended) or a standard Node.js install.
+**Purpose**: A complementary assistant for code reviews and to continue work if the primary assistant (Claude) hits usage limits.
+**Prerequisite**: Node.js and npm (see step 3.1).
 
-**If you need nvm on Windows**
-1. Download the latest `nvm-setup.exe` from https://github.com/coreybutler/nvm-windows/releases
-2. Run the installer (accept defaults), then open a new terminal.
-3. `nvm-setup` often installs Node v25.2.1 by default; if present, activate it with `nvm use 25.2.1`. Otherwise install/select your preferred version (e.g., `nvm install 22.11.0` then `nvm use 22.11.0`).
-4. Verify: `node -v` shows the selected version (e.g., v25.2.1) and `npm -v` returns a matching npm version.
-
-#### Installation
+##### Installation
 
 ```powershell
-# With Node.js already installed (e.g., via nvm)
+# With Node.js already installed
 npm install -g @openai/codex
 ```
 
-#### Verification
+##### Verification
 
 ```powershell
 codex --version
 codex --help
 ```
 
-#### Notes
+##### Notes
 - Keep both Claude Code CLI and Codex CLI available; switch if one hits usage limits.
 - Codex respects the same project workspace; run it from your repo root for best context.
 
 ---
 
-### Step 5: Install Java Development Kit (JDK) 17
+#### 3.4 Gemini CLI (Optional)
+
+**Purpose**: An optional assistant for advanced tasks like complex code generation, performance analysis, or leveraging multi-modal (e.g., image-based) queries.
+**Prerequisite**: Node.js and npm (see step 3.1).
+
+##### Installation
+```powershell
+# Install Gemini CLI (requires npm)
+npm install -g @google/gemini-cli
+```
+
+More details are available at [https://geminicli.com/docs/get-started/installation/](https://geminicli.com/docs/get-started/installation/).
+
+##### Authentication
+
+**Note**: Authentication happens automatically on first use. The CLI will guide you through the process.
+
+##### Notes
+- The Gemini CLI respects the same project workspace; run it from your repo root for best context.
+
+---
+
+### Step 4: Install Java Development Kit (JDK) 17
 
 **Version**: JDK 17 (LTS)
 **Download**: https://adoptium.net/temurin/releases/?version=17
@@ -349,7 +375,7 @@ $env:JAVA_HOME
 
 ---
 
-### Step 6: Install Android Studio (SDK/NDK Manager)
+### Step 5: Install Android Studio (SDK/NDK Manager)
 
 **Version**: Narwhal 4 Feature Drop (2025.1.4)
 **Build**: AI-251.27812.49.2514.14217341
@@ -416,7 +442,7 @@ After reopening PowerShell Admin:
 ```powershell
 # Navigate back to project
 cd ~
-cd .\Projects\Localize-InnoVision-Gradle-Modules\
+cd .\Projects\openxr-quest-tutorial\
 
 # Verify ANDROID_HOME is set
 $env:ANDROID_HOME
@@ -447,7 +473,7 @@ cmake --version
 
 ---
 
-### Step 7: Install Meta Quest Developer Hub (MQDH)
+### Step 6: Install Meta Quest Developer Hub (MQDH)
 
 **Version**: 6.1.1
 **Download**: https://developers.meta.com/horizon/downloads/package/oculus-developer-hub-win
@@ -457,8 +483,9 @@ cmake --version
 #### Installation
 
 ```powershell
-# Download and run installer
-# Install to: C:\Program Files\Meta Quest Developer Hub
+# Download and run the installer from the URL above.
+# When prompted, we recommend installing to the default location:
+# C:\Program Files\Meta Quest Developer Hub
 ```
 
 1. Run installer with defaults
@@ -512,7 +539,7 @@ List of devices attached
 
 ---
 
-### Step 8: Configure Visual Studio Code
+### Step 7: Configure Visual Studio Code
 
 **Version**: Latest stable
 **Download**: https://code.visualstudio.com/
@@ -583,7 +610,7 @@ code --list-extensions --show-versions
 
 ---
 
-### Step 9: Install Python
+### Step 8: Install Python
 
 **Version**: Python 3.14
 **Download**: https://www.python.org/downloads/
@@ -658,7 +685,7 @@ python -m pip install --upgrade pip
 
 ---
 
-### Step 10: OpenXR SDK (Managed Automatically)
+### Step 9: OpenXR SDK (Managed Automatically)
 
 **No manual installation required!**
 
