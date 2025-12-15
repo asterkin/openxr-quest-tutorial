@@ -17,13 +17,21 @@ This document provides common instructions for building, running, and troublesho
     ```
     *   **Note**: Ensure your Quest 3 is connected via USB. The first time you run the sample, you may need to find it in the **"Unknown Sources"** list in your app library. Subsequently, it should appear in your main app menu.
 
-3.  **Uninstall the Sample**
+3.  **Launch the Application (Optional)**
+    For samples like `hello_world` that don't require immediate visual interaction, you can launch the application directly from your development machine without wearing the Quest headset. This is particularly useful for verifying logs.
+    To launch, use the Android Debug Bridge (ADB):
+    ```powershell
+    adb shell am start -n com.example.openxr.helloworld/android.app.NativeActivity
+    ```
+    *   **Note**: The package name (`com.example.openxr.helloworld`) and activity (`android.app.NativeActivity`) might vary between samples. Refer to the specific sample's `AndroidManifest.xml` for accurate details.
+
+4.  **Uninstall the Sample**
     To remove the sample from your device, run:
     ```powershell
     .\gradlew.bat uninstallDebug
     ```
 
-4.  **View Device Logs**
+5.  **View Device Logs**
     To view the application logs from your device in real-time, use the Android Debug Bridge (ADB):
     ```powershell
     adb logcat
