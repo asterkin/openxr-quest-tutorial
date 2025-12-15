@@ -62,7 +62,7 @@ android {
         prefab = true
     }
 
-    packagingOptions {
+    packaging {
         jniLibs {
             useLegacyPackaging = true
         }

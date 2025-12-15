@@ -13,24 +13,26 @@ plugins {
 // Use Maven Central for OpenXR loader instead of building from source
 
 android {
-    compileSdk 34
-    ndkVersion "27.2.12479018"
-    namespace 'org.khronos.openxr.hello_xr'
+    compileSdk = 34
+    ndkVersion = "27.2.12479018"
+    namespace = 'org.khronos.openxr.hello_xr'
 
     defaultConfig {
-        applicationId "org.khronos.openxr.hello_xr"
-        // for Vulkan, need at least 24
-        minSdkVersion 24
-        targetSdkVersion 34
-
-        versionName "1.0"
-        versionCode 1
+        applicationId = "org.khronos.openxr.hello_xr"
+        minSdk = 29
+        targetSdk = 34
+        versionName = "1.0"
+        versionCode = 1
+        ndk {
+            abiFilters = ['arm64-v8a']
+        }
 
         externalNativeBuild {
             cmake {
-                arguments '-DANDROID_STL=c++_shared',
-                          '-DANDROID_PLATFORM=android-24'
-                targets "hello_xr"
+                arguments = [
+                    '-DANDROID_STL=c++_shared'
+                ]
+                cppFlags = ['-std=c++17']
             }
         }
     }
@@ -38,7 +40,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            res.srcDir 'android_resources'
+            res.srcDir 'android_resources/common'
         }
         Vulkan {
             res.srcDir 'android_resources/vulkan'
@@ -49,34 +51,53 @@ android {
     }
 
     buildTypes {
+        debug {
+            debuggable = true
+            jniDebuggable = true
+        }
         release {
-            minifyEnabled false
+            minifyEnabled = false
         }
     }
 
     externalNativeBuild {
         cmake {
-            path "CMakeLists.txt"
-            version "3.22.1"
+            path = "CMakeLists.txt"
+            version = "3.22.1"
         }
     }
 
-    flavorDimensions 'api'
+    flavorDimensions = ['api']
 
     productFlavors {
         OpenGLES {
-            dimension 'api'
-            applicationIdSuffix '.opengles'
+            dimension = 'api'
+            applicationIdSuffix = '.opengles'
             externalNativeBuild.cmake.arguments += '-DHELLOXR_DEFAULT_GRAPHICS_PLUGIN=OpenGLES'
 
             resValue "string", "app_name", "Hello XR (OpenGL ES)"
         }
         Vulkan {
-            dimension 'api'
-            applicationIdSuffix '.vulkan'
+            dimension = 'api'
+            applicationIdSuffix = '.vulkan'
             externalNativeBuild.cmake.arguments += '-DHELLOXR_DEFAULT_GRAPHICS_PLUGIN=Vulkan'
 
             resValue "string", "app_name", "Hello XR (Vulkan)"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        prefab = true
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }
@@ -106,3 +127,16 @@ if (keystorePropertiesFilename) {
     }
 }
 
+// Restart vrshell after uninstall to clear stale icon
+def execOps = project.services.get(org.gradle.process.ExecOperations)
+
+tasks.matching { it.name.startsWith("uninstall") }.configureEach {
+    doLast {
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell'
+        }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1'
+        }
+    }
+}

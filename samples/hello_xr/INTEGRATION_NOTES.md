@@ -331,6 +331,103 @@ set_target_properties(hello_xr PROPERTIES
 
 ---
 
+## Gradle 9.0 Compatibility Fixes (2025-12-15)
+
+These changes modernize the build configuration to eliminate deprecation warnings and prepare for Gradle 9.0.
+
+### 1. Property Assignment Syntax
+
+**Problem**: Groovy method-call syntax (e.g., `compileSdk 34`) is deprecated in AGP 8.x and will error in Gradle 9.0.
+
+**Solution** - [build.gradle](build.gradle): Use assignment syntax (`=`) for all properties:
+
+```gradle
+// Before (deprecated)
+compileSdk 34
+ndkVersion "27.2.12479018"
+abiFilters 'arm64-v8a'
+debuggable true
+flavorDimensions 'api'
+dimension 'api'
+
+// After (modern)
+compileSdk = 34
+ndkVersion = "27.2.12479018"
+abiFilters = ['arm64-v8a']
+debuggable = true
+flavorDimensions = ['api']
+dimension = 'api'
+```
+
+### 2. PackagingOptions Renamed
+
+**Problem**: `packagingOptions` block is deprecated, replaced by `packaging`.
+
+**Solution** - [build.gradle](build.gradle):
+```gradle
+// Before (deprecated)
+packagingOptions {
+    jniLibs {
+        useLegacyPackaging = true
+    }
+}
+
+// After (modern)
+packaging {
+    jniLibs {
+        useLegacyPackaging = true
+    }
+}
+```
+
+### 3. Nested Resources Warning
+
+**Problem**: Gradle detects nested resource directories and warns this will become an error in 9.0:
+```
+Nested resources detected.
++ android_resources
+-- android_resources\vulkan
+```
+
+**Root Cause**: Main sourceset used `android_resources/` which contained flavor subdirectories `vulkan/` and `opengles/`.
+
+**Solution**: Restructure resources to avoid nesting:
+
+```
+# Before (nested - triggers warning)
+android_resources/
+├── drawable/        ← main
+├── values/          ← main
+├── vulkan/          ← Vulkan flavor (NESTED!)
+└── opengles/        ← OpenGLES flavor (NESTED!)
+
+# After (flat - no warning)
+android_resources/
+├── common/          ← main sourceset
+│   ├── drawable/
+│   └── values/
+├── vulkan/          ← Vulkan flavor
+└── opengles/        ← OpenGLES flavor
+```
+
+**build.gradle change**:
+```gradle
+sourceSets {
+    main {
+        manifest.srcFile 'AndroidManifest.xml'
+        res.srcDir 'android_resources/common'  // Changed from 'android_resources'
+    }
+    Vulkan {
+        res.srcDir 'android_resources/vulkan'
+    }
+    OpenGLES {
+        res.srcDir 'android_resources/opengles'
+    }
+}
+```
+
+---
+
 ## Future Maintenance
 
 ### Syncing with Upstream
@@ -371,4 +468,4 @@ To update hello_xr from a newer OpenXR-SDK-Source release:
 ---
 
 **Maintained by**: OpenXR Quest Tutorial Project
-**Last Updated**: 2024-12-04
+**Last Updated**: 2025-12-15
