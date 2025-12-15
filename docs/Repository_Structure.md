@@ -12,6 +12,8 @@ openxr-quest-tutorial/
 │   ├── Environment_Setup.md     # SDK installation guide
 │   └── adrs/                    # Architecture Decision Records
 └── samples/                     # Sample projects
+    ├── README.md                # High-level overview of all samples
+    ├── Build_Guidelines.md      # Common build and deployment instructions
     ├── hello_world/             # Minimal OpenXR Hello World
     ├── hello_xr/                # Khronos OpenXR sample
     ├── openxr-tutorial/         # Progressive tutorial from openxr-tutorial.com
@@ -55,6 +57,6 @@ Tutorial samples organized by complexity and source:
   - **Shaders/** - GLSL/HLSL shader files
   - **thirdparty/** - Third-party dependencies shared across chapters
   - **Chapter1/** - Self-contained Gradle project: Introduction & Setup
-swapchains
   - *Additional chapters planned* - See [openxr-tutorial/README.md](../samples/openxr-tutorial/README.md)
 - **meta/** - Meta Quest-specific samples from OVR SDK (planned)
+- **Build_Guidelines.md** - Common instructions for building and running all samples.

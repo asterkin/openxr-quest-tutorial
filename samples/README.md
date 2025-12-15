@@ -5,6 +5,12 @@
 
 ---
 
+## Build Guidelines
+
+For detailed instructions on how to build, install, and troubleshoot the samples, refer to the **[OpenXR Samples Build Guidelines](Build_Guidelines.md)**.
+
+---
+
 ## Available Samples
 
 | Sample | Complexity | Description |
