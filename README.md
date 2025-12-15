@@ -2,6 +2,11 @@
 
 > Learning and reference repository for OpenXR development on Meta Quest 3
 
+[![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/asterkin/openxr-quest-tutorial/graphs/commit-activity)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+![OpenXR](https://img.shields.io/badge/OpenXR-1.0.34-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-Meta%20Quest%203-orange.svg)
+
 ---
 
 ## Overview
@@ -33,3 +38,13 @@ For more detailed information, refer to the following documents:
 - **[Environment Setup Guide](docs/Environment_Setup.md)**: Detailed workstation and toolchain prerequisites.
 - **[Repository Structure](docs/Repository_Structure.md)**: An overview of the directory layout.
 - **[AI Agent Instructions](CLAUDE.md)**: Guidelines for using AI assistants with this project.
+
+---
+## Contributing
+Contributions are welcome! Please read our [**Contributing Guidelines**](CONTRIBUTING.md) for more details on how to get involved.
+
+---
+## License and Conduct
+
+-   **[MIT License](LICENSE.md)**: This project is licensed under the MIT License.
+-   **[Code of Conduct](CODE_OF_CONDUCT.md)**: We adhere to the Contributor Covenant code of conduct.
