@@ -32,13 +32,20 @@ To ensure efficient and clear interaction, please adhere to the following guidel
 
 ### File Locations
 
-- **AI Agent Entry Point**: `AGENTS.md` (this file, repo root)
-- **Other Agent Files**: `CLAUDE.md`, `GEMINI.md` (kept roughly in sync, but `AGENTS.md` is canonical for agent tooling)
+- **AI Agent Entry Point**: `GEMINI.md` (this file, repo root)
 - **Detailed Documentation**: `docs/` directory
 - **Project Plan**: `docs/Project_Plan.md`
-- **Project Architecture**: `docs/adrs/`
+- **Project Architecture**: `docs/adrs` (**TBD**)
 - **Per-Sample Docs**: `samples/*/README.md` (quick reference)
-- **Sample Analysis**: `docs/adrs/` (deep dives; sample-specific analyses may be added later)
+- **Sample Analysis**: `docs/samples/` (deep dives)
+
+### Gemini-Specific Guidelines
+
+To optimize interaction with this Gemini agent:
+
+- **Utilize Tooling:** I have access to a variety of tools (e.g., `list_directory`, `read_file`, `replace`, `run_shell_command`, `codebase_investigator`). Feel free to request direct actions using these tools.
+- **Provide Context:** For complex tasks, ensure all relevant file paths, function names, and desired changes are clearly specified. If unsure, allow me to investigate the codebase first using `codebase_investigator`.
+- **Iterative Approach:** For larger tasks, prefer breaking them down into smaller, verifiable steps. This helps ensure accuracy and allows for intermediate feedback.
 
 ### Cross-References
 
@@ -54,27 +61,6 @@ When referencing documentation:
 ### File Discovery Strategies
 
 **Use appropriate tools for different search patterns:**
-
-### Preferred Commands (Windows `cmd.exe`)
-
-This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer these commands to avoid tool availability issues:
-
-- **List files by pattern (glob)**: `dir /s /b *.md`, `dir /s /b **\CMakeLists.txt` (use folder wildcards where helpful)
-- **List a directory**: `dir`, `dir /a` (shows hidden), `dir /s` (recursive)
-- **Read a file**: `type path\to\file.md` (add `| more` for paging)
-- **Find files by name substring**: `dir /s /b *OpenXR*`
-- **Avoid**: `<<` heredocs and bash-style pipes/flags that `cmd` doesn’t support
-
-### Python Usage (avoid quoting pitfalls)
-
-When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `cmd.exe`, avoid multi-line `python -` input; prefer `python -c` one-liners or write a temporary `.py` file.
-
-- **Run a one-liner** (keep it a single line; use Python `;` to separate statements):
-  - `python -c "import pathlib; print('\n'.join(map(str, pathlib.Path('docs').rglob('*.md'))))"`
-- **Print file with line numbers** (single-line list-comprehension to avoid indentation issues):
-  - `python -c "import pathlib; lines=pathlib.Path('AGENTS.md').read_text(encoding='utf-8',errors='replace').splitlines(); [print(f'{i:4d}: {l}') for i,l in enumerate(lines,1)]"`
-- **Quick content search fallback** (example: search `xrCreate` in `*.cpp`):
-  - `python -c "import pathlib,re; pat=re.compile(r'xrCreate'); [print(f'{p}:{i+1}:{line}') for p in pathlib.Path('.').rglob('*.cpp') for i,line in enumerate(p.read_text(errors='ignore').splitlines()) if pat.search(line)]"`
 
 - **Glob** - Finding files by name/pattern:
   - CMake configs: `**/CMakeLists.txt`
@@ -94,8 +80,7 @@ When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `
 
 **Task-based documentation lookup:**
 
-- Build & deploy → [samples/Build_Guidelines.md](samples/Build_Guidelines.md)
-- Build system architecture → [docs/adrs/adr-0007-build-and-run-architecture.md](docs/adrs/adr-0007-build-and-run-architecture.md)
+- Build issues → [docs/Build_Deploy_Guide.md](docs/Build_Deploy_Guide.md)
 - SDK setup problems → [docs/Environment_Setup.md](docs/Environment_Setup.md)
 - Architecture questions → [docs/Project_Plan.md](docs/Project_Plan.md)
 - Sample-specific → `samples/{sample_name}/README.md`
@@ -106,7 +91,6 @@ When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `
 - **Self-Contained Samples**: Each sample duplicates dependencies for learning
 - **No Shared Libraries**: Samples don't share code between them
 - **Documentation-First**: Always check docs/ before exploring code
-- **Generated Build Outputs**: Avoid editing `**/.cxx/` and `**/build/` (safe to delete when troubleshooting)
 
 ### Pre-Commit Requirements
 
@@ -128,3 +112,4 @@ When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `
 - Feature branches for adding new samples or documentation
 
 ---
+

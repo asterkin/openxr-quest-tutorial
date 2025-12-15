@@ -38,6 +38,12 @@ This document provides common instructions for building, running, and troublesho
     ```
     *   **Tip**: You can filter the output to show only messages from your specific sample. For example: `adb logcat -s "hello_world"`. Check the sample's own `README.md` for specific log tags.
 
+6.  **Exiting Applications**
+    To quit an application running on your Meta Quest 3:
+    1.  Press the **Meta button** (the oval-shaped button) on either controller to open the Universal Menu.
+    2.  Locate the running application's window in the Universal Menu.
+    3.  Click the **"Quit"** button within the application window.
+
 ## Troubleshooting
 
 *   **Build Fails or Freezes**: If a build fails or seems stuck, you can force-stop the Gradle daemon and try cleaning the project again.
