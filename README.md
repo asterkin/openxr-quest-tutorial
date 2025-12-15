@@ -9,6 +9,7 @@
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](#)
 [![CMake](https://img.shields.io/badge/CMake-3.24.3-green.svg)](#)
 [![Gradle](https://img.shields.io/badge/Gradle-8.1-orange.svg)](#)
+[![Android](https://img.shields.io/badge/Android-API%2034-green.svg)](#)
 
 ---
 
