@@ -1,188 +1,179 @@
 # ADR-0007: Build and Run Architecture
 
-**Status**: Proposed
+**Status**: Accepted
+**Date**: 2025-12-15
 
 ## Context
 
 OpenXR Quest samples require a build and deployment workflow that supports:
 - Native C++ compilation for Android (CMake + NDK)
-- Android APK packaging and signing (Gradle)
+- Android APK packaging (Gradle)
 - Device deployment and testing (ADB)
-- Developer convenience and automation
 
 The build system must balance:
-- **Standard tooling**: Follow Android/CMake conventions
-- **Developer productivity**: Simple commands for common tasks
-- **Automation readiness**: Scriptable for CI/CD and AI agents
-- **Tutorial clarity**: Learners understand the build flow
-
-### Current Implementation (hello_xr)
-
-The `hello_xr` sample uses:
-1. **Gradle wrapper** (`gradlew.bat`) for build and APK generation
-2. **CMake** (invoked by Gradle) for native C++ compilation
-3. **Batch scripts** (`test_run.bat`, `adb_cleanup.bat`) for device operations
-4. **Manual ADB commands** for deployment and logging
-
-This approach works but has limitations:
-- Batch scripts are Windows-only
-- No unified workflow automation
-- Manual coordination between build/deploy/test steps
-
-### Future Needs
-
-As more samples are added:
-- Need cross-platform automation (Windows, macOS, Linux)
-- Context-aware scripts (detect current sample directory)
-- Unified workflows for AI agents
-- CI/CD pipeline integration
+- **Standard tooling**: Follow Android/CMake conventions familiar to developers
+- **Tutorial clarity**: Learners can understand and modify the build configuration
+- **Self-contained samples**: Each sample buildable independently without complex setup
+- **Shared code reuse**: Common utilities shared across related samples without duplication
 
 ## Decision
 
-Adopt a **layered build and run architecture** with three levels:
+### Decision 1: Gradle as Primary Build Interface
 
-### Layer 1: Build (Gradle + CMake)
+**Choice**: Use Gradle wrapper (`gradlew`) as the single entry point for all build operations.
 
-**Primary Interface**: Gradle wrapper (`gradlew.bat` / `gradlew`)
+**Rationale**:
+- Industry standard for Android development
+- IDE integration (Android Studio, VS Code with Gradle extension)
+- Handles APK packaging, signing, and dependency resolution
+- Invokes CMake automatically via `externalNativeBuild`
 
-**Responsibilities**:
-- APK packaging and signing
-- Dependency resolution (Maven, CMake)
-- Invokes CMake for native builds
-- Invokes NDK toolchain
+**Consequence**: Developers use familiar commands (`gradlew installDebug`) regardless of native code complexity.
 
-**Commands**:
-```bash
-# Build Vulkan debug APK
-gradlew assembleVulkanDebug
+### Decision 2: CMake for Native Compilation
 
-# Build OpenGL ES debug APK
-gradlew assembleOpenGLESDebug
+**Choice**: CMake 3.22.1+ invoked by Gradle's `externalNativeBuild` block.
 
-# Clean build
-gradlew clean
+**Rationale**:
+- NDK's recommended native build system
+- FetchContent for dependency management
+- Cross-platform CMake scripts (future desktop builds possible)
+- Separates native build logic from Android packaging
+
+**Consequence**: Native build configuration in `CMakeLists.txt`, Android configuration in `build.gradle`.
+
+### Decision 3: Hybrid OpenXR SDK Dependency Strategy
+
+**Choice**: Use **both** Maven AAR (loader) and CMake FetchContent (headers/utilities).
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      OpenXR SDK Strategy                     │
+├─────────────────────────────────────────────────────────────┤
+│  Maven AAR (Prefab)              CMake FetchContent          │
+│  ─────────────────               ──────────────────          │
+│  • openxr_loader.so              • OpenXR headers            │
+│  • Pre-built, tested             • OpenXR utilities          │
+│  • Version: 1.1.54               • Version: release-1.1.54   │
+│                                                              │
+│  build.gradle:                   CMakeLists.txt:             │
+│  implementation                  FetchContent_Declare(       │
+│    'org.khronos.openxr:            OpenXR                    │
+│     openxr_loader_for_android'     URL ...release-1.1.54...) │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**CMake Role**:
-- Invoked automatically by Gradle's `externalNativeBuild`
-- Compiles C++ sources
-- Links OpenXR loader and platform libraries
-- Managed via `CMakeLists.txt` in each sample
+**Rationale**:
+- **Loader from Maven**: Pre-built, tested binary; simpler than building from source
+- **Headers via FetchContent**: Access to full SDK utilities (`OpenXRDebugUtils`, `xr_linear_algebra.h`)
+- **Version alignment**: Both pinned to 1.1.54 for compatibility
 
-### Layer 2: Device Operations (ADB + Batch Scripts)
+**Alternatives Considered**:
+- *Maven only*: Lacks access to SDK utility headers and common code
+- *FetchContent only*: Slower builds, loader compilation issues with NDK 27+
+- *Vendor SDK (Meta OpenXR SDK)*: Adds proprietary dependency, less portable
 
-**Primary Tool**: Android Debug Bridge (ADB)
+**Consequence**: Slightly larger configuration but provides best of both approaches.
 
-**Current Approach** (hello_xr sample):
-- **Batch scripts** for common workflows:
-  - `test_run.bat` - Build, install, run, stream logs
-  - `adb_cleanup.bat` - Uninstall, clear cache, kill processes
-- **Manual ADB** for ad-hoc operations
+### Decision 4: Shared Configuration Pattern (openxr-tutorial)
 
-**Responsibilities**:
-- APK installation/uninstallation
-- Application launch/stop
-- Logcat streaming
-- Device cleanup (zombie processes, cached data)
+**Choice**: Use Gradle `apply from` and CMake `include()` for shared configuration.
 
-**Commands**:
-```bash
-# Install APK
-adb install -r path/to/app.apk
-
-# Launch application
-adb shell am start -n <package>/<activity>
-
-# Stream logs
-adb logcat -c && adb logcat -s OpenXR:* *:E
-
-# Cleanup
-adb shell pm clear <package>
+```
+samples/openxr-tutorial/
+├── Common/
+│   ├── app/build.gradle      ← Shared Gradle config (applied by chapters)
+│   ├── CMakeLists.txt        ← Shared CMake config (included by chapters)
+│   ├── *.cpp / *.h           ← Shared C++ code
+├── Chapter1/
+│   ├── app/build.gradle      ← apply from: "../Common/app/build.gradle"
+│   ├── CMakeLists.txt        ← include("../Common/CMakeLists.txt")
+│   ├── main.cpp              ← Chapter-specific code
+│   └── settings.gradle       ← Standalone project settings
+├── Chapter2/ ...
 ```
 
-### Layer 3: Workflow Automation (Python - Future)
+**Rationale**:
+- Each chapter remains a standalone Gradle project (no multi-module complexity)
+- Shared configuration reduces duplication and ensures consistency
+- Chapter-specific code clearly separated
+- Easy to understand for tutorial readers
 
-**Status**: Not yet implemented
+**Alternatives Considered**:
+- *Multi-module Gradle project*: More complex, harder to run individual chapters
+- *Copy-paste configuration*: Maintenance burden, drift between chapters
+- *Git submodules*: Overkill for single-repo tutorials
 
-**Planned Responsibilities**:
-- Context-aware build/deploy/test workflows
-- Cross-platform support (Windows, macOS, Linux)
-- AI agent integration
-- Sample auto-detection
+**Consequence**: Chapters are independently buildable but share common patterns.
 
-**Planned Commands** (example):
-```bash
-# Auto-detect sample and build
-python scripts/build.py --config Debug
+### Decision 5: Standalone Samples (hello_world, hello_xr)
 
-# Deploy to device and stream logs
-python scripts/deploy.py --run --logs
+**Choice**: Non-tutorial samples are fully self-contained with no shared dependencies.
 
-# Full workflow
-python scripts/test.py
+**Rationale**:
+- Minimal setup for quick verification
+- No external file dependencies
+- Clear reference implementations
+
+**Consequence**: Some duplication between samples, but maximum clarity and portability.
+
+### Decision 6: NativeActivity Integration
+
+**Choice**: All samples use Android's `NativeActivity` with the `-u ANativeActivity_onCreate` linker flag.
+
+**Rationale**:
+- No Java/Kotlin code required for pure C++ samples
+- Simpler entry point for OpenXR applications
+- Standard pattern for native VR applications
+
+**Technical Requirement**:
+```cmake
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    LINK_FLAGS "-u ANativeActivity_onCreate"
+)
 ```
 
-**Rationale for Future Implementation**:
-- Current batch scripts sufficient for Phase 1 (hello_xr)
-- Python layer deferred until patterns emerge from more samples
-- Avoid premature abstraction
+**Consequence**: Linker flag must be explicitly set; without it, runtime crashes with `UnsatisfiedLinkError`.
+
+### Decision 7: Toolchain Versions
+
+**Choice**: Pin specific toolchain versions for reproducibility.
+
+| Component | Version | Rationale |
+|-----------|---------|-----------|
+| NDK | r27.2.12479018 | Quest 3 / Horizon OS v81 support |
+| CMake | 3.22.1+ | NDK r27 bundled version |
+| Gradle | 8.x | Android Studio Ladybug compatibility |
+| AGP | 8.13.0 | Gradle 8 requirement |
+| API Level | 29+ (minSdk) | OpenXR Android runtime requirement |
+| API Level | 34 (targetSdk) | Current Android 14 target |
+
+**Consequence**: Build environment must meet minimum versions; documented in Environment_Setup.md.
 
 ## Consequences
 
 ### Advantages
 
-**Layer 1 (Gradle + CMake)**:
-- ✅ Industry standard Android/NDK build system
-- ✅ IDE integration (Android Studio, VS Code)
-- ✅ Dependency management (Maven, FetchContent)
-- ✅ Reproducible builds
+- **Familiar tooling**: Standard Gradle/CMake workflow
+- **IDE support**: Works with Android Studio, VS Code
+- **Reproducible builds**: Pinned versions and FetchContent
+- **Tutorial-friendly**: Clear separation of concerns
+- **Flexible**: Shared config for related samples, standalone for independent ones
 
-**Layer 2 (ADB + Batch Scripts)**:
-- ✅ Simple, explicit commands
-- ✅ Easy to understand for tutorials
-- ✅ Immediate developer productivity
-- ✅ No additional dependencies (ADB already required)
+### Trade-offs
 
-**Layer 3 (Python - Future)**:
-- ✅ Cross-platform automation
-- ✅ AI agent integration
-- ✅ CI/CD readiness
-- ✅ Context-aware workflows
+- **Two dependency mechanisms**: Maven + FetchContent adds configuration complexity
+- **FetchContent download**: First build downloads ~10MB OpenXR SDK
+- **Version synchronization**: Maven AAR and FetchContent versions must match
 
-### Disadvantages
+### Future Considerations
 
-**Current Limitations**:
-- ⚠️ Batch scripts are Windows-only (hello_xr sample)
-- ⚠️ Manual coordination between build/deploy steps
-- ⚠️ No unified automation yet
-
-**Trade-offs**:
-- ❌ Layer 3 not yet implemented (deferred complexity)
-- ❌ Batch scripts require manual porting for macOS/Linux users
-
-### Migration Path
-
-As more samples are added:
-1. **Short term**: Continue using batch scripts, add shell script equivalents for macOS/Linux
-2. **Medium term**: Implement Python automation layer when patterns stabilize
-3. **Long term**: Integrate with CI/CD, AI agent workflows
-
-### Adjustments Expected
-
-This architecture is **deliberately lightweight** for Phase 1. Expected changes:
-- Add Python automation layer (Layer 3) when multi-sample patterns emerge
-- Refine batch/shell scripts based on developer feedback
-- Integrate with CI/CD pipelines (GitHub Actions, GitLab CI)
-- Add AI agent integration hooks
-
-Status will be updated from **Proposed** to **Accepted** after:
-- Validation with 2-3 additional samples
-- Cross-platform testing
-- Developer feedback incorporation
+- **CI/CD Integration**: Gradle commands are scriptable for GitHub Actions
+- **Cross-platform**: CMake configuration could support desktop builds
+- **Automation**: Python scripts could wrap Gradle/ADB for advanced workflows
 
 ## References
 
-- [Project Plan - Decision 3](../Project_Plan.md#L1144-L1171)
-- [hello_xr test_run.bat](../../samples/hello_xr/test_run.bat)
-- [hello_xr adb_cleanup.bat](../../samples/hello_xr/adb_cleanup.bat)
-- [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) - OpenXR SDK dependency management
+- [Build_Guidelines.md](../../samples/Build_Guidelines.md) - Detailed build and ADB commands
+- [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) - OpenXR SDK dependency management rationale
+- [Environment_Setup.md](../Environment_Setup.md) - Development environment requirements
