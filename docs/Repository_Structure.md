@@ -39,12 +39,21 @@ Claude Code configuration and extensions:
 
 ### docs/
 
+
+
 Detailed documentation for developers and AI agents:
 
-- **Repository_Structure.md** - This file; directory layout and organization
-- **Project_Plan.md** - Complete architecture, phase breakdown, and implementation roadmap
-- **Environment_Setup.md** - SDK installation and development environment configuration
-- **adrs/** - Architecture Decision Records documenting significant technical decisions
+
+
+-   **README.md** - Primary entry point for documentation overview
+
+-   **Repository_Structure.md** - This file; directory layout and organization
+
+-   **Project_Plan.md** - Complete architecture, phase breakdown, and implementation roadmap
+
+-   **Environment_Setup.md** - SDK installation and development environment configuration
+
+-   **adrs/** - Architecture Decision Records documenting significant technical decisions
 
 ### samples/
 
