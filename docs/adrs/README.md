@@ -35,6 +35,7 @@ Each ADR follows this structure:
 | [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) | OpenXR SDK Dependency Management via Maven and FetchContent | Accepted |
 | [ADR-0006](adr-0006-use-ai-assisted-tooling-for-adr-creation.md) | Use AI-Assisted Tooling for ADR Creation | Accepted |
 | [ADR-0007](adr-0007-build-and-run-architecture.md) | Build and Run Architecture | Proposed |
+| [ADR-0008](adr-0008-adapt-meta-openxr-samples-using-established-build-blueprint.md) | Adapt Meta OpenXR Samples Using Established Build Blueprint | Proposed |
 
 ## Creating New ADRs
 
