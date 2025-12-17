@@ -32,8 +32,11 @@ Follow these steps to get started with the tutorial samples:
 
 1.  **Set Up Your Environment**: Before you can build and run the samples, you must configure your workstation. Follow the detailed instructions in the **[Environment Setup Guide](docs/Environment_Setup.md)**.
 
-2.  **Explore the Samples**: Once your environment is ready, browse the available samples. For a gentle introduction, we recommend starting with the `hello_world` sample.
-    -   **[View All Samples](samples/README.md)**
+2.  **Explore the Samples**: Once your environment is ready, browse the available samples. We now have two main collections of samples:
+
+    *   **[OpenXR Tutorial Samples](openxr/README.md)**: Our core tutorial samples, including `hello_world` (a great place to start) and a progressive tutorial series.
+
+    *   **[Meta Quest Samples](meta/README.md)**: Integrated official Meta OpenXR SDK samples, demonstrating Quest-specific features.**
 
 ## Documentation
 

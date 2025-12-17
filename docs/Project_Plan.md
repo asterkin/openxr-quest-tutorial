@@ -5,9 +5,9 @@
 
 ## Current Status
 
--   **Completed**: Phases 0, 1, 2, and 3.
--   **In Progress**: Phase 4.
--   **Next**: Phase 5.
+-   **Completed**: Phases 0, 1, 2, 3, 4, and 5.
+-   **In Progress**: None.
+-   **Next**: Phase 6.
 
 ## Implementation Phases
 
@@ -22,32 +22,32 @@
 ### Phase 2: `hello_world` Sample
 **Status**: ✅ Completed
 -   A minimal OpenXR sample to verify basic environment setup and instance creation.
--   **Location**: `samples/hello_world/`
+-   **Location**: `openxr/hello_world/`
 
 ### Phase 3: `hello_xr` Sample
 **Status**: ✅ Completed
 -   The canonical Khronos `hello_xr` sample, adapted as a standalone project for Quest 3. Demonstrates a full rendering loop and multi-API support.
--   **Location**: `samples/hello_xr/`
+-   **Location**: `openxr/hello_xr/`
 
 ### Phase 4: `openxr-tutorial` Series
 **Status**: ✅ Completed
 -   A progressive, multi-chapter tutorial series adapted from openxr-tutorial.com, demonstrating core OpenXR concepts from setup to advanced rendering and interactions.
--   **Location**: `samples/openxr-tutorial/`
+-   **Location**: `openxr/tutorial/`
 
-### Phase 5: Meta SDK Samples
-**Status**: 🔧 In Progress
--   Importing samples from the Meta OVR Mobile SDK to demonstrate Quest-specific features and OpenXR extensions (e.g., Passthrough, Hand Tracking, Spatial Anchors).
--   **Location**: `samples/meta/`
+### Phase 5: Meta SDK Samples Migration
+**Status**: ✅ Completed
+-   Samples from the Meta OVR Mobile SDK have been imported and integrated to demonstrate Quest-specific features and OpenXR extensions (e.g., Passthrough, Hand Tracking, Spatial Anchors).
+-   **Location**: `meta/`
 
-### Phase 6: Automation & Final Documentation
+### Phase 6: Upgrade to Recent Tool Versions
 **Status**: ⏳ Planned
--   Development of Python-based automation scripts for building and deployment, and finalization of all project documentation.
+-   Upgrade the toolchain and language standards across the projects to more recent versions. This includes:
+    1.  Upgrading to C++ 20.
+    2.  Updating the Android NDK to version 25 or newer.
+    3.  Streamlining Gradle, NDK, and C++ versions across all samples for consistency.
+    4.  Adding auto-cleaup to meta build.gradle to remove zomby icons
 
-## TODO
-Upgarde to C++ 20.0:
-  1. Update NDK to 25+ (install via Android Studio SDK Manager)
-  2. Change Samples/CMakeLists.txt line 22 from:
-  set(CMAKE_CXX_STANDARD 17)
-  2. to:
-  set(CMAKE_CXX_STANDARD 20)
+### Phase 7: Connect to Context7 MCP
+**Status**: ⏳ Planned
+-   Integrate with the Context7 MCP (Mission Control Platform) to automate the generation and maintenance of up-to-date project documentation based on the codebase.
   
