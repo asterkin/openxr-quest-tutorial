@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:openxr-tutorial.com)",
-      "Bash(dir /b \"C:\\Users\\PRO\\Projects\\openxr-quest-tutorial\\samples\\openxr-tutorial\\Chapter*.zip\")",
-      "Bash(dir /b \"C:\\Users\\PRO\\Projects\\openxr-quest-tutorial\\samples\\openxr-tutorial\")"
-    ]
-  }
-}

@@ -42,3 +42,12 @@
 ### Phase 6: Automation & Final Documentation
 **Status**: ⏳ Planned
 -   Development of Python-based automation scripts for building and deployment, and finalization of all project documentation.
+
+## TODO
+Upgarde to C++ 20.0:
+  1. Update NDK to 25+ (install via Android Studio SDK Manager)
+  2. Change Samples/CMakeLists.txt line 22 from:
+  set(CMAKE_CXX_STANDARD 17)
+  2. to:
+  set(CMAKE_CXX_STANDARD 20)
+  

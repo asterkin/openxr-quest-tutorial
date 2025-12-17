@@ -1,0 +1,89 @@
+// OpenXR Hello World - Minimal Quest Sample
+// Following https://openxr-tutorial.com/ approach
+
+plugins {
+    id 'com.android.application' version '8.13.0'
+}
+
+android {
+    compileSdk = 34
+    ndkVersion = "27.2.12479018"
+    namespace = "com.example.openxr.helloworld"
+
+    defaultConfig {
+        applicationId "com.example.openxr.helloworld"
+        minSdk = 29
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+        ndk {
+            abiFilters = ['arm64-v8a']
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments = [
+                    '-DANDROID_STL=c++_shared'
+                ]
+                cppFlags = ['-std=c++17']
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable =true
+            jniDebuggable = true
+        }
+        release {
+            minifyEnabled = false
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = "CMakeLists.txt"
+            version = "3.22.1"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        prefab = true
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+dependencies {
+    // OpenXR loader from Maven Central
+    implementation 'org.khronos.openxr:openxr_loader_for_android:1.1.54'
+}
+
+// Restart vrshell after uninstall to clear stale icon
+def execOps = project.services.get(org.gradle.process.ExecOperations)
+
+tasks.matching { it.name.startsWith("uninstall") }.configureEach {
+    doLast {
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell'
+        }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1'
+        }
+    }
+}
