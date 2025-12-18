@@ -2,12 +2,12 @@
 // Following https://openxr-tutorial.com/ approach
 
 plugins {
-    id 'com.android.application' version '8.13.0'
+    id 'com.android.application' version '8.13.2'
 }
 
 android {
     compileSdk = 34
-    ndkVersion = "27.2.12479018"
+    ndkVersion = "29.0.14206865"
     namespace = "com.example.openxr.helloworld"
 
     defaultConfig {
@@ -25,7 +25,7 @@ android {
                 arguments = [
                     '-DANDROID_STL=c++_shared'
                 ]
-                cppFlags = ['-std=c++17']
+                cppFlags = ['-std=c++20']
             }
         }
     }

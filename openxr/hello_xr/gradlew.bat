@@ -66,6 +66,42 @@ echo location of your Java installation.
 goto fail
 
 :execute
+@rem Bootstrap Gradle wrapper if needed
+set WRAPPER_DIR=%APP_HOME%\gradle\wrapper
+set WRAPPER_JAR=%WRAPPER_DIR%\gradle-wrapper.jar
+set WRAPPER_PROPERTIES=%WRAPPER_DIR%\gradle-wrapper.properties
+set GRADLE_VERSION=8.13
+
+@rem Create wrapper directory if it doesn't exist
+if not exist "%WRAPPER_DIR%" (
+    echo Initializing Gradle wrapper...
+    mkdir "%WRAPPER_DIR%"
+)
+
+@rem Download gradle-wrapper.jar if missing
+if not exist "%WRAPPER_JAR%" (
+    echo Downloading gradle-wrapper.jar...
+    %SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe -Command "& {Invoke-WebRequest -Uri 'https://github.com/gradle/gradle/raw/v%GRADLE_VERSION%.0/gradle/wrapper/gradle-wrapper.jar' -OutFile '%WRAPPER_JAR%'}"
+    if %ERRORLEVEL% neq 0 (
+        echo ERROR: Failed to download gradle-wrapper.jar 1>&2
+        goto fail
+    )
+)
+
+@rem Create gradle-wrapper.properties if missing
+if not exist "%WRAPPER_PROPERTIES%" (
+    echo Creating gradle-wrapper.properties...
+    (
+        echo distributionBase=GRADLE_USER_HOME
+        echo distributionPath=wrapper/dists
+        echo distributionUrl=https\://services.gradle.org/distributions/gradle-%GRADLE_VERSION%-bin.zip
+        echo networkTimeout=10000
+        echo validateDistributionUrl=true
+        echo zipStoreBase=GRADLE_USER_HOME
+        echo zipStorePath=wrapper/dists
+    ) > "%WRAPPER_PROPERTIES%"
+)
+
 @rem Setup the command line
 
 set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar

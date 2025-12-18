@@ -16,6 +16,9 @@ build/
 */build/
 local.properties
 
+# Gradle wrapper (auto-downloaded by bootstrap gradlew.bat)
+**/gradle/wrapper/
+
 # Android Studio
 .idea/
 *.iml

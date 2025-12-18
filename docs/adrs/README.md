@@ -36,6 +36,7 @@ Each ADR follows this structure:
 | [ADR-0006](adr-0006-use-ai-assisted-tooling-for-adr-creation.md) | Use AI-Assisted Tooling for ADR Creation | Accepted |
 | [ADR-0007](adr-0007-build-and-run-architecture.md) | Build and Run Architecture | Proposed |
 | [ADR-0008](adr-0008-integrate-meta-openxr-samples-with-minimal-changes.md) | Integrate Meta OpenXR Samples with Minimal Changes | Accepted |
+| [ADR-0009](adr-0009-automatic-gradle-wrapper-bootstrapping.md) | Automatic Gradle Wrapper Bootstrapping | Accepted |
 
 ## Creating New ADRs
 

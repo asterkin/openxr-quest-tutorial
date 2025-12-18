@@ -5,7 +5,7 @@ def appId = "com.example.${pkgBase}"
 android {
     namespace = appId
     compileSdk = 34
-    ndkVersion = '27.2.12479018'
+    ndkVersion = '29.0.14206865'
 
     defaultConfig {
         applicationId = appId
@@ -23,7 +23,7 @@ android {
                     '-DANDROID_STL=c++_shared', 
                     "-DPROJECT_NAME=${rootName}",
                 ]
-                cppFlags = ['-std=c++17']
+                cppFlags = ['-std=c++20']
             }
         }
     }
