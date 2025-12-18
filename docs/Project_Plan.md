@@ -6,8 +6,8 @@
 ## Current Status
 
 -   **Completed**: Phases 0, 1, 2, 3, 4, and 5.
--   **In Progress**: None.
--   **Next**: Phase 6.
+-   **In Progress**: Phase 6.
+-   **Next**: Phase 7.
 
 ## Implementation Phases
 
@@ -39,8 +39,8 @@
 -   Samples from the Meta OVR Mobile SDK have been imported and integrated to demonstrate Quest-specific features and OpenXR extensions (e.g., Passthrough, Hand Tracking, Spatial Anchors).
 -   **Location**: `meta/`
 
-### Phase 6: Upgrade to Recent Tool Versions
-**Status**: ⏳ Planned
+### Phase 6: Upgrade to Latest Tool Versions
+**Status**: 🔧 In Progress
 -   Upgrade the toolchain and language standards across the projects to more recent versions. This includes:
     1.  Upgrading to C++ 20.
     2.  Updating the Android NDK to version 25 or newer.
@@ -50,4 +50,7 @@
 ### Phase 7: Connect to Context7 MCP
 **Status**: ⏳ Planned
 -   Integrate with the Context7 MCP (Mission Control Platform) to automate the generation and maintenance of up-to-date project documentation based on the codebase.
-  
+
+### Phase 8: CI/CD Scripts
+**Status**: ⏳ Planned
+-   Implement automated build scripts triggered by git push to build all samples automatically.
