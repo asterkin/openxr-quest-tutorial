@@ -47,7 +47,7 @@ BUILD_GRADLE_TEMPLATE = '''/*
  */
 
 plugins {{
-    id 'com.android.application'
+    id 'com.android.application' version '8.13.2'
 }}
 
 android {{
