@@ -81,9 +81,16 @@ function(find_minizip)
 
     if(ANDROID)
         target_compile_options(minizip PRIVATE
-            $<$<COMPILE_LANGUAGE:C>:-Wno-unused-command-line-argument;-marm;-mfpu=neon>
-            $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-command-line-argument;-marm>
+            $<$<COMPILE_LANGUAGE:C>:-Wno-unused-command-line-argument>
+            $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-command-line-argument>
         )
+        # 32-bit ARM specific flags (not valid for aarch64)
+        if(ANDROID_ABI STREQUAL "armeabi-v7a")
+            target_compile_options(minizip PRIVATE
+                $<$<COMPILE_LANGUAGE:C>:-marm;-mfpu=neon>
+                $<$<COMPILE_LANGUAGE:CXX>:-marm>
+            )
+        endif()
         target_link_libraries(minizip z)
     elseif (WIN32)
         target_include_directories(minizip

@@ -1462,7 +1462,7 @@ void ActivityMainLoopContext::HandleOsEvents() {
              app_->destroyRequested == 0)
             ? -1
             : 0;
-        if (ALooper_pollAll(timeoutMilliseconds, nullptr, &events, (void**)&source) < 0) {
+        if (ALooper_pollOnce(timeoutMilliseconds, nullptr, &events, (void**)&source) < 0) {
             break;
         }
 

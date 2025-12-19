@@ -131,9 +131,9 @@ ovrRibbon::ovrRibbon(const ovrPointList& pointList, const float width, const Vec
 #if 1
     gc.UniformData[0].Data = &Texture;
 
-    constexpr std::array<ovrProgramParm, 1> parms = {{
+    constexpr auto parms = std::to_array<ovrProgramParm>({
         {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-    }};
+    });
 
     gc.Program =
         GlProgram::Build(ribbonVertexShader, ribbonFragmentShader, parms.data(), parms.size());

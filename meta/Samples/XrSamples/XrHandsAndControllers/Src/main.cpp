@@ -49,18 +49,18 @@ Copyright   :   Copyright (c) Meta Platforms, Inc. and affiliates.
 
 // All physical units in OpenXR are in meters, but sometimes it's more useful
 // to think in cm, so this user defined literal converts from centimeters to meters
-constexpr float operator"" _cm(long double centimeters) {
+constexpr float operator""_cm(long double centimeters) {
     return static_cast<float>(centimeters * 0.01);
 }
-constexpr float operator"" _cm(unsigned long long centimeters) {
+constexpr float operator""_cm(unsigned long long centimeters) {
     return static_cast<float>(centimeters * 0.01);
 }
 
 // For expressiveness; use _m rather than f literals when we mean meters
-constexpr float operator"" _m(long double meters) {
+constexpr float operator""_m(long double meters) {
     return static_cast<float>(meters);
 }
-constexpr float operator"" _m(unsigned long long meters) {
+constexpr float operator""_m(unsigned long long meters) {
     return static_cast<float>(meters);
 }
 

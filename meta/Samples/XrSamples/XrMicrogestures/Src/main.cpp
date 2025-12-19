@@ -28,10 +28,10 @@
 #include "Input/HandRenderer.h"
 
 // For expressiveness; use _m rather than f literals when we mean meters
-constexpr float operator"" _m(long double meters) {
+constexpr float operator""_m(long double meters) {
     return static_cast<float>(meters);
 }
-constexpr float operator"" _m(unsigned long long meters) {
+constexpr float operator""_m(unsigned long long meters) {
     return static_cast<float>(meters);
 }
 

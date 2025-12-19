@@ -2,14 +2,14 @@
 
 > **Build fixes, hand tracking guidelines, and microgestures usage**
 >
-> Last updated: 2025-12-17
+> Last updated: 2025-12-19
 
 ---
 
 ## Table of Contents
 
 1. [Build Fixes](#build-fixes)
-   - [C++20 std::to_array Fix](#c20-stdto_array-fix)
+   - [NDK 29 Compatibility Fixes](#ndk-29-compatibility-fixes)
    - [XrHandTrackingWideMotionMode Internal API Fix](#xrhandtrackingwidemotionmode-internal-api-fix)
 2. [Hand Tracking Guidelines](#hand-tracking-guidelines)
    - [Controller vs Hand Tracking Switching](#controller-vs-hand-tracking-switching)
@@ -40,55 +40,112 @@
 
 ## Build Fixes
 
-### C++20 std::to_array Fix
+### NDK 29 Compatibility Fixes
 
-**Problem:** The SDK uses `std::to_array` which is a C++20 feature, but the build is configured for C++17 (`CMAKE_CXX_STANDARD 17` in `Samples/CMakeLists.txt`). This causes compilation errors with NDK 21.x:
+The Meta samples have been upgraded to use **NDK 29.0.14206865** with **C++ 20**. This required several source code and build configuration fixes for compatibility with the newer toolchain.
+
+#### 0. CMake C++ Standard Upgrade
+
+**Change:** Updated `Samples/CMakeLists.txt` line 22 from C++17 to C++20:
+
+```cmake
+# Before
+set(CMAKE_CXX_STANDARD 17)
+
+# After
+set(CMAKE_CXX_STANDARD 20)
+```
+
+This enables C++20 features like `std::to_array` which the SDK source code uses.
+
+#### 1. ALooper_pollAll Deprecation
+
+**Problem:** `ALooper_pollAll` was deprecated in NDK 29 and marked as unavailable. The function may ignore wakes and has been replaced with `ALooper_pollOnce`.
 
 ```
-error: no template named 'to_array' in namespace 'std'; did you mean 'is_array'?
+error: 'ALooper_pollAll' is unavailable: obsoleted in Android 1 - ALooper_pollAll may ignore wakes. Use ALooper_pollOnce instead.
 ```
 
-**Affected Files:**
-- `Samples/SampleXrFramework/Src/Input/ControllerRenderer.cpp:192`
-- `Samples/SampleXrFramework/Src/Render/Ribbon.cpp:134`
+**Fix:** Replace `ALooper_pollAll` with `ALooper_pollOnce` in all affected files:
 
-**Fix:** Replace `std::to_array<T>({...})` with explicit `std::array<T, N>{{...}}`:
+**Affected Files (8 total):**
+- `Samples/SampleXrFramework/Src/XrApp.cpp:1465`
+- `Samples/XrSamples/XrPassthrough/Src/XrPassthrough.cpp:1157`
+- `Samples/XrSamples/XrPassthroughOcclusion/Src/XrPassthroughOcclusion.cpp:1187`
+- `Samples/XrSamples/XrSpatialAnchor/Src/SpatialAnchorXr.cpp:1971`
+- `Samples/XrSamples/XrSceneModel/Src/SceneModelXr.cpp:2203`
+- `Samples/XrSamples/XrSceneSharing/Src/SceneSharingXr.cpp:2055`
+- `Samples/XrSamples/XrCompositor_NativeActivity/Src/XrCompositor_NativeActivity.c:3485`
+- `Samples/XrSamples/XrSpaceWarp/Src/XrSpaceWarp.c:3224`
 
-**ControllerRenderer.cpp (line 192):**
 ```cpp
-// Before (C++20)
-auto UniformParms = std::to_array<ovrProgramParm>({
-    {.Name = "SpecularLightDirection", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "SpecularLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "AmbientLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-});
+// Before
+if (ALooper_pollAll(timeoutMilliseconds, NULL, &events, (void**)&source) < 0) {
 
-// After (C++17 compatible)
-std::array<ovrProgramParm, 4> UniformParms = {{
-    {.Name = "SpecularLightDirection", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "SpecularLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "AmbientLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
-    {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-}};
+// After
+if (ALooper_pollOnce(timeoutMilliseconds, NULL, &events, (void**)&source) < 0) {
 ```
 
-**Ribbon.cpp (line 134):**
+#### 2. ARM32-Only Compiler Flags
+
+**Problem:** The 3rdParty/CMakeLists.txt included `-marm` and `-mfpu=neon` flags which are only valid for 32-bit ARM (armeabi-v7a), not 64-bit ARM (arm64-v8a/aarch64).
+
+```
+clang: error: unsupported option '-mno-thumb' for target 'aarch64-none-linux-android29'
+clang: error: unsupported option '-mfpu=' for target 'aarch64-none-linux-android29'
+```
+
+**Fix:** Make the 32-bit ARM flags conditional on ABI in `Samples/3rdParty/CMakeLists.txt`:
+
+```cmake
+# Before
+if(ANDROID)
+    target_compile_options(minizip PRIVATE
+        $<$<COMPILE_LANGUAGE:C>:-Wno-unused-command-line-argument;-marm;-mfpu=neon>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-command-line-argument;-marm>
+    )
+
+# After
+if(ANDROID)
+    target_compile_options(minizip PRIVATE
+        $<$<COMPILE_LANGUAGE:C>:-Wno-unused-command-line-argument>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-command-line-argument>
+    )
+    # 32-bit ARM specific flags (not valid for aarch64)
+    if(ANDROID_ABI STREQUAL "armeabi-v7a")
+        target_compile_options(minizip PRIVATE
+            $<$<COMPILE_LANGUAGE:C>:-marm;-mfpu=neon>
+            $<$<COMPILE_LANGUAGE:CXX>:-marm>
+        )
+    endif()
+```
+
+#### 3. Literal Operator Whitespace Deprecation
+
+**Problem:** C++23 deprecates whitespace between `""` and the suffix in user-defined literal operators. With `-Werror`, this becomes an error in clang 18+ (NDK 29).
+
+```
+error: identifier '_cm' preceded by whitespace in a literal operator declaration is deprecated [-Werror,-Wdeprecated-literal-operator]
+   55 | constexpr float operator"" _cm(long double centimeters) {
+      |                 ~~~~~~~~~~~^~~
+```
+
+**Fix:** Remove whitespace between `""` and the suffix in all literal operator declarations:
+
+**Affected Files (3 total):**
+- `Samples/XrSamples/XrInput/Src/main.cpp` (lines 55, 58, 63, 66)
+- `Samples/XrSamples/XrHandsAndControllers/Src/main.cpp` (lines 52, 55, 60, 63)
+- `Samples/XrSamples/XrMicrogestures/Src/main.cpp` (lines 31, 34)
+
 ```cpp
-// Before (C++20)
-constexpr auto parms = std::to_array<ovrProgramParm>({
-    {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-});
+// Before
+constexpr float operator"" _cm(long double centimeters) {
+constexpr float operator"" _m(long double meters) {
 
-// After (C++17 compatible)
-constexpr std::array<ovrProgramParm, 1> parms = {{
-    {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-}};
+// After
+constexpr float operator""_cm(long double centimeters) {
+constexpr float operator""_m(long double meters) {
 ```
-
-**Alternative Fix:** Update to C++20 by:
-1. Installing NDK 25+ via Android Studio SDK Manager
-2. Changing `Samples/CMakeLists.txt` line 22 from `set(CMAKE_CXX_STANDARD 17)` to `set(CMAKE_CXX_STANDARD 20)`
 
 ---
 

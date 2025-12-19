@@ -189,12 +189,12 @@ bool ControllerRenderer::Init(
     PoseCorrection = poseCorrection;
 
     /// Shader
-    std::array<ovrProgramParm, 4> UniformParms = {{
+    auto UniformParms = std::to_array<ovrProgramParm>({
         {.Name = "SpecularLightDirection", .Type = ovrProgramParmType::FLOAT_VECTOR3},
         {.Name = "SpecularLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
         {.Name = "AmbientLightColor", .Type = ovrProgramParmType::FLOAT_VECTOR3},
         {.Name = "Texture0", .Type = ovrProgramParmType::TEXTURE_SAMPLED},
-    }};
+    });
     ProgControllerTexture = GlProgram::Build(
         "#define USE_TEXTURE 1\n",
         Controller::VertexShaderSrc,

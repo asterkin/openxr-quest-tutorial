@@ -12,7 +12,9 @@
       "Bash(findstr:*)",
       "Bash(unzip:*)",
       "Skill(adr)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(.gradlew.bat:*)",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\PRO\\\\Projects\\\\openxr-quest-tutorial\\\\meta\\\\Samples && gradlew.bat :XrPassthrough:assembleDebug\")"
     ],
     "deny": [],
     "ask": []

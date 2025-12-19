@@ -54,33 +54,36 @@
 - [x] **Propagate to OpenXR Samples** - Updated `openxr/hello_xr/` and all `openxr/tutorial/` chapters
 - [x] **Composite Builds** - Created top-level `openxr/gradlew.bat` to build all samples with single command
 - [x] **Gradle Wrapper Bootstrapping** - Implemented auto-download pattern, documented in [ADR-0009](adrs/adr-0009-automatic-gradle-wrapper-bootstrapping.md)
-- [ ] **Propagate to Meta Samples** - Update all samples in `meta/`
-- [ ] **Standardize Build Configuration** - Extract common version properties, ensure consistency
-- [ ] **Meta Auto-Cleanup** - Add Gradle task to remove zombie icons
-- [ ] **Final Verification** - Build and test all samples on Quest 3
+- [x] **Propagate to Meta Samples** - Updated all 19 samples in `meta/` to AGP 8.13.2, NDK 29, C++ 20
+- [x] **Standardize Build Configuration** - Consistent versions across all samples (hardcoded for tutorial simplicity)
+- [x] **Meta Auto-Cleanup** - Added Gradle task to restart vrshell after uninstall (zombie icon cleanup)
+- [ ] **Remove Warnings** - Remove all Meta samples warninsg
+- [ ] **Final Verification** - Build and test all samples on Quest 3 (top-level build script, standardtized tasks assmbleDebug vs assembleAllDebug)
 - [ ] **Update Documentation** - Update `docs/Environment_Setup.md` with new standard versions
 - [ ] **Clean Up Unused Versions** - Remove old NDK versions, unused Gradle distributions, and deprecated dependencies
 
-**Audit Results** (2025-12-18):
+**Audit Results** (2025-12-19):
 
 | Component | hello_world | hello_xr | tutorial | meta samples |
 |-----------|-------------|----------|----------|--------------|
-| **AGP** | ~~8.13.0~~ → 8.13.2 | ~~8.13.0~~ → 8.13.2 | ~~8.10.1~~ → 8.13.2 | 7.0.3 |
-| **Gradle** | 8.13 | 8.13 | ~~8.12~~ → 8.13 | 7.2 |
-| **NDK** | ~~27.2~~ → 29.0 | ~~27.2~~ → 29.0 | ~~27.2~~ → 29.0 | (not set) |
-| **C++ Standard** | ~~17~~ → 20 | ~~17~~ → 20 | ~~17~~ → 20 | 17 |
-| **CMake** | 3.22.1 | 3.22.1 | 3.22.1+ | 3.10.2 |
-| **compileSdk** | 34 | 34 | 34 | 32 |
-| **minSdk** | 29 | 29 | 29 | 26 |
-| **targetSdk** | 34 | 34 | 34 | 32 |
-| **Java** | 17 | 17 | 17 | (default) |
-| **OpenXR Loader** | 1.1.54 (Maven) | FetchContent | 1.1.54 (Maven) | 1.1.51 (Maven) |
+| **AGP** | 8.13.2 | 8.13.2 | 8.13.2 | ~~7.0.3~~ → 8.13.2 |
+| **Gradle** | 8.13 | 8.13 | 8.13 | ~~7.2~~ → 8.13 |
+| **NDK** | 29.0 | 29.0 | 29.0 | ~~(not set)~~ → 29.0 |
+| **C++ Standard** | 20 | 20 | 20 | ~~17~~ → 20 |
+| **CMake** | 3.22.1 | 3.22.1 | 3.22.1+ | 3.22.1 |
+| **compileSdk** | 34 | 34 | 34 | ~~32~~ → 34 |
+| **minSdk** | 29 | 29 | 29 | ~~26~~ → 29 |
+| **targetSdk** | 34 | 34 | 34 | ~~32~~ → 34 |
+| **Java** | 17 | 17 | 17 | ~~(default)~~ → 17 |
+| **OpenXR Loader** | 1.1.54 (Maven) | FetchContent | 1.1.54 (Maven) | ~~1.1.51~~ → 1.1.54 |
 
 **Progress Summary** (2025-12-19):
 - ✅ OpenXR samples fully upgraded to C++ 20, NDK 29, AGP 8.13.2
 - ✅ Composite build structure: `openxr/gradlew.bat assembleDebug` builds all samples
 - ✅ Gradle wrapper auto-bootstrap eliminates need for committed JAR files
-- ⏳ Meta samples still require upgrade (AGP 7.0.3 → 8.13.2, etc.)
+- ✅ Meta samples upgraded to AGP 8.13.2, NDK 29, C++ 20 (all 19 samples)
+- ✅ NDK 29 compatibility fixes applied (ALooper_pollOnce, ARM flags, literal operators)
+- ✅ Zombie icon cleanup task added to all samples
 
 ### Phase 7: Connect to Context7 MCP
 **Status**: ⏳ Planned

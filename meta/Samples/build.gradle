@@ -16,9 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
+
+// Root build file for Meta OpenXR SDK Samples
+// Individual samples are configured via settings.gradle.kts
+
+plugins {
+    id 'com.android.application' version '8.13.2' apply false
+}
+
+// Convenience tasks for building all samples
+tasks.register("assembleAllDebug") {
+    description = "Assembles debug APKs for all Meta XR samples"
+    group = "build"
+    dependsOn subprojects.collect { it.tasks.matching { task -> task.name == "assembleDebug" } }
+}
+
+tasks.register("assembleAllRelease") {
+    description = "Assembles release APKs for all Meta XR samples"
+    group = "build"
+    dependsOn subprojects.collect { it.tasks.matching { task -> task.name == "assembleRelease" } }
+}
+
+tasks.register("cleanAll") {
+    description = "Cleans all Meta XR samples"
+    group = "build"
+    dependsOn subprojects.collect { it.tasks.matching { task -> task.name == "clean" } }
 }

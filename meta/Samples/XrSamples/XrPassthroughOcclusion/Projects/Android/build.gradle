@@ -16,81 +16,95 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:7.0.3"
-    }
-}
 
-repositories {
-    google()
-    mavenCentral()
+plugins {
+    id 'com.android.application'
 }
-
-apply plugin: 'com.android.application'
 
 android {
-  compileSdk 32
+    compileSdk = 34
+    ndkVersion = "29.0.14206865"
+    namespace = "com.oculus.xrpassthroughocclusion"
 
-  defaultConfig {
-    applicationId "com.oculus.xrpassthroughocclusion"
-    minSdk 26
-    targetSdk 32
-    versionCode 1
-    versionName "1.0"
+    defaultConfig {
+        applicationId "com.oculus.xrpassthroughocclusion"
+        minSdk = 29
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
 
-    // override app plugin abiFilters for 64-bit support
+        ndk {
+            abiFilters = ['arm64-v8a']
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments = ['-DANDROID_STL=c++_shared']
+                cppFlags = ['-std=c++20']
+                targets "xrpassthroughocclusion"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['../../java']
+            assets.srcDirs = ['../../assets']
+            res.srcDirs = ['../../res']
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable = true
+            jniDebuggable = true
+        }
+
+        release {
+            debuggable = false
+            minifyEnabled = false
+        }
+    }
+
     externalNativeBuild {
-      ndk {
-        abiFilters 'arm64-v8a'
-      }
-      ndkBuild {
-        abiFilters 'arm64-v8a'
-      }
-      cmake {
-         targets "xrpassthroughocclusion"
-      }
-    }
-  }
-
-  sourceSets {
-    main {
-      manifest.srcFile 'AndroidManifest.xml'
-      java.srcDirs = ['../../java']
-      assets.srcDirs = ['../../assets']
-      res.srcDirs = ['../../res']
-    }
-  }
-
-  buildTypes {
-    debug {
-      debuggable true
+        cmake {
+            path = file('../../../../CMakeLists.txt')
+            version = "3.22.1"
+        }
     }
 
-    release {
-      debuggable false
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-  }
 
-  externalNativeBuild {
-    cmake {
-      path file('../../../../CMakeLists.txt')
+    buildFeatures {
+        prefab = true
     }
-  }
 
-  // Enable prefab support for the OpenXR AAR
-  buildFeatures {
-    prefab true
-  }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
-  // Package/application AndroidManifest.xml properties, plus headers and libraries
-  // exposed to CMake
-  implementation 'org.khronos.openxr:openxr_loader_for_android:1.1.51'
+    // OpenXR loader from Maven Central
+    implementation 'org.khronos.openxr:openxr_loader_for_android:1.1.54'
+}
+
+// Restart vrshell after uninstall to clear stale icon (zombie icon cleanup)
+def execOps = project.services.get(org.gradle.process.ExecOperations)
+
+tasks.matching { it.name.startsWith("uninstall") }.configureEach {
+    doLast {
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'am', 'force-stop', 'com.oculus.vrshell'
+        }
+        execOps.exec { spec ->
+            spec.commandLine 'adb', 'shell', 'monkey', '-p', 'com.oculus.vrshell', '1'
+        }
+    }
 }

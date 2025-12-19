@@ -1154,7 +1154,7 @@ int main() {
                                              androidApp->destroyRequested == 0)
                 ? -1
                 : 0;
-            if (ALooper_pollAll(timeoutMilliseconds, NULL, &events, (void**)&source) < 0) {
+            if (ALooper_pollOnce(timeoutMilliseconds, NULL, &events, (void**)&source) < 0) {
                 break;
             }
 
