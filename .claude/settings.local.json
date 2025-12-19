@@ -10,7 +10,9 @@
       "Bash(powershell -Command \"cd ''C:\\Users\\PRO\\Projects\\openxr-quest-tutorial\\samples\\OXR''; Get-ChildItem -Exclude ''Chapter1.zip'',''update_chapters.py'' | Remove-Item -Recurse -Force\")",
       "Bash(python:*)",
       "Bash(findstr:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Skill(adr)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
