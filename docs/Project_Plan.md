@@ -49,9 +49,11 @@
 
 **Implementation Plan**:
 - [x] **Audit Current State** - Inventory C++ standards, NDK versions, Gradle/AGP versions across all samples
-- [ ] **Define Target Versions** - Finalize C++ 20, NDK (25/26/27), Gradle, AGP, and SDK versions
-- [ ] **Upgrade Pilot Sample** - Update `openxr/hello_world/` first, build and verify on Quest 3
-- [ ] **Propagate to OpenXR Samples** - Update `openxr/hello_xr/` and `openxr/tutorial/` chapters
+- [x] **Define Target Versions** - C++ 20, NDK 29.0.14206865, AGP 8.13.2, Gradle 8.13
+- [x] **Upgrade Pilot Sample** - Updated `openxr/hello_world/`, verified on Quest 3
+- [x] **Propagate to OpenXR Samples** - Updated `openxr/hello_xr/` and all `openxr/tutorial/` chapters
+- [x] **Composite Builds** - Created top-level `openxr/gradlew.bat` to build all samples with single command
+- [x] **Gradle Wrapper Bootstrapping** - Implemented auto-download pattern, documented in [ADR-0009](adrs/adr-0009-automatic-gradle-wrapper-bootstrapping.md)
 - [ ] **Propagate to Meta Samples** - Update all samples in `meta/`
 - [ ] **Standardize Build Configuration** - Extract common version properties, ensure consistency
 - [ ] **Meta Auto-Cleanup** - Add Gradle task to remove zombie icons
@@ -63,10 +65,10 @@
 
 | Component | hello_world | hello_xr | tutorial | meta samples |
 |-----------|-------------|----------|----------|--------------|
-| **AGP** | 8.13.0 | 8.13.0 | 8.10.1 | 7.0.3 |
-| **Gradle** | 8.13 | 8.13 | 8.12 | 7.2 |
-| **NDK** | 27.2.12479018 | 27.2.12479018 | 27.2.12479018 | (not set) |
-| **C++ Standard** | 17 | 17 | 17 | 17 |
+| **AGP** | ~~8.13.0~~ → 8.13.2 | ~~8.13.0~~ → 8.13.2 | ~~8.10.1~~ → 8.13.2 | 7.0.3 |
+| **Gradle** | 8.13 | 8.13 | ~~8.12~~ → 8.13 | 7.2 |
+| **NDK** | ~~27.2~~ → 29.0 | ~~27.2~~ → 29.0 | ~~27.2~~ → 29.0 | (not set) |
+| **C++ Standard** | ~~17~~ → 20 | ~~17~~ → 20 | ~~17~~ → 20 | 17 |
 | **CMake** | 3.22.1 | 3.22.1 | 3.22.1+ | 3.10.2 |
 | **compileSdk** | 34 | 34 | 34 | 32 |
 | **minSdk** | 29 | 29 | 29 | 26 |
@@ -74,11 +76,11 @@
 | **Java** | 17 | 17 | 17 | (default) |
 | **OpenXR Loader** | 1.1.54 (Maven) | FetchContent | 1.1.54 (Maven) | 1.1.51 (Maven) |
 
-**Key Findings**:
-- OpenXR samples (`hello_world`, `hello_xr`, `tutorial`) are mostly aligned with modern tooling
-- Meta samples are significantly outdated (AGP 7.0.3, Gradle 7.2, SDK 32)
-- All samples currently use C++ 17 (target: C++ 20)
-- NDK 27 already in use for OpenXR samples; meta samples lack explicit NDK version
+**Progress Summary** (2025-12-19):
+- ✅ OpenXR samples fully upgraded to C++ 20, NDK 29, AGP 8.13.2
+- ✅ Composite build structure: `openxr/gradlew.bat assembleDebug` builds all samples
+- ✅ Gradle wrapper auto-bootstrap eliminates need for committed JAR files
+- ⏳ Meta samples still require upgrade (AGP 7.0.3 → 8.13.2, etc.)
 
 ### Phase 7: Connect to Context7 MCP
 **Status**: ⏳ Planned

@@ -33,10 +33,11 @@ Each ADR follows this structure:
 | [ADR-0003](adr-0003-use-ovr-openxr-mobile-sdk-for-meta-extensions.md) | Use OVR OpenXR Mobile SDK for Meta Extensions | Accepted |
 | [ADR-0004](adr-0004-establish-open-ai-code-assistants-structure.md) | Establish Open AI Code Assistants Structure | Accepted |
 | [ADR-0005](adr-0005-openxr-sdk-dependency-management-via-maven-and-fetchcontent.md) | OpenXR SDK Dependency Management via Maven and FetchContent | Accepted |
-| [ADR-0006](adr-0006-use-ai-assisted-tooling-for-adr-creation.md) | Use AI-Assisted Tooling for ADR Creation | Accepted |
-| [ADR-0007](adr-0007-build-and-run-architecture.md) | Build and Run Architecture | Proposed |
+| [ADR-0006](adr-0006-use-ai-assisted-tooling-for-adr-creation.md) | Use AI-Assisted Tooling for ADR Creation | Accepted - Phase 1 (Skill) - 2025-12-05 |
+| [ADR-0007](adr-0007-build-and-run-architecture.md) | Build and Run Architecture | Accepted |
 | [ADR-0008](adr-0008-integrate-meta-openxr-samples-with-minimal-changes.md) | Integrate Meta OpenXR Samples with Minimal Changes | Accepted |
 | [ADR-0009](adr-0009-automatic-gradle-wrapper-bootstrapping.md) | Automatic Gradle Wrapper Bootstrapping | Accepted |
+| [ADR-0010](adr-0010-composite-build-for-openxr-samples.md) | Composite Build for OpenXR Samples | Accepted |
 
 ## Creating New ADRs
 

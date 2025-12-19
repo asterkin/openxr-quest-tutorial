@@ -59,7 +59,10 @@ if not exist "%WRAPPER_PROPERTIES%" (
         echo distributionBase=GRADLE_USER_HOME
         echo distributionPath=wrapper/dists
         echo distributionUrl=https\://services.gradle.org/distributions/gradle-%GRADLE_VERSION%-bin.zip
-        ...
+        echo networkTimeout=10000
+        echo validateDistributionUrl=true
+        echo zipStoreBase=GRADLE_USER_HOME
+        echo zipStorePath=wrapper/dists
     ) > "%WRAPPER_PROPERTIES%"
 )
 ```

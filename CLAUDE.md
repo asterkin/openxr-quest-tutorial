@@ -35,7 +35,7 @@ To ensure efficient and clear interaction, please adhere to the following guidel
 - **AI Agent Entry Point**: `CLAUDE.md` (this file, repo root)
 - **Detailed Documentation**: `docs/` directory
 - **Project Plan**: `docs/Project_Plan.md`
-- **Project Architecture**: `docs/adrs` (**TBD**)
+- **Project Architecture**: `docs/adrs/` (Architecture Decision Records)
 - **Per-Sample Docs**: `samples/*/README.md` (quick reference)
 - **Sample Analysis**: `docs/samples/` (deep dives)
 
@@ -45,6 +45,33 @@ When referencing documentation:
 - Use relative paths from current file location
 - Link to specific sections with anchors when helpful
 - Always provide context for cross-project references
+
+---
+
+## Required Skills for Common Tasks
+
+### Architecture Decision Records (ADRs)
+
+**IMPORTANT**: When any of these conditions apply, ALWAYS invoke the `adr` skill FIRST:
+
+- User requests creating a new ADR
+- User requests updating or superseding an existing ADR
+- A decision is being made that affects system structure, dependencies, or build architecture
+- Choosing between competing technical approaches with long-term implications
+- Establishing new patterns or conventions for the repository
+
+**Trigger phrases** (invoke skill immediately when you see these):
+- "create an ADR", "new ADR", "document this decision"
+- "update ADR", "supersede ADR"
+- "we decided to", "the decision is" (when architecturally significant)
+
+**ADR Location**: `docs/adrs/`
+**Skill Location**: `.claude/skills/adr/`
+
+The skill provides:
+- Correct numbering sequence
+- Standard template
+- TOC update automation via `python .claude/skills/adr/scripts/update-adr-toc.py`
 
 ---
 

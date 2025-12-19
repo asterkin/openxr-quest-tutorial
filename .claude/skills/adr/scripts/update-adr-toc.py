@@ -7,12 +7,19 @@ extracts their metadata (number, title, status), and updates the
 table of contents in docs/adrs/README.md.
 
 Requirements: Python 3.12+
+Platform: Windows and Unix/Linux compatible
 """
 
 import re
 import sys
+import io
 from pathlib import Path
 from dataclasses import dataclass
+
+# Fix Windows console encoding for Unicode output
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 
 @dataclass
@@ -57,13 +64,21 @@ def extract_adr_metadata(adr_file: Path) -> ADR | None:
             return None
         title = title_match.group(1).strip()
 
-        # Extract status (e.g., "**Status:** Accepted" -> "Accepted")
-        # Handle multiline status like "Accepted - Phase 1 (Skill) - 2025-01-16"
-        status_match = re.search(r'\*\*Status:\*\*\s*(.+?)(?:\n|$)', content, re.MULTILINE)
+        # Extract status - handle multiple formats:
+        # - "**Status:** Accepted" (colon inside bold)
+        # - "**Status**: Accepted" (colon outside bold)
+        # - "**Status** Accepted" (no colon)
+        status_match = re.search(
+            r'\*\*Status\*\*:?\s*(.+?)(?:\n|$)|'  # **Status**: or **Status**
+            r'\*\*Status:\*\*\s*(.+?)(?:\n|$)',    # **Status:**
+            content,
+            re.MULTILINE
+        )
         if not status_match:
             print(f"Warning: Could not extract status from {adr_file.name}", file=sys.stderr)
             return None
-        status = status_match.group(1).strip()
+        # Get whichever group matched
+        status = (status_match.group(1) or status_match.group(2) or '').strip()
 
         return ADR(
             number=number,
