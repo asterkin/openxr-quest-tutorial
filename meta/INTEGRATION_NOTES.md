@@ -10,7 +10,8 @@
 
 1. [Build Fixes](#build-fixes)
    - [NDK 29 Compatibility Fixes](#ndk-29-compatibility-fixes)
-   - [XrHandTrackingWideMotionMode Internal API Fix](#xrhandtrackingwidemotionmode-internal-api-fix)
+   - [Sample Renames for Path Length](#sample-renames-for-path-length)
+   - [XrHandWMM Internal API Fix](#xrhandwmm-internal-api-fix)
 2. [Hand Tracking Guidelines](#hand-tracking-guidelines)
    - [Controller vs Hand Tracking Switching](#controller-vs-hand-tracking-switching)
    - [Enabling Hand Tracking](#enabling-hand-tracking)
@@ -134,7 +135,7 @@ error: identifier '_cm' preceded by whitespace in a literal operator declaration
 
 **Affected Files (3 total):**
 - `Samples/XrSamples/XrInput/Src/main.cpp` (lines 55, 58, 63, 66)
-- `Samples/XrSamples/XrHandsAndControllers/Src/main.cpp` (lines 52, 55, 60, 63)
+- `Samples/XrSamples/XrHandsCtrl/Src/main.cpp` (lines 52, 55, 60, 63) *(renamed from XrHandsAndControllers)*
 - `Samples/XrSamples/XrMicrogestures/Src/main.cpp` (lines 31, 34)
 
 ```cpp
@@ -149,9 +150,34 @@ constexpr float operator""_m(long double meters) {
 
 ---
 
-### XrHandTrackingWideMotionMode Internal API Fix
+### Sample Renames for Path Length
 
-**Problem:** The `XrHandTrackingWideMotionMode` sample contains internal/unreleased code that was supposed to be stripped from the public SDK (marked with `/// BEGIN_SDK_REMOVE` / `/// END_SDK_REMOVE` comments) but wasn't. This code references undefined APIs:
+**Problem:** Windows has a 260-character path limit. CMake generates object file paths based on project and target names. Several samples had names so long that combined with the deep repository path, CMake warned about paths exceeding 250 characters.
+
+**Fix:** Renamed 4 samples to shorter names while keeping them recognizable:
+
+| Original Name | New Name | Characters Saved |
+|---------------|----------|------------------|
+| `XrHandsAndControllers` | `XrHandsCtrl` | 10 |
+| `XrPassthroughOcclusion` | `XrPtOcclusion` | 9 |
+| `XrHandTrackingWideMotionMode` | `XrHandWMM` | 19 |
+| `XrCompositor_NativeActivity` | `XrCompositorNA` | 13 |
+
+**Updated components for each rename:**
+- Folder name (`XrSamples/{name}/`)
+- CMakeLists.txt target name (`project(...)`)
+- build.gradle (`namespace`, `applicationId`, `targets`)
+- settings.gradle (`rootProject.name`)
+- AndroidManifest.xml (activity class name, lib_name)
+- Java package name (`package com.oculus...`)
+
+**Maintenance scripts:** Use `rename_samples.py` to apply these renames if working from fresh Meta SDK sources.
+
+---
+
+### XrHandWMM Internal API Fix
+
+**Problem:** The `XrHandWMM` sample (renamed from `XrHandTrackingWideMotionMode`) contains internal/unreleased code that was supposed to be stripped from the public SDK (marked with `/// BEGIN_SDK_REMOVE` / `/// END_SDK_REMOVE` comments) but wasn't. This code references undefined APIs:
 
 - `wideMotionModeSource_` member variable (not declared)
 - `WideMotionModeSource()` method (not defined)
@@ -164,8 +190,8 @@ error: use of undeclared identifier 'XR_HAND_TRACKING_WIDE_MOTION_MODE_SOURCE_IN
 ```
 
 **Affected Files:**
-- `Samples/XrSamples/XrHandTrackingWideMotionMode/Src/xr_hand_helper.h`
-- `Samples/XrSamples/XrHandTrackingWideMotionMode/Src/main.cpp`
+- `Samples/XrSamples/XrHandWMM/Src/xr_hand_helper.h` *(renamed from XrHandTrackingWideMotionMode)*
+- `Samples/XrSamples/XrHandWMM/Src/main.cpp`
 
 **Fix for xr_hand_helper.h (lines 133-138):**
 ```cpp
@@ -500,12 +526,14 @@ This sample demonstrates **colocated multi-user experiences** using shared spati
 | Sample | Status | Notes |
 |--------|--------|-------|
 | XrPassthrough | Works | - |
-| XrPassthroughOcclusion | Works | - |
+| XrPtOcclusion | Works | Renamed from XrPassthroughOcclusion |
 | XrHandDataSource | Works | After std::to_array fix |
 | XrHandsFB | Works | Put down controllers to see hands |
-| XrHandTrackingWideMotionMode | Works | After internal API removal fix |
+| XrHandWMM | Works | Renamed from XrHandTrackingWideMotionMode; after internal API removal fix |
 | XrMicrogestures | Works | Requires correct hand position for swipes |
 | XrInput | Works | Grab tool with grip button, not trigger; beams only on UI |
+| XrHandsCtrl | Works | Renamed from XrHandsAndControllers |
+| XrCompositorNA | Works | Renamed from XrCompositor_NativeActivity |
 | XrSpaceWarp | Works | Hold trigger to disable; shows frame extrapolation tech |
 | XrSceneSharing | Works | Requires room scan first; Right Trigger for Space Setup |
 

@@ -72,10 +72,11 @@ function(find_minizip)
     # Add the include directories
     target_include_directories(minizip PUBLIC ${CMAKE_CURRENT_LIST_DIR}/minizip/src)
 
-    # no-shadow doesn't exist on MSVC
+    # Suppress warnings for 3rd party code
     if(NOT MSVC)
         target_compile_options(minizip PRIVATE
             $<$<COMPILE_LANGUAGE:C>:-Wno-shadow>
+            $<$<COMPILE_LANGUAGE:C>:-Wno-deprecated-non-prototype>
         )
     endif()
 
@@ -111,6 +112,13 @@ function(find_stb)
     add_library(stb STATIC ${STB_SRC})
 
     target_include_directories(stb PUBLIC ${CMAKE_CURRENT_LIST_DIR}/stb/src)
+
+    # Suppress warnings for 3rd party code
+    if(NOT MSVC)
+        target_compile_options(stb PRIVATE
+            $<$<COMPILE_LANGUAGE:C>:-Wno-tautological-compare>
+        )
+    endif()
 endfunction()
 
 function(find_openxr_loader)
