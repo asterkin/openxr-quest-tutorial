@@ -1,4 +1,9 @@
-@rem
+#!/usr/bin/env python3
+"""Update all individual sample gradlew.bat files with auto-bootstrapping."""
+
+from pathlib import Path
+
+GRADLEW_BAT_CONTENT = r'''@rem
 @rem Copyright 2015 the original author or authors.
 @rem
 @rem Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,3 +133,24 @@ exit /b %EXIT_CODE%
 if "%OS%"=="Windows_NT" endlocal
 
 :omega
+'''
+
+def main():
+    script_dir = Path(__file__).parent
+    xr_samples_dir = script_dir / "XrSamples"
+
+    updated_count = 0
+
+    for sample_dir in xr_samples_dir.iterdir():
+        if sample_dir.is_dir():
+            gradlew_path = sample_dir / "Projects" / "Android" / "gradlew.bat"
+            if gradlew_path.parent.exists():
+                with open(gradlew_path, 'w', encoding='utf-8', newline='\r\n') as f:
+                    f.write(GRADLEW_BAT_CONTENT)
+                print(f"[OK] {sample_dir.name}")
+                updated_count += 1
+
+    print(f"\nUpdated {updated_count} gradlew.bat files")
+
+if __name__ == "__main__":
+    main()
