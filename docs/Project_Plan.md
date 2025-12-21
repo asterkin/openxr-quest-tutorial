@@ -59,8 +59,8 @@
 - [x] **Meta Auto-Cleanup** - Added Gradle task to restart vrshell after uninstall (zombie icon cleanup)
 - [x] **Remove Warnings** - Remove all Meta samples warnings
 - [x] **Final Verification** - Build and test all samples on Quest 3 (top-level build script, standardized tasks assembleAllDebug/Release)
-- [ ] **Update Documentation** - Update `docs/Environment_Setup.md` with new standard versions
-- [ ] **Clean Up Unused Versions** - Remove old NDK versions, unused Gradle distributions, and deprecated dependencies
+- [x] **Clean Up Unused Versions** - Remove old NDK versions, unused Gradle distributions, and deprecated dependencies
+- [x] **Update Documentation** - Update `docs/Environment_Setup.md` with new standard versions
 
 **Audit Results** (2025-12-19):
 

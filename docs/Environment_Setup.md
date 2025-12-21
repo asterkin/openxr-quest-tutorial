@@ -32,7 +32,7 @@ This document describes the **workstation prerequisites** for building the OpenX
 | **Java/JDK** | 17 (LTS) | Gradle build system |
 | **Gradle** | 8.x | Build automation (via wrapper) |
 | **Android SDK** | Platform 34 | Android build target |
-| **Android NDK** | r27 (27.2.12479018) | Native C/C++ compilation |
+| **Android NDK** | r29 (29.0.14206865) | Native C/C++ compilation |
 | **Python** | 3.14 | Build scripts, code generation, diagnostics |
 | **Meta XR SDK** | OVR Mobile SDK 81.0 | Quest-specific OpenXR extensions (optional) |
 | **Meta Quest Developer Hub** | 6.1.1 | Device deployment/debugging |
@@ -406,10 +406,10 @@ After Android Studio opens:
 
 **SDK Tools Tab** (click "Show Package Details" checkbox):
 - ✅ **Android SDK Build-Tools 34.0.0**
-- ✅ **NDK (Side by side) 27.2.12479018** ⚠️ **CRITICAL - Exact version required**
+- ✅ **NDK (Side by side) 29.0.14206865** ⚠️ **CRITICAL - Exact version required**
   - Expand "NDK (Side by side)" section
-  - Check version **27.2.12479018** specifically
-  - Do NOT use "latest" - must be r27
+  - Check version **29.0.14206865** specifically
+  - Do NOT use "latest" - must be r29
 - ✅ **CMake 3.22.1**
 - ✅ **Android SDK Command-line Tools (latest)**
 - ✅ **Android Emulator** (optional)
@@ -419,7 +419,7 @@ Click **"Apply"** → Accept licenses → Wait for downloads
 
 #### Configure Android SDK Environment Variables
 
-**Important**: Set `ANDROID_HOME` and add platform-tools and CMake to PATH (required for Gradle builds, Quest 3 deployment, and OpenXR SDK building).
+**Important**: Set `ANDROID_HOME` and add platform-tools to PATH (required for Gradle builds and Quest 3 deployment). CMake in PATH is optional - Gradle finds it automatically via the SDK.
 
 ```powershell
 # Set Android SDK location
@@ -428,11 +428,14 @@ $androidSdk = "$env:LOCALAPPDATA\Android\Sdk"
 # Set ANDROID_HOME permanently at system level
 [System.Environment]::SetEnvironmentVariable('ANDROID_HOME', $androidSdk, 'Machine')
 
-# Add platform-tools and CMake to PATH permanently
+# Add platform-tools to PATH permanently (required for adb)
 $currentPath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
 $platformTools = "$androidSdk\platform-tools"
-$cmakeBin = "$androidSdk\cmake\3.22.1\bin"
-[System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$platformTools;$cmakeBin", 'Machine')
+[System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$platformTools", 'Machine')
+
+# Optional: Add CMake to PATH for command-line use (Gradle finds it automatically)
+# $cmakeBin = "$androidSdk\cmake\3.22.1\bin"
+# [System.Environment]::SetEnvironmentVariable('Path', "$currentPath;$platformTools;$cmakeBin", 'Machine')
 
 # Close and reopen PowerShell Admin to refresh environment variables
 ```
@@ -451,8 +454,8 @@ $env:ANDROID_HOME
 **Expected**: `C:\Users\<YourName>\AppData\Local\Android\Sdk`
 
 ```powershell
-# Verify NDK r27 installation
-Test-Path "$env:ANDROID_HOME\ndk\27.2.12479018"
+# Verify NDK r29 installation
+Test-Path "$env:ANDROID_HOME\ndk\29.0.14206865"
 ```
 
 **Expected**: `True`
@@ -465,11 +468,11 @@ adb --version
 **Expected**: `Android Debug Bridge version 1.x.x`
 
 ```powershell
-# Verify cmake is available
+# Optional: Verify cmake is available (only if added to PATH)
 cmake --version
 ```
 
-**Expected**: `cmake version 3.22.1` or higher
+**Expected** (if CMake added to PATH): `cmake version 3.22.1` or higher
 
 ---
 
