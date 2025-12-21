@@ -136,6 +136,55 @@ The skill provides:
 
 ---
 
+## Tool Documentation Access
+
+Query up-to-date documentation for tools and SDKs via Context7 API. This overcomes AI training data cutoffs for rapidly evolving tools.
+
+### When to Query Documentation
+
+**ALWAYS** query documentation in these scenarios:
+
+1. **Before using C++ 20 features** - std::ranges, concepts, modules, coroutines
+2. **Before using OpenXR/MetaXR extensions** - XR_FB_*, XR_META_*, hand tracking, passthrough
+3. **When encountering build errors** - Gradle, CMake, NDK toolchain issues
+4. **When user asks "How do I..."** - Questions about configured tools
+
+### Available Sources
+
+| Source | Aliases | Description |
+|--------|---------|-------------|
+| `cpp` | `c++`, `cppreference` | C++ 20 language and STL |
+| `cmake` | - | CMake build system |
+| `gradle` | `agp` | Gradle, Android plugin |
+| `ndk` | `android-ndk` | Android NDK, JNI |
+| `openxr` | `xr` | OpenXR runtime API |
+| `metaxr` | `meta`, `quest` | Meta Quest extensions |
+| `vulkan` | `vk` | Vulkan graphics API |
+| `gles` | `opengles`, `gl` | OpenGL ES graphics |
+
+### Usage
+
+```bash
+# List available sources
+python .claude/skills/doc-query/scripts/list-sources.py
+
+# Query documentation
+python .claude/skills/doc-query/scripts/query.py <source> "<topic>" [tokens]
+
+# Examples
+python .claude/skills/doc-query/scripts/query.py cpp "std::expected"
+python .claude/skills/doc-query/scripts/query.py openxr "XR_FB_passthrough"
+python .claude/skills/doc-query/scripts/query.py gradle "namespace configuration"
+```
+
+### Configuration
+
+- **Sources config**: `.claude/doc-sources.toml`
+- **API key**: `CONTEXT7_API_KEY` environment variable (see [Environment_Setup.md](docs/Environment_Setup.md#35-context7-api-key-for-claude-code-documentation-access))
+- **Architecture**: [ADR-0011](docs/adrs/adr-0011-use-context7-mcp-for-documentation-access.md)
+
+---
+
 ## Repository Navigation & Search Guidelines
 
 ### File Discovery Strategies
