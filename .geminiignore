@@ -1,0 +1,40 @@
+# OpenXR Quest Tutorial - Gemini Ignore
+# Exclude build artifacts and large directories from context scanning
+
+# Gradle & Build
+.gradle/
+build/
+*/build/
+**/build/
+local.properties
+
+# Gradle wrapper
+**/gradle/wrapper/
+
+# Android/CMake artifacts
+.cxx/
+.externalNativeBuild/
+obj/
+libs/
+CMakeFiles/
+CMakeCache.txt
+
+# Generated binaries
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.so
+*.o
+*.a
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+venv/
+env/

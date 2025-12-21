@@ -97,8 +97,8 @@ Read(file_path, offset=500, limit=500)  # Lines 500-1000
 - **Detailed Documentation**: `docs/` directory
 - **Project Plan**: `docs/Project_Plan.md`
 - **Project Architecture**: `docs/adrs/` (Architecture Decision Records)
-- **Per-Sample Docs**: `samples/*/README.md` (quick reference)
-- **Sample Analysis**: `docs/samples/` (deep dives)
+- **Per-Sample Docs**: `openxr/*/README.md`, `openxr/tutorial/README.md`, `meta/README.md` (quick reference)
+- **Sample Analysis**: `docs/adrs/` (deep dives; sample-specific analyses may be added later)
 
 ### Cross-References
 
@@ -241,10 +241,9 @@ python .claude/skills/doc-query/scripts/query.py cpp "unique_ptr" 1500
 
 **Task-based documentation lookup:**
 
-- Build issues → [docs/Build_Deploy_Guide.md](docs/Build_Deploy_Guide.md)
+- Build & run instructions → README files at each level (`README.md`, `openxr/README.md`, `openxr/tutorial/README.md`, `meta/README.md`)
 - SDK setup problems → [docs/Environment_Setup.md](docs/Environment_Setup.md)
 - Architecture questions → [docs/Project_Plan.md](docs/Project_Plan.md)
-- Sample-specific → `samples/{sample_name}/README.md`
 
 ### Repository Scope Reminders
 

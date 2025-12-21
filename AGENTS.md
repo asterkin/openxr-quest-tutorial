@@ -37,7 +37,7 @@ To ensure efficient and clear interaction, please adhere to the following guidel
 - **Detailed Documentation**: `docs/` directory
 - **Project Plan**: `docs/Project_Plan.md`
 - **Project Architecture**: `docs/adrs/`
-- **Per-Sample Docs**: `samples/*/README.md` (quick reference)
+- **Per-Sample Docs**: `openxr/*/README.md`, `openxr/tutorial/README.md`, `meta/README.md` (quick reference)
 - **Sample Analysis**: `docs/adrs/` (deep dives; sample-specific analyses may be added later)
 
 ### Cross-References
@@ -63,6 +63,7 @@ This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer th
 - **List a directory**: `dir`, `dir /a` (shows hidden), `dir /s` (recursive)
 - **Read a file**: `type path\to\file.md` (add `| more` for paging)
 - **Find files by name substring**: `dir /s /b *OpenXR*`
+- **Fast content search**: `rg "pattern"` (if installed), fallback to `findstr /s /n /i "pattern" *.cpp`
 - **Avoid**: `<<` heredocs and bash-style pipes/flags that `cmd` doesn’t support
 
 ### Python Usage (avoid quoting pitfalls)
@@ -94,11 +95,11 @@ When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `
 
 **Task-based documentation lookup:**
 
-- Build & deploy → [samples/Build_Guidelines.md](samples/Build_Guidelines.md)
+- Build & deploy → [openxr/Build_Guidelines.md](openxr/Build_Guidelines.md) and [meta/README.md](meta/README.md)
 - Build system architecture → [docs/adrs/adr-0007-build-and-run-architecture.md](docs/adrs/adr-0007-build-and-run-architecture.md)
 - SDK setup problems → [docs/Environment_Setup.md](docs/Environment_Setup.md)
 - Architecture questions → [docs/Project_Plan.md](docs/Project_Plan.md)
-- Sample-specific → `samples/{sample_name}/README.md`
+- Sample-specific → `openxr/{sample_name}/README.md` or `meta/Samples/XrSamples/{sample_name}/README.md`
 
 ### Repository Scope Reminders
 

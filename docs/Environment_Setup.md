@@ -212,7 +212,7 @@ cd openxr-quest-tutorial
 ls
 ```
 
-**Expected**: Should show directories: `docs`, `samples`, `scripts`, `README.md`, `CLAUDE.md`
+**Expected**: Should show directories: `docs`, `meta`, `openxr` and files: `README.md`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `gradlew.bat`
 
 **Your working directory**: `C:\Users\<YourName>\Projects\openxr-quest-tutorial`
 
@@ -549,7 +549,7 @@ cmake --version
 1. Run installer with defaults
 2. Launch MQDH after installation
 3. Create/login to Meta developer account (if needed)
-   - **See**: [Meta Developer Accounts Management](Meta_Developer_Accounts_Management.md) for guidance on individual vs. team accounts
+   - **See**: https://developer.oculus.com/documentation/native/android/mobile-openxr-sample/ for official Meta developer account guidance
 
 #### Connect Quest 3 Device
 
