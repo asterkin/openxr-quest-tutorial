@@ -63,6 +63,7 @@
 | OpenXR | `github_repos/KhronosGroup/OpenXR-SDK-Source` | XR runtime API, extensions |
 | Meta OpenXR | `github_repos/meta-quest/Meta-OpenXR-SDK` | Quest-specific extensions |
 | Vulkan | `websites/vulkan` | Graphics API, SPIR-V, synchronization |
+| OpenGL ES | `websites/opengl` | Graphics API for Meta Quest samples |
 
 **Execution Plan**:
 - [x] **Create ADR** - Document decision to adopt Context7 MCP for documentation access ([ADR-0011](adrs/adr-0011-use-context7-mcp-for-documentation-access.md))
@@ -70,7 +71,7 @@
 - [x] **Implement doc-query skill** - Python script querying Context7 API with TOML config
 - [x] **Implement add-doc skill** - Script to register new documentation sources
 - [x] **Document API key setup** - Add Context7 API key acquisition steps to [Environment_Setup.md](Environment_Setup.md)
-- [ ] **Create doc-sources.toml** - Initial configuration with all 7 sources above
+- [x] **Create doc-sources.toml** - Initial configuration with all 8 sources above
 - [ ] **Update CLAUDE.md** - Add "Tool Documentation Access" section with usage triggers
 - [ ] **Verify Context7 IDs** - Confirm all library IDs exist on context7.com
 - [ ] **Test queries** - Validate each source returns relevant documentation

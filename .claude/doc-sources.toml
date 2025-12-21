@@ -1,0 +1,50 @@
+# Documentation Sources Configuration
+# Maps tools and SDKs to their Context7 documentation sources.
+# Used by doc-query skill for accessing up-to-date documentation.
+
+[sources.cpp]
+context7_id = "websites/cppreference"
+description = "C++ 20 language features, STL, and standard library"
+default_tokens = 3000
+aliases = ["c++", "cppreference"]
+
+[sources.cmake]
+context7_id = "websites/cmake"
+description = "CMake build system, modules, and toolchain files"
+default_tokens = 2500
+
+[sources.gradle]
+context7_id = "websites/gradle"
+description = "Gradle build automation, Android plugin, Kotlin DSL"
+default_tokens = 2500
+aliases = ["agp"]
+
+[sources.ndk]
+context7_id = "websites/android_ndk"
+description = "Android NDK native development, JNI, toolchains"
+default_tokens = 2500
+aliases = ["android-ndk"]
+
+[sources.openxr]
+context7_id = "github_repos/KhronosGroup/OpenXR-SDK-Source"
+description = "OpenXR runtime API, extensions, loader"
+default_tokens = 3000
+aliases = ["xr"]
+
+[sources.metaxr]
+context7_id = "github_repos/meta-quest/Meta-OpenXR-SDK"
+description = "Meta Quest OpenXR extensions (passthrough, hand tracking)"
+default_tokens = 3000
+aliases = ["meta", "quest"]
+
+[sources.vulkan]
+context7_id = "websites/vulkan"
+description = "Vulkan graphics API, SPIR-V, synchronization"
+default_tokens = 3000
+aliases = ["vk"]
+
+[sources.gles]
+context7_id = "websites/opengl"
+description = "OpenGL ES graphics API for Meta Quest samples"
+default_tokens = 2500
+aliases = ["opengles", "gl"]
