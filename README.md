@@ -6,10 +6,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 ![OpenXR](https://img.shields.io/badge/OpenXR-1.0.34-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Meta%20Quest%203-orange.svg)
-[![C++](https://img.shields.io/badge/C++-17-blue.svg)](#)
-[![CMake](https://img.shields.io/badge/CMake-3.24.3-green.svg)](#)
-[![Gradle](https://img.shields.io/badge/Gradle-8.1-orange.svg)](#)
+[![C++](https://img.shields.io/badge/C++-20-blue.svg)](#)
+[![CMake](https://img.shields.io/badge/CMake-3.22.1-green.svg)](#)
+[![Gradle](https://img.shields.io/badge/Gradle-8.13-orange.svg)](#)
 [![Android](https://img.shields.io/badge/Android-API%2034-green.svg)](#)
+[![NDK](https://img.shields.io/badge/NDK-r29-purple.svg)](#)
 
 ---
 
@@ -36,7 +37,34 @@ Follow these steps to get started with the tutorial samples:
 
     *   **[OpenXR Tutorial Samples](openxr/README.md)**: Our core tutorial samples, including `hello_world` (a great place to start) and a progressive tutorial series.
 
-    *   **[Meta Quest Samples](meta/README.md)**: Integrated official Meta OpenXR SDK samples, demonstrating Quest-specific features.**
+    *   **[Meta Quest Samples](meta/README.md)**: Integrated official Meta OpenXR SDK samples, demonstrating Quest-specific features.
+
+## Building
+
+Build all samples from the repository root using the unified Gradle wrapper:
+
+```bash
+# Build all samples (OpenXR + Meta) - Debug
+./gradlew.bat assembleAllDebug
+
+# Build all samples - Release
+./gradlew.bat assembleAllRelease
+
+# Clean all samples
+./gradlew.bat cleanAll
+```
+
+Or build individual sample collections:
+
+```bash
+# OpenXR samples only
+cd openxr && ./gradlew.bat assembleAllDebug
+
+# Meta samples only
+cd meta/Samples && ./gradlew.bat assembleAllDebug
+```
+
+> **Note**: The Gradle wrapper auto-downloads on first run (no pre-installation required).
 
 ## Documentation
 
