@@ -28,6 +28,7 @@ This document describes the **workstation prerequisites** for building the OpenX
 | **Claude Code CLI** | Latest | AI-powered development assistant |
 | **Codex CLI** (optional) | Latest | Backup AI assistant |
 | **Gemini CLI** (optional) | Latest | Google AI assistant for code generation and analysis |
+| **Context7 API Key** | N/A | Real-time documentation access for Claude Code |
 | **VSCode** | Latest | Primary IDE for this repository |
 | **Java/JDK** | 17 (LTS) | Gradle build system |
 | **Gradle** | 8.x | Build automation (via wrapper) |
@@ -328,6 +329,60 @@ More details are available at [https://geminicli.com/docs/get-started/installati
 
 ##### Notes
 - The Gemini CLI respects the same project workspace; run it from your repo root for best context.
+
+---
+
+#### 3.5 Context7 API Key (For Claude Code Documentation Access)
+
+**Purpose**: Enables Claude Code to query up-to-date documentation for C++ 20, OpenXR, Gradle, NDK, and other tools via the Context7 service.
+
+**Why This Matters**: AI models have training data cutoffs. Context7 provides real-time access to current documentation, ensuring Claude Code gives accurate advice for the latest SDK versions.
+
+##### Get API Key
+
+1. Visit [https://context7.com](https://context7.com)
+2. Sign up or log in with GitHub
+3. Navigate to **Settings** → **API Keys**
+4. Click **"Create API Key"**
+5. Copy the generated key (starts with `c7-...`)
+
+##### Configure Environment Variable
+
+```powershell
+# Set CONTEXT7_API_KEY permanently at user level
+[System.Environment]::SetEnvironmentVariable('CONTEXT7_API_KEY', 'c7-your-api-key-here', 'User')
+
+# Close and reopen PowerShell to refresh environment variables
+```
+
+After reopening PowerShell:
+
+```powershell
+# Verify the key is set (should show your key)
+$env:CONTEXT7_API_KEY
+```
+
+**Expected**: `c7-...` (your API key)
+
+##### Verification
+
+```powershell
+# Navigate to project
+cd ~\Projects\openxr-quest-tutorial
+
+# List available documentation sources
+python .claude/skills/doc-query/scripts/list-sources.py
+
+# Test a documentation query
+python .claude/skills/doc-query/scripts/query.py cpp "std::ranges"
+```
+
+**Expected**: Documentation content returned without errors.
+
+##### Notes
+- The API key is stored at user level (not system level) for security
+- Free tier includes generous query limits for individual developers
+- See [ADR-0011](adrs/adr-0011-use-context7-mcp-for-documentation-access.md) for architectural context
 
 ---
 
