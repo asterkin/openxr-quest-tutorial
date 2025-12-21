@@ -1,0 +1,18 @@
+# Documentation Source Entry Template
+#
+# Copy this template to .claude/doc-sources.toml and customize.
+# Or use: python .claude/skills/add-doc/scripts/add-source.py
+
+[sources.example]
+# Required: Context7 library identifier
+# Format: "websites/LIBRARY_ID" or "github_repos/OWNER/REPO"
+context7_id = "websites/example"
+
+# Required: Brief description of the documentation
+description = "Example documentation source"
+
+# Optional: Maximum tokens to retrieve (default: 2500)
+default_tokens = 2500
+
+# Optional: Alternative names for easier querying
+aliases = ["ex", "eg"]
