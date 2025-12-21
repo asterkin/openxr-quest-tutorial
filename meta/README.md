@@ -1,5 +1,7 @@
 # Meta OpenXR SDK / Samples
 
+> **Note**: This is an adaptation of the official [Meta-OpenXR-SDK](https://github.com/meta-quest/Meta-OpenXR-SDK), updated for compatibility with the latest toolchain (AGP 8.13.2, NDK r29, C++ 20).
+
 ## Introduction
 Welcome to the Meta OpenXR SDK project, a native OpenXR SDK and samples specifically designed for Meta Quest. This SDK is a comprehensive resource that includes header files and API definitions for both experimental and pre-release OpenXR APIs.
 
