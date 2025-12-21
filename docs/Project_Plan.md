@@ -69,9 +69,9 @@
 - [x] **Set up skill structure** - Create `.claude/skills/doc-query/` and `.claude/skills/add-doc/`
 - [x] **Implement doc-query skill** - Python script querying Context7 API with TOML config
 - [x] **Implement add-doc skill** - Script to register new documentation sources
+- [ ] **Document API key setup** - Add Context7 API key acquisition steps to [Environment_Setup.md](Environment_Setup.md)
 - [ ] **Create doc-sources.toml** - Initial configuration with all 7 sources above
 - [ ] **Update CLAUDE.md** - Add "Tool Documentation Access" section with usage triggers
-- [ ] **Document API key setup** - Add Context7 API key acquisition steps to [Environment_Setup.md](Environment_Setup.md)
 - [ ] **Verify Context7 IDs** - Confirm all library IDs exist on context7.com
 - [ ] **Test queries** - Validate each source returns relevant documentation
 - [ ] **Document usage patterns** - Add examples for common scenarios (code explanation, migration)
