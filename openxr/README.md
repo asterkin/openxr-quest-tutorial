@@ -5,9 +5,32 @@
 
 ---
 
-## Build Guidelines
+## Building
 
-For detailed instructions on how to build, install, and troubleshoot the samples, refer to the **[OpenXR Samples Build Guidelines](Build_Guidelines.md)**.
+Build all OpenXR samples from this directory:
+
+```bash
+# Build all OpenXR samples - Debug
+./gradlew.bat assembleAllDebug
+
+# Build all OpenXR samples - Release
+./gradlew.bat assembleAllRelease
+
+# Clean all
+./gradlew.bat cleanAll
+```
+
+Or build individual samples:
+
+```bash
+./gradlew.bat -p hello_world assembleDebug
+./gradlew.bat -p hello_xr assembleVulkanDebug
+./gradlew.bat -p tutorial assembleDebug
+```
+
+> **Note**: The Gradle wrapper auto-downloads on first run.
+
+For detailed build and troubleshooting instructions, see **[Build Guidelines](Build_Guidelines.md)**.
 
 ---
 
