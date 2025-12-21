@@ -48,6 +48,39 @@ C:\Users\PRO\AppData\Local\Android\Sdk → /c/Users/PRO/AppData/Local/Android/Sd
 
 ---
 
+## File Reading Guidelines
+
+**Before reading unknown or potentially large files**, check the file size first to avoid token waste:
+
+```bash
+ls -lh /path/to/file  # Check size before reading
+```
+
+### Size Thresholds
+| Size | Action |
+|------|--------|
+| < 500 lines | Read entire file |
+| 500-2000 lines | Consider using `offset` and `limit` parameters |
+| > 2000 lines | **Must chunk** - use `offset` and `limit` to read in sections |
+
+### Chunked Reading Example
+```
+# First, check total lines
+wc -l /path/to/file
+
+# Then read in chunks
+Read(file_path, offset=1, limit=500)    # Lines 1-500
+Read(file_path, offset=500, limit=500)  # Lines 500-1000
+```
+
+### Best Practices
+- Always check size of unfamiliar files (logs, generated code, data files)
+- Use `Grep` to find relevant sections before reading entire files
+- For config files and source code, full read is usually fine
+- Large reads that fail waste significant tokens - prevention is key
+
+---
+
 ## Quick Reference
 
 - **Repository Structure**: [docs/Repository_Structure.md](docs/Repository_Structure.md) - Directory layout and organization
