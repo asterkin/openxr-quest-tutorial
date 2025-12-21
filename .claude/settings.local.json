@@ -14,7 +14,11 @@
       "Skill(adr)",
       "Bash(git add:*)",
       "Bash(.gradlew.bat:*)",
-      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\PRO\\\\Projects\\\\openxr-quest-tutorial\\\\meta\\\\Samples && gradlew.bat :XrPassthrough:assembleDebug\")"
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\PRO\\\\Projects\\\\openxr-quest-tutorial\\\\meta\\\\Samples && gradlew.bat :XrPassthrough:assembleDebug\")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:context7.com)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

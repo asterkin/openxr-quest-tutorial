@@ -153,14 +153,12 @@ Query up-to-date documentation for tools and SDKs via Context7 API. This overcom
 
 | Source | Aliases | Description |
 |--------|---------|-------------|
-| `cpp` | `c++`, `cppreference` | C++ 20 language and STL |
+| `cpp` | `c++`, `cppcore` | C++ Core Guidelines |
 | `cmake` | - | CMake build system |
 | `gradle` | `agp` | Gradle, Android plugin |
 | `ndk` | `android-ndk` | Android NDK, JNI |
 | `openxr` | `xr` | OpenXR runtime API |
 | `metaxr` | `meta`, `quest` | Meta Quest extensions |
-| `vulkan` | `vk` | Vulkan graphics API |
-| `gles` | `opengles`, `gl` | OpenGL ES graphics |
 
 ### Usage
 
@@ -176,6 +174,40 @@ python .claude/skills/doc-query/scripts/query.py cpp "std::expected"
 python .claude/skills/doc-query/scripts/query.py openxr "XR_FB_passthrough"
 python .claude/skills/doc-query/scripts/query.py gradle "namespace configuration"
 ```
+
+### Common Scenarios
+
+**Explaining unfamiliar OpenXR code:**
+```bash
+# User asks: "What does this XR_FB_passthrough extension do?"
+python .claude/skills/doc-query/scripts/query.py metaxr "passthrough" 2000
+```
+
+**Understanding CMake patterns:**
+```bash
+# Build error with target_link_libraries
+python .claude/skills/doc-query/scripts/query.py cmake "target_link_libraries" 1500
+```
+
+**NDK/JNI debugging:**
+```bash
+# Crash in JNI code
+python .claude/skills/doc-query/scripts/query.py ndk "JNI local reference" 1500
+```
+
+**Gradle build issues:**
+```bash
+# AGP configuration problem
+python .claude/skills/doc-query/scripts/query.py gradle "android namespace" 1500
+```
+
+**Modern C++ patterns:**
+```bash
+# Understanding RAII or smart pointers in samples
+python .claude/skills/doc-query/scripts/query.py cpp "unique_ptr" 1500
+```
+
+**Note:** If topic search returns "Library not found", try without a topic filter or use broader terms. Some libraries have limited topic indexing.
 
 ### Configuration
 

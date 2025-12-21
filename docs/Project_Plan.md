@@ -53,17 +53,15 @@
 -   Sub-agents add complexity without significant benefit for documentation queries
 -   Skills integrate naturally with CLAUDE.md workflow instructions
 
-**Documentation Sources to Configure**:
+**Documentation Sources Configured** (verified 2025-12-21):
 | Source | Context7 ID | Purpose |
 |--------|-------------|---------|
-| C++ 20 | `websites/cppreference` | Modern C++ features, STL, language spec |
-| CMake | `websites/cmake` | Build system, modules, toolchain files |
-| Gradle | `websites/gradle` | Android build, AGP, Kotlin DSL |
-| Android NDK | `websites/android_ndk` | Native development, JNI, toolchains |
-| OpenXR | `github_repos/KhronosGroup/OpenXR-SDK-Source` | XR runtime API, extensions |
-| Meta OpenXR | `github_repos/meta-quest/Meta-OpenXR-SDK` | Quest-specific extensions |
-| Vulkan | `websites/vulkan` | Graphics API, SPIR-V, synchronization |
-| OpenGL ES | `websites/opengl` | Graphics API for Meta Quest samples |
+| C++ | `isocpp/CppCoreGuidelines` | C++ Core Guidelines, modern best practices |
+| CMake | `Kitware/CMake` | Build system, modules, toolchain files |
+| Gradle | `gradle/gradle` | Android build, AGP, Kotlin DSL |
+| Android NDK | `android/ndk` | Native development, JNI, toolchains |
+| OpenXR | `KhronosGroup/OpenXR-SDK` | XR runtime API, extensions |
+| Meta OpenXR | `meta-quest/Meta-OpenXR-SDK` | Quest-specific extensions |
 
 **Execution Plan**:
 - [x] **Create ADR** - Document decision to adopt Context7 MCP for documentation access ([ADR-0011](adrs/adr-0011-use-context7-mcp-for-documentation-access.md))
@@ -71,11 +69,11 @@
 - [x] **Implement doc-query skill** - Python script querying Context7 API with TOML config
 - [x] **Implement add-doc skill** - Script to register new documentation sources
 - [x] **Document API key setup** - Add Context7 API key acquisition steps to [Environment_Setup.md](Environment_Setup.md)
-- [x] **Create doc-sources.toml** - Initial configuration with all 8 sources above
+- [x] **Create doc-sources.toml** - Initial configuration with all 6 sources above
 - [x] **Update CLAUDE.md** - Add "Tool Documentation Access" section with usage triggers
-- [ ] **Verify Context7 IDs** - Confirm all library IDs exist on context7.com
-- [ ] **Test queries** - Validate each source returns relevant documentation
-- [ ] **Document usage patterns** - Add examples for common scenarios (code explanation, migration)
+- [x] **Verify Context7 IDs** - Confirmed all library IDs exist (removed unavailable: vulkan, gles)
+- [x] **Test queries** - All 6 sources return documentation (topic filtering may 404 if no matches)
+- [x] **Document usage patterns** - Added "Common Scenarios" section to CLAUDE.md
 
 ### Phase 8: CI/CD Scripts
 **Status**: ⏳ Planned

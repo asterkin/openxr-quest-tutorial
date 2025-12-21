@@ -6,6 +6,7 @@ Uses only Python 3.14+ stdlib (urllib, tomllib, pathlib).
 import json
 import os
 import tomllib
+import urllib.parse
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -109,14 +110,18 @@ def query_documentation(source: str, topic: str = "", tokens: int | None = None)
     # Make request
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Accept": "application/json",
     }
     req = urllib.request.Request(full_url, headers=headers)
 
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as response:
-            data = json.loads(response.read().decode("utf-8"))
-            return data.get("content", "")
+            content = response.read().decode("utf-8")
+            # API returns plain text markdown, but try JSON first for compatibility
+            try:
+                data = json.loads(content)
+                return data.get("content", content)
+            except json.JSONDecodeError:
+                return content
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", errors="replace")
         if e.code == 401:
