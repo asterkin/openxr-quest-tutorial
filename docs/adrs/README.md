@@ -38,6 +38,7 @@ Each ADR follows this structure:
 | [ADR-0008](adr-0008-integrate-meta-openxr-samples-with-minimal-changes.md) | Integrate Meta OpenXR Samples with Minimal Changes | Accepted |
 | [ADR-0009](adr-0009-automatic-gradle-wrapper-bootstrapping.md) | Automatic Gradle Wrapper Bootstrapping | Accepted |
 | [ADR-0010](adr-0010-composite-build-for-openxr-samples.md) | Composite Build for OpenXR Samples | Accepted |
+| [ADR-0011](adr-0011-use-context7-mcp-for-documentation-access.md) | Use Context7 MCP for Documentation Access | Accepted |
 
 ## Creating New ADRs
 

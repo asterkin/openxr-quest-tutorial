@@ -65,7 +65,7 @@
 | Vulkan | `websites/vulkan` | Graphics API, SPIR-V, synchronization |
 
 **Execution Plan**:
-- [ ] **Create ADR** - Document decision to adopt Context7 MCP for documentation access
+- [x] **Create ADR** - Document decision to adopt Context7 MCP for documentation access ([ADR-0011](adrs/adr-0011-use-context7-mcp-for-documentation-access.md))
 - [ ] **Set up skill structure** - Create `.claude/skills/doc-query/` and `.claude/skills/add-doc/`
 - [ ] **Implement doc-query skill** - Python script querying Context7 API with TOML config
 - [ ] **Implement add-doc skill** - Script to register new documentation sources
