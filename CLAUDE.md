@@ -18,6 +18,34 @@ To ensure efficient and clear interaction, please adhere to the following guidel
 - **Be Concise:** Provide brief summaries and responses. Avoid lengthy explanations unless explicitly requested. This helps with focus and reduces cognitive load.
 - **Clarify Ambiguity:** If a request is unclear, ask clarifying questions before proceeding with implementation.
 - **Investigate First, Then Act:** For any non-trivial task, first investigate the existing code and documentation. Present your findings and a clear plan before implementing changes.
+
+---
+
+## Shell Command Guidelines
+
+**CRITICAL**: The Bash tool runs in Git Bash on Windows. PowerShell and cmd.exe are NOT available.
+
+### Allowed Commands
+- Pure Git Bash commands: `ls`, `cat`, `grep`, `rm`, `mkdir`, `cp`, `mv`, etc.
+- Git commands: `git status`, `git add`, `git commit`, etc.
+- Gradle wrapper: `./gradlew.bat` (runs via Git Bash)
+- Python: `python` (if in PATH)
+
+### NOT Allowed (will fail and waste tokens)
+- `powershell` - Command not found
+- `cmd.exe` - Command not found
+- Windows-style paths in commands (use `/c/Users/...` not `C:\Users\...`)
+
+### Path Conventions
+```bash
+# Windows path → Git Bash path
+C:\Users\PRO\AppData\Local\Android\Sdk → /c/Users/PRO/AppData/Local/Android/Sdk
+```
+
+### Environment Variables
+- Use `printenv` or `echo "$VAR"` (not `echo %VAR%`)
+- Windows environment variables are inherited but use Unix syntax
+
 ---
 
 ## Quick Reference
