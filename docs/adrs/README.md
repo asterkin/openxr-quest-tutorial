@@ -39,6 +39,8 @@ Each ADR follows this structure:
 | [ADR-0009](adr-0009-automatic-gradle-wrapper-bootstrapping.md) | Automatic Gradle Wrapper Bootstrapping | Accepted |
 | [ADR-0010](adr-0010-composite-build-for-openxr-samples.md) | Composite Build for OpenXR Samples | Accepted |
 | [ADR-0011](adr-0011-use-context7-mcp-for-documentation-access.md) | Use Context7 MCP for Documentation Access | Accepted |
+| [ADR-0012](adr-0012-graphics-api-strategy-vulkan-for-openxr-opengles-for-meta.md) | Graphics API Strategy - Vulkan for OpenXR Tutorials, OpenGL-ES for Meta Samples | Accepted |
+| [ADR-0013](adr-0013-activity-model-gameactivity-for-openxr-nativeactivity-for-meta.md) | Activity Model - GameActivity for OpenXR Tutorials, NativeActivity for Meta Samples | Accepted |
 
 ## Creating New ADRs
 

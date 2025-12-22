@@ -138,85 +138,21 @@ The skill provides:
 
 ## Tool Documentation Access
 
-Query up-to-date documentation for tools and SDKs via Context7 API. This overcomes AI training data cutoffs for rapidly evolving tools.
-
-### When to Query Documentation
-
-**ALWAYS** query documentation in these scenarios:
-
-1. **Before using C++ 20 features** - std::ranges, concepts, modules, coroutines
-2. **Before using OpenXR/MetaXR extensions** - XR_FB_*, XR_META_*, hand tracking, passthrough
-3. **When encountering build errors** - Gradle, CMake, NDK toolchain issues
-4. **When user asks "How do I..."** - Questions about configured tools
-
-### Available Sources
-
-| Source | Aliases | Description |
-|--------|---------|-------------|
-| `cpp` | `c++`, `cppcore` | C++ Core Guidelines |
-| `cmake` | - | CMake build system |
-| `gradle` | `agp` | Gradle, Android plugin |
-| `ndk` | `android-ndk` | Android NDK, JNI |
-| `vulkan` | `vk` | Vulkan graphics API specification |
-| `vulkan-tools` | `vktools` | Vulkan utilities (vulkaninfo, cube) |
-| `opengl` | `gl`, `gles`, `opengles` | OpenGL/OpenGL ES specifications |
-| `openxr` | `xr` | OpenXR SDK, loader, samples |
-| `openxr-docs` | `xr-spec`, `fb`, `meta`, `metaxr` | OpenXR spec & extensions (XR_FB_*, XR_META_*) |
-
-### Usage
+Query up-to-date documentation via Context7 API when:
+- Using **C++20 features** (ranges, concepts, modules, coroutines)
+- Using **OpenXR/MetaXR extensions** (XR_FB_*, XR_META_*)
+- Encountering **build errors** (Gradle, CMake, NDK)
+- User asks **"How do I..."** about configured tools
 
 ```bash
-# List available sources
+# List sources: cpp, cmake, gradle, ndk, vulkan, openxr, openxr-docs (fb/meta extensions)
 python .claude/skills/doc-query/scripts/list-sources.py
 
-# Query documentation
-python .claude/skills/doc-query/scripts/query.py <source> "<topic>" [tokens]
-
-# Examples
-python .claude/skills/doc-query/scripts/query.py cpp "std::expected"
-python .claude/skills/doc-query/scripts/query.py fb "XR_FB_passthrough"
-python .claude/skills/doc-query/scripts/query.py gradle "namespace configuration"
-```
-
-### Common Scenarios
-
-**Explaining unfamiliar OpenXR code:**
-```bash
-# User asks: "What does this XR_FB_passthrough extension do?"
+# Query: python .claude/skills/doc-query/scripts/query.py <source> "<topic>" [tokens]
 python .claude/skills/doc-query/scripts/query.py fb "passthrough" 2000
 ```
 
-**Understanding CMake patterns:**
-```bash
-# Build error with target_link_libraries
-python .claude/skills/doc-query/scripts/query.py cmake "target_link_libraries" 1500
-```
-
-**NDK/JNI debugging:**
-```bash
-# Crash in JNI code
-python .claude/skills/doc-query/scripts/query.py ndk "JNI local reference" 1500
-```
-
-**Gradle build issues:**
-```bash
-# AGP configuration problem
-python .claude/skills/doc-query/scripts/query.py gradle "android namespace" 1500
-```
-
-**Modern C++ patterns:**
-```bash
-# Understanding RAII or smart pointers in samples
-python .claude/skills/doc-query/scripts/query.py cpp "unique_ptr" 1500
-```
-
-**Note:** If topic search returns "Library not found", try without a topic filter or use broader terms. Some libraries have limited topic indexing.
-
-### Configuration
-
-- **Sources config**: `.claude/doc-sources.toml`
-- **API key**: `CONTEXT7_API_KEY` environment variable (see [Environment_Setup.md](docs/Environment_Setup.md#35-context7-api-key-for-claude-code-documentation-access))
-- **Architecture**: [ADR-0011](docs/adrs/adr-0011-use-context7-mcp-for-documentation-access.md)
+Config: `.claude/doc-sources.toml` | Architecture: [ADR-0011](docs/adrs/adr-0011-use-context7-mcp-for-documentation-access.md)
 
 ---
 
