@@ -157,8 +157,11 @@ Query up-to-date documentation for tools and SDKs via Context7 API. This overcom
 | `cmake` | - | CMake build system |
 | `gradle` | `agp` | Gradle, Android plugin |
 | `ndk` | `android-ndk` | Android NDK, JNI |
-| `openxr` | `xr` | OpenXR runtime API |
-| `metaxr` | `meta`, `quest` | Meta Quest extensions |
+| `vulkan` | `vk` | Vulkan graphics API specification |
+| `vulkan-tools` | `vktools` | Vulkan utilities (vulkaninfo, cube) |
+| `opengl` | `gl`, `gles`, `opengles` | OpenGL/OpenGL ES specifications |
+| `openxr` | `xr` | OpenXR SDK, loader, samples |
+| `openxr-docs` | `xr-spec`, `fb`, `meta`, `metaxr` | OpenXR spec & extensions (XR_FB_*, XR_META_*) |
 
 ### Usage
 
@@ -171,7 +174,7 @@ python .claude/skills/doc-query/scripts/query.py <source> "<topic>" [tokens]
 
 # Examples
 python .claude/skills/doc-query/scripts/query.py cpp "std::expected"
-python .claude/skills/doc-query/scripts/query.py openxr "XR_FB_passthrough"
+python .claude/skills/doc-query/scripts/query.py fb "XR_FB_passthrough"
 python .claude/skills/doc-query/scripts/query.py gradle "namespace configuration"
 ```
 
@@ -180,7 +183,7 @@ python .claude/skills/doc-query/scripts/query.py gradle "namespace configuration
 **Explaining unfamiliar OpenXR code:**
 ```bash
 # User asks: "What does this XR_FB_passthrough extension do?"
-python .claude/skills/doc-query/scripts/query.py metaxr "passthrough" 2000
+python .claude/skills/doc-query/scripts/query.py fb "passthrough" 2000
 ```
 
 **Understanding CMake patterns:**

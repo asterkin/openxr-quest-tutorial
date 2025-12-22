@@ -28,14 +28,32 @@ description = "Android NDK native development, JNI, toolchains"
 default_tokens = 3000
 aliases = ["android-ndk"]
 
+[sources.vulkan]
+context7_id = "KhronosGroup/Vulkan-Docs"
+description = "Vulkan graphics API specification and documentation"
+default_tokens = 3000
+aliases = ["vk"]
+
+[sources.vulkan-tools]
+context7_id = "KhronosGroup/Vulkan-Tools"
+description = "Vulkan utilities: vulkaninfo, cube demo, mock ICD"
+default_tokens = 3000
+aliases = ["vktools"]
+
+[sources.opengl]
+context7_id = "KhronosGroup/OpenGL-Registry"
+description = "OpenGL and OpenGL ES specifications, extensions, headers"
+default_tokens = 3000
+aliases = ["gl", "gles", "opengles"]
+
 [sources.openxr]
 context7_id = "KhronosGroup/OpenXR-SDK"
-description = "OpenXR runtime API, extensions, loader"
+description = "OpenXR SDK, loader, and sample code"
 default_tokens = 3000
 aliases = ["xr"]
 
-[sources.metaxr]
-context7_id = "meta-quest/Meta-OpenXR-SDK"
-description = "Meta Quest OpenXR extensions (passthrough, hand tracking)"
+[sources.openxr-docs]
+context7_id = "KhronosGroup/OpenXR-Docs"
+description = "OpenXR specification and extensions (XR_FB_*, XR_META_*, XR_EXT_*)"
 default_tokens = 3000
-aliases = ["meta", "quest"]
+aliases = ["xr-spec", "fb", "meta", "metaxr"]
