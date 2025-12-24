@@ -25,6 +25,7 @@ openxr-quest-tutorial/
     ├── Build_Guidelines.md      # Common build and deployment instructions
     ├── hello_world/             # Minimal OpenXR Hello World
     ├── hello_xr/                # Khronos OpenXR sample
+    ├── camera2_tutorial/         # Standalone Camera2 + OpenXR scaffold
     └── tutorial/                # Progressive tutorial from openxr-tutorial.com
         ├── Common/              # Shared utility files for all chapters
         ├── Chapter1/            # Introduction & Setup
@@ -70,12 +71,13 @@ Integrated Meta Quest-specific samples from the official OVR SDK. These samples 
 
 ### openxr/
 
-Our core OpenXR tutorial samples, following the established build blueprint (Vulkan-first, GameActivity).
+Our core OpenXR tutorial samples, following the established build blueprint (Vulkan-first, NativeActivity).
 
 - **README.md** - High-level overview of all tutorial samples within this directory.
 - **Build_Guidelines.md** - Common instructions for building and running these samples.
 - **hello_world/** - Minimal OpenXR application demonstrating basic Quest 3 setup.
 - **hello_xr/** - Khronos OpenXR conformance sample adapted for Quest.
+- **camera2_tutorial/** - Standalone OpenXR + Vulkan scaffold for the Camera2 passthrough tutorial.
 - **tutorial/** - Container for a progressive tutorial series, providing step-by-step learning modules.
   - **Common/** - Shared utility files (e.g., DebugOutput, GraphicsAPI, OpenXRDebugUtils) used across tutorial chapters.
   - **Shaders/** - GLSL/HLSL shader files used in various tutorial chapters.

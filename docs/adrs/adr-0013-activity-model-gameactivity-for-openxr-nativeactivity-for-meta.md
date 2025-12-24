@@ -1,6 +1,6 @@
 # ADR-0013: Activity Model - GameActivity for OpenXR Tutorials, NativeActivity for Meta Samples
 
-**Status:** Accepted
+**Status:** Rejected
 
 **Date:** 2025-12-22
 
@@ -36,6 +36,8 @@ Similar to graphics APIs (see [ADR-0012](adr-0012-graphics-api-strategy-vulkan-f
 Converting samples from one model to another requires source code modifications, not just configuration changes.
 
 ## Decision
+
+This ADR is rejected because it incorrectly attributes GameActivity usage to the OpenXR tutorial chapters. All OpenXR tutorial chapters use `android.app.NativeActivity` with no Java/Kotlin code (`android:hasCode="false"`). There is no GameActivity usage in the tutorial series, so the premise and decision are invalid.
 
 We will maintain **different activity models** for different sample categories:
 

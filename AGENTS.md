@@ -59,6 +59,21 @@ When referencing documentation:
 
 This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer these commands to avoid tool availability issues:
 
+**Known-working commands in this environment:**
+- `dir` (including `/b`, `/s`, `/a`)
+- `type`
+- `copy`
+- `mkdir`
+- `rg` / `rg --files`
+
+**Known-unavailable commands in this environment:**
+- `powershell`
+- `xcopy`
+- `robocopy`
+- `findstr`
+- `find`
+- `more`
+
 - **List files by pattern (glob)**: `dir /s /b *.md`, `dir /s /b **\CMakeLists.txt` (use folder wildcards where helpful)
 - **List a directory**: `dir`, `dir /a` (shows hidden), `dir /s` (recursive)
 - **Read a file**: `type path\to\file.md` (add `| more` for paging)

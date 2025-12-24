@@ -26,6 +26,7 @@ Or build individual samples:
 ./gradlew.bat -p hello_world assembleDebug
 ./gradlew.bat -p hello_xr assembleVulkanDebug
 ./gradlew.bat -p tutorial assembleDebug
+./gradlew.bat -p camera2_tutorial assembleDebug
 ```
 
 > **Note**: The Gradle wrapper auto-downloads on first run.
@@ -41,6 +42,7 @@ For detailed build and troubleshooting instructions, see **[Build Guidelines](Bu
 | [hello_world - Minimal OpenXR Application](hello_world/) | ⭐ Beginner | Demonstrates basic Quest 3 setup with OpenXR session initialization and rendering loop. Focuses on instance/session creation, Vulkan binding, and basic rendering. |
 | [hello_xr - Khronos OpenXR Conformance Sample](hello_xr/) | ⭐⭐ Intermediate | Adapted for Quest 3, this sample demonstrates standard OpenXR API usage including swapchain management, view configuration, input handling, and reference spaces. |
 | [openxr-tutorial - Progressive OpenXR Tutorial Series](tutorial/) | ⭐⭐⭐ Advanced | A step-by-step tutorial series covering OpenXR instance/extension management, session lifecycle, event polling, Vulkan integration, swapchain, and frame rendering. |
+| [camera2_tutorial - Camera2 + OpenXR Scaffold](camera2_tutorial/) | ⭐⭐⭐ Advanced | Standalone OpenXR + Vulkan scaffold intended for a full-screen Camera2 passthrough tutorial. |
 
 ---
 
@@ -54,6 +56,7 @@ For detailed build and troubleshooting instructions, see **[Build Guidelines](Bu
    - Begin with Chapter 1 (setup)
    - Progress through Chapter 2 (session & events)
    - Continue with subsequent chapters
-4. **Advanced**: [meta/](meta/) - Explore Quest-specific features
+4. **Advanced**: [camera2_tutorial/](camera2_tutorial/) - Camera2 passthrough scaffold
+5. **Advanced**: [meta/](meta/) - Explore Quest-specific features
 
 Each sample builds on concepts from previous samples.

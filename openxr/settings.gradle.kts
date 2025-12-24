@@ -15,3 +15,4 @@ rootProject.name = "openxr-samples"
 includeBuild("hello_world")
 includeBuild("hello_xr")
 includeBuild("tutorial")
+includeBuild("camera2_tutorial")

@@ -74,6 +74,26 @@
 - [x] **Test queries** - All 6 sources return documentation (topic filtering may 404 if no matches)
 - [x] **Document usage patterns** - Added "Common Scenarios" section to CLAUDE.md
 
-### Phase 8: CI/CD Scripts
+### Phase 8: NDK Camera2 + OpenXR + Vulkan Tutorial
+**Status**: 🔧 In Progress
+-   Build a minimal, full-screen Camera2 passthrough feed using the NDK Camera2 API (C++).
+-   **Note**: An NDK C++ Camera2 tutorial does not exist; this will be built from first principles.
+-   Use the existing OpenXR + Vulkan tutorial foundation for rendering and swapchain management.
+-   **Location**: `openxr/camera2_tutorial/` (render loop, Vulkan setup, XR session lifecycle)
+
+**Major Steps**:
+-   Create a new tutorial module with Gradle/CMake wiring and Android permissions.
+-   Add manifest features/permissions (`CAMERA`, `horizonos.permission.HEADSET_CAMERA`) and Quest 3/3S device gating.
+-   Implement NDK Camera2 device enumeration and select the headset passthrough camera.
+-   Create a capture session with a native output target (`ANativeWindow` or `AImageReader`).
+-   Define frame format/size and confirm expected FPS/latency on device.
+-   Implement frame ingestion: acquire images, handle stride/format, and manage backpressure.
+-   Upload frames into a Vulkan image (staging + layout transitions) or use external memory if supported.
+-   Wire the Vulkan texture into the OpenXR render loop via the existing tutorial swapchain flow.
+-   Render a full-screen quad with a simple fragment shader (no zoom yet).
+-   Add lifecycle handling (pause/resume), permission prompts, and error recovery.
+-   Validate on Quest 3/3S (API 34+, Horizon OS v76+) and document limitations.
+
+### Phase 9: CI/CD Scripts
 **Status**: ⏳ Planned
 -   Implement automated build scripts triggered by git push to build all samples automatically.
