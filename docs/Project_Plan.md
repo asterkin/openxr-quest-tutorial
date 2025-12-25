@@ -5,8 +5,8 @@
 
 ## Current Status
 
--   **Completed**: Phases 0, 1, 2, 3, 4, 5, 6, 7, and 8 (core functionality).
--   **In Progress**: Phase 8 outstanding TODOs (folder structure simplification).
+-   **Completed**: Phases 0, 1, 2, 3, 4, 5, 6, 7, and 8.
+-   **In Progress**: None.
 -   **Next**: Phase 9.
 
 ## Implementation Phases
@@ -76,7 +76,7 @@
 - [x] **Document usage patterns** - Added "Common Scenarios" section to CLAUDE.md
 
 ### Phase 8: NDK Camera2 + OpenXR + Vulkan Tutorial
-**Status**: ✅ Core Functionality Complete
+**Status**: ✅ Completed
 -   Build a minimal, full-screen Camera2 passthrough feed using the NDK Camera2 API (C++).
 -   **Note**: An NDK C++ Camera2 tutorial does not exist; this will be built from first principles.
 -   Use the existing OpenXR + Vulkan tutorial foundation for rendering and swapchain management.
@@ -92,14 +92,6 @@
 -   [x] Upload frames into a Vulkan image (staging buffer + layout transitions).
 -   [x] Wire the Vulkan texture into OpenXR render loop using **Quad Layer** (head-locked, stereo-correct).
 -   [x] Render full-screen camera feed with proper stereo fusion (both eyes see same image).
-
-**Outstanding TODOs**:
-
-| Priority | Issue | Description |
-|----------|-------|-------------|
-| Minor | Avatar body at startup | An avatar body briefly shows up at the beginning of the app |
-| Nice-to-have | Video quality/latency | Low video quality and small delay; consider switching to "Vulkan YCbCr sampling + sampler conversion" if not too complex |
-| **Must** | Simplify folder structure | Tutorial folder structure needs cleanup/simplification |
 
 ### Phase 9: CI/CD Scripts
 **Status**: ⏳ Planned
