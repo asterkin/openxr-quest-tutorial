@@ -25,7 +25,7 @@ openxr-quest-tutorial/
     ├── Build_Guidelines.md      # Common build and deployment instructions
     ├── hello_world/             # Minimal OpenXR Hello World
     ├── hello_xr/                # Khronos OpenXR sample
-    ├── camera2_tutorial/         # Standalone Camera2 + OpenXR scaffold
+    ├── camera2_tutorial/        # Standalone Camera2 + OpenXR scaffold
     └── tutorial/                # Progressive tutorial from openxr-tutorial.com
         ├── Common/              # Shared utility files for all chapters
         ├── Chapter1/            # Introduction & Setup
