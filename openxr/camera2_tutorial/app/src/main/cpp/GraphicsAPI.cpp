@@ -7,42 +7,13 @@
 #include <GraphicsAPI.h>
 
 bool CheckGraphicsAPI_TypeIsValidForPlatform(GraphicsAPI_Type type) {
-#if defined(XR_USE_PLATFORM_WIN32)
-    return (type == D3D11) || (type == D3D12) || (type == OPENGL) || (type == VULKAN);
-#elif defined(XR_USE_PLATFORM_XLIB) || defined(XR_USE_PLATFORM_XCB) || defined(XR_USE_PLATFORM_WAYLAND)
-    return (type == OPENGL) || (type == VULKAN);
-#elif defined(XR_USE_PLATFORM_ANDROID) || defined(XR_USE_PLATFORM_XCB) || defined(XR_USE_PLATFORM_WAYLAND)
-    return (type == OPENGL_ES) || (type == VULKAN);
-#endif
-    return false;
+    return type == VULKAN;
 }
 
 const char *GetGraphicsAPIInstanceExtensionString(GraphicsAPI_Type type) {
-#if defined(XR_USE_GRAPHICS_API_D3D11)
-    if (type == D3D11) {
-        return XR_KHR_D3D11_ENABLE_EXTENSION_NAME;
-    }
-#endif
-#if defined(XR_USE_GRAPHICS_API_D3D12)
-    if (type == D3D12) {
-        return XR_KHR_D3D12_ENABLE_EXTENSION_NAME;
-    }
-#endif
-#if defined(XR_USE_GRAPHICS_API_OPENGL)
-    if (type == OPENGL) {
-        return XR_KHR_OPENGL_ENABLE_EXTENSION_NAME;
-    }
-#endif
-#if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
-    if (type == OPENGL_ES) {
-        return XR_KHR_OPENGL_ES_ENABLE_EXTENSION_NAME;
-    }
-#endif
-#if defined(XR_USE_GRAPHICS_API_VULKAN)
     if (type == VULKAN) {
         return XR_KHR_VULKAN_ENABLE_EXTENSION_NAME;
     }
-#endif
     std::cerr << "ERROR: Unknown Graphics API." << std::endl;
     DEBUG_BREAK;
     return nullptr;

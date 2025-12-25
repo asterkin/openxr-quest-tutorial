@@ -24,13 +24,7 @@
 // - Removed GraphicsAPI_Type due to naming conflict.
 // - Updated relevant functions to use the GraphicsAPI_Type from the OpenXR Tutorial.
 
-#ifndef XR_LINEAR_H_
-#define XR_LINEAR_H_
-
-#if defined(OS_LINUX_XCB) || defined(OS_LINUX_XCB_GLX) || defined(OS_LINUX_WAYLAND)
-#pragma GCC diagnostic ignored "-Wunused-function"
-#pragma clang diagnostic ignored "-Wunused-function"
-#endif
+#pragma once
 
 #include <openxr/openxr.h>
 
@@ -488,15 +482,12 @@ inline static void XrMatrix4x4f_CreateTranslationRotationScale(XrMatrix4x4f* res
 inline static void XrMatrix4x4f_CreateProjection(XrMatrix4x4f* result, GraphicsAPI_Type graphicsApi, const float tanAngleLeft,
                                                  const float tanAngleRight, const float tanAngleUp, float const tanAngleDown,
                                                  const float nearZ, const float farZ) {
+    (void)graphicsApi;
     const float tanAngleWidth = tanAngleRight - tanAngleLeft;
 
-    // Set to tanAngleDown - tanAngleUp for a clip space with positive Y down (Vulkan).
-    // Set to tanAngleUp - tanAngleDown for a clip space with positive Y up (OpenGL / D3D / Metal).
-    const float tanAngleHeight = graphicsApi == VULKAN ? (tanAngleDown - tanAngleUp) : (tanAngleUp - tanAngleDown);
-
-    // Set to nearZ for a [-1,1] Z clip space (OpenGL / OpenGL ES).
-    // Set to zero for a [0,1] Z clip space (Vulkan / D3D / Metal).
-    const float offsetZ = (graphicsApi == OPENGL || graphicsApi == OPENGL_ES) ? nearZ : 0;
+    // Vulkan clip space: positive Y down, Z in [0,1].
+    const float tanAngleHeight = tanAngleDown - tanAngleUp;
+    const float offsetZ = 0;
 
     if (farZ <= nearZ) {
         // place the far plane at infinity
@@ -789,5 +780,3 @@ inline static bool XrMatrix4x4f_CullBounds(const XrMatrix4x4f* mvp, const XrVect
     }
     return i == 8;
 }
-
-#endif  // XR_LINEAR_H_

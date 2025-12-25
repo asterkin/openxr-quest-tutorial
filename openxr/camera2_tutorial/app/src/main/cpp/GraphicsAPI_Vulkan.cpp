@@ -4,12 +4,7 @@
 
 // OpenXR Tutorial for Khronos Group
 
-#if defined(_WIN32)
-#define VK_USE_PLATFORM_WIN32_KHR
-#endif
 #include <GraphicsAPI_Vulkan.h>
-
-#if defined(XR_USE_GRAPHICS_API_VULKAN)
 
 #define VULKAN_CHECK(x, y)                                                                         \
     {                                                                                              \
@@ -106,13 +101,7 @@ GraphicsAPI_Vulkan::GraphicsAPI_Vulkan() {
     std::vector<VkExtensionProperties> instanceExtensionProperties;
     instanceExtensionProperties.resize(instanceExtensionCount);
     VULKAN_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, instanceExtensionProperties.data()), "Failed to enumerate InstanceExtensionProperties.");
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-    const std::vector<std::string> &instanceExtensionNames = {VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_WIN32_SURFACE_EXTENSION_NAME};
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
     const std::vector<std::string> &instanceExtensionNames = {VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME};
-#else
-    const std::vector<std::string> &instanceExtensionNames = {};
-#endif
     for (const std::string &requestExtension : instanceExtensionNames) {
         for (const VkExtensionProperties &extensionProperty : instanceExtensionProperties) {
             if (strcmp(requestExtension.c_str(), extensionProperty.extensionName))
@@ -344,9 +333,6 @@ GraphicsAPI_Vulkan::GraphicsAPI_Vulkan(XrInstance m_xrInstance, XrSystemId syste
 
     VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, 0, &deviceExtensionCount, deviceExtensionProperties.data()), "Failed to enumerate DeviceExtensionProperties.");
     std::vector<std::string> openXrDeviceExtensionNames = GetDeviceExtensionsForOpenXR(m_xrInstance, systemId);
-#if XR_TUTORIAL_ENABLE_MULTIVIEW
-    openXrDeviceExtensionNames.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
-#endif
     for (const std::string &requestExtension : openXrDeviceExtensionNames) {
         for (const VkExtensionProperties &extensionProperty : deviceExtensionProperties) {
             if (strcmp(requestExtension.c_str(), extensionProperty.extensionName))
@@ -356,12 +342,6 @@ GraphicsAPI_Vulkan::GraphicsAPI_Vulkan(XrInstance m_xrInstance, XrSystemId syste
             break;
         }
     }
-#if XR_TUTORIAL_ENABLE_MULTIVIEW
-    if (!IsStringInVector(activeDeviceExtensions, VK_KHR_MULTIVIEW_EXTENSION_NAME)) {
-        std::cerr << "ERROR: VULKAN: Unable to find VK_KHR_multiview extension." << std::endl;
-        DEBUG_BREAK;
-    }
-#endif
 
     VkPhysicalDeviceFeatures features;
     vkGetPhysicalDeviceFeatures(physicalDevice, &features);
@@ -434,16 +414,6 @@ GraphicsAPI_Vulkan::~GraphicsAPI_Vulkan() {
 
 void *GraphicsAPI_Vulkan::CreateDesktopSwapchain(const SwapchainCreateInfo &swapchainCI) {
     VkSurfaceKHR surface{};
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-    VkWin32SurfaceCreateInfoKHR surfaceCI;
-    surfaceCI.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    surfaceCI.pNext = nullptr;
-    surfaceCI.flags = 0;
-    surfaceCI.hinstance = GetModuleHandle(nullptr);
-    surfaceCI.hwnd = (HWND)swapchainCI.windowHandle;
-    VULKAN_CHECK(vkCreateWin32SurfaceKHR(instance, &surfaceCI, nullptr, &surface), "Failed to create Device.");
-#endif
-
     VkBool32 surfaceSupport;
     VULKAN_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &surfaceSupport), "Failed to get PhysicalDeviceSurfaceSupport.");
     if (!surfaceSupport) {
@@ -818,19 +788,6 @@ void *GraphicsAPI_Vulkan::CreatePipeline(const PipelineCreateInfo &pipelineCI) {
 
     bool multiview = false;
     VkRenderPassMultiviewCreateInfoKHR multiviewCreateInfo;
-#if XR_TUTORIAL_ENABLE_MULTIVIEW
-    if (pipelineCI.viewMask != 0) {
-        multiviewCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
-        multiviewCreateInfo.pNext = nullptr;
-        multiviewCreateInfo.subpassCount = 1;
-        multiviewCreateInfo.pViewMasks = &pipelineCI.viewMask;
-        multiviewCreateInfo.dependencyCount = 0;
-        multiviewCreateInfo.pViewOffsets = nullptr;
-        multiviewCreateInfo.correlationMaskCount = 1;
-        multiviewCreateInfo.pCorrelationMasks = &pipelineCI.viewMask;
-        multiview = true;
-    }
-#endif
 
     VkRenderPass renderPass{};
     VkRenderPassCreateInfo renderPassCI;
@@ -1731,4 +1688,4 @@ const std::vector<int64_t> GraphicsAPI_Vulkan::GetSupportedDepthSwapchainFormats
         VK_FORMAT_D32_SFLOAT,
         VK_FORMAT_D16_UNORM};
 }
-#endif
+

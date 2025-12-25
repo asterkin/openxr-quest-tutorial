@@ -1,6 +1,7 @@
 # OpenXR Camera2 Tutorial
 
 Standalone tutorial that initializes OpenXR + Vulkan on Quest 3 and displays a full-screen Camera2 feed via CPU YUV conversion.
+Adapted for OpenXR tutorial: https://openxr-tutorial.com//android/vulkan/index.html
 
 ## Build
 

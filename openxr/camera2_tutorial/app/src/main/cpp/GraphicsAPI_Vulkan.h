@@ -8,7 +8,6 @@
 #include <GraphicsAPI.h>
 #include <cstdint>
 
-#if defined(XR_USE_GRAPHICS_API_VULKAN)
 class GraphicsAPI_Vulkan : public GraphicsAPI {
 public:
     GraphicsAPI_Vulkan();
@@ -144,4 +143,3 @@ private:
     std::vector<std::tuple<VkWriteDescriptorSet, VkDescriptorBufferInfo, VkDescriptorImageInfo>> writeDescSets;
 
 };
-#endif

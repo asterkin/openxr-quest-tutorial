@@ -1045,7 +1045,6 @@ private:
         }
     }
 
-#if defined(__ANDROID__)
 public:
     static android_app *androidApp;
 
@@ -1107,11 +1106,6 @@ private:
             }
         }
     }
-#else
-    void PollSystemEvents() {
-        return;
-    }
-#endif
 
 private:
     XrInstance m_xrInstance = XR_NULL_HANDLE;
@@ -1183,7 +1177,6 @@ void Camera2Tutorial_Main() {
     app.Run();
 }
 
-#if defined(__ANDROID__)
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_openxrcamera2tutorial_Camera2TutorialActivity_nativeOnPermissionResult(JNIEnv *env, jclass clazz, jboolean granted) {
     (void)env;
@@ -1191,15 +1184,7 @@ Java_com_example_openxrcamera2tutorial_Camera2TutorialActivity_nativeOnPermissio
     g_cameraPermissionGranted.store(granted == JNI_TRUE);
     XR_TUT_LOG("Camera2: Permission " << (granted == JNI_TRUE ? "granted" : "denied"));
 }
-#endif
 
-#if defined(_WIN32) || (defined(__linux__) && !defined(__ANDROID__))
-int main(int argc, char **argv) {
-    (void)argc;
-    (void)argv;
-    Camera2Tutorial_Main();
-}
-#elif (__ANDROID__)
 android_app *Camera2Tutorial::androidApp = nullptr;
 Camera2Tutorial::AndroidAppState Camera2Tutorial::androidAppState = {};
 
@@ -1227,4 +1212,3 @@ void android_main(struct android_app *app) {
     Camera2Tutorial::androidApp = app;
     Camera2Tutorial_Main();
 }
-#endif
