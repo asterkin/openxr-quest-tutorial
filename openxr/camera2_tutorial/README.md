@@ -1,4 +1,4 @@
-# OpenXR Camera2 Tutorial (Scaffold)
+# OpenXR Camera2 Tutorial
 
 Standalone tutorial that initializes OpenXR + Vulkan on Quest 3 and displays a full-screen Camera2 feed via CPU YUV conversion.
 
@@ -16,4 +16,6 @@ Standalone tutorial that initializes OpenXR + Vulkan on Quest 3 and displays a f
 
 ## Notes
 
-- Requires user approval for `android.permission.CAMERA`.
+- Requires user approval for headset camera access (`android.permission.CAMERA`).
+
+![Camera permission prompt](camera_approval.png)
