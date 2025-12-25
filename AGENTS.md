@@ -65,6 +65,7 @@ This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer th
 - `copy`
 - `mkdir`
 - `rg` / `rg --files` (fast content search)
+- `cmd /c` (wraps commands to avoid quoting issues in agent harnesses)
 
 **Known-unavailable commands in this environment:**
 - `powershell`
@@ -76,21 +77,30 @@ This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer th
 
 - **List files by pattern (glob)**: `dir /s /b *.md`, `dir /s /b **\CMakeLists.txt` (use folder wildcards where helpful)
 - **List a directory**: `dir`, `dir /a` (shows hidden), `dir /s` (recursive)
-- **Read a file**: `type path\to\file.md` (add `| more` for paging)
+- **Read a file**: `type path\to\file.md` (no pager available in this environment)
 - **Find files by name substring**: `dir /s /b *OpenXR*`
-- **Fast content search**: `rg "pattern"` (if installed), fallback to `findstr /s /n /i "pattern" *.cpp`
+- **Fast content search**: `rg "pattern"` (if installed), fallback to Python one-liner (see below)
 - **Avoid**: `<<` heredocs and bash-style pipes/flags that `cmd` doesn’t support
 
 ### Python Usage (avoid quoting pitfalls)
 
-When shell tools like `rg/findstr/where/fc` aren’t available, use Python. In `cmd.exe`, avoid multi-line `python -` input; prefer `python -c` one-liners or write a temporary `.py` file.
+When shell tools like `rg/where/fc` aren’t available, use Python. In `cmd.exe`, avoid multi-line `python -` input; prefer `python -c` one-liners or write a temporary `.py` file.
 
-- **Run a one-liner** (keep it a single line; use Python `;` to separate statements):
-  - `python -c "import pathlib; print('\n'.join(map(str, pathlib.Path('docs').rglob('*.md'))))"`
+- **Run a one-liner** (keep it a single line; use Python `;` to separate statements; wrap with `cmd /c`):
+  - `cmd /c python -c "import pathlib; print('\n'.join(map(str, pathlib.Path('docs').rglob('*.md'))))"`
 - **Print file with line numbers** (single-line list-comprehension to avoid indentation issues):
-  - `python -c "import pathlib; lines=pathlib.Path('AGENTS.md').read_text(encoding='utf-8',errors='replace').splitlines(); [print(f'{i:4d}: {l}') for i,l in enumerate(lines,1)]"`
+  - `cmd /c python -c "import pathlib; lines=pathlib.Path('AGENTS.md').read_text(encoding='utf-8',errors='replace').splitlines(); [print(f'{i:4d}: {l}') for i,l in enumerate(lines,1)]"`
 - **Quick content search fallback** (example: search `xrCreate` in `*.cpp`):
-  - `python -c "import pathlib,re; pat=re.compile(r'xrCreate'); [print(f'{p}:{i+1}:{line}') for p in pathlib.Path('.').rglob('*.cpp') for i,line in enumerate(p.read_text(errors='ignore').splitlines()) if pat.search(line)]"`
+  - `cmd /c python -c "import pathlib,re; pat=re.compile(r'xrCreate'); [print(f'{p}:{i+1}:{line}') for p in pathlib.Path('.').rglob('*.cpp') for i,line in enumerate(p.read_text(errors='ignore').splitlines()) if pat.search(line)]"`
+
+- **If quoting gets messy**, write a temporary script instead:
+  - `cmd /c (echo import pathlib & echo print('\\\\n'.join(map(str, pathlib.Path('docs').rglob('*.md'))))) > tmp_list.py`
+  - `cmd /c python tmp_list.py`
+- **If Python output seems missing**, redirect to a file and `type` it:
+  - `cmd /c python -c "print('hello')" > tmp_out.txt`
+  - `type tmp_out.txt`
+- **Cleanup temp scripts/files when done**:
+  - `cmd /c del tmp_list.py tmp_out.txt`
 
 - **Glob** - Finding files by name/pattern:
   - CMake configs: `**/CMakeLists.txt`

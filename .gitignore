@@ -15,6 +15,7 @@
 build/
 */build/
 local.properties
+**/gradle/
 
 # Gradle wrapper (auto-downloaded by bootstrap gradlew.bat)
 **/gradle/wrapper/
