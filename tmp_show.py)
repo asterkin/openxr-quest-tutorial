@@ -1,5 +1,0 @@
-    print('%4d: %s' % (i, lines[i-1]))
-    print('%%4d: %%s' %% (i, lines[i-1]))
-print('\n'.join([f'{i:4d}: {lines[i-1]}' for i in range(start, end+1)]))
-print('\n'.join([f'{i:4d}: {lines[i-1]}' for i in range(start, end+1)]))
-print('\n'.join([f'{i:4d}: {lines[i-1]}' for i in range(start, end+1)]))
