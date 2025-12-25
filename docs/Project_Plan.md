@@ -5,8 +5,9 @@
 
 ## Current Status
 
--   **Completed**: Phases 0, 1, 2, 3, 4, 5, 6, and 7.
--   **Next**: Phase 8.
+-   **Completed**: Phases 0, 1, 2, 3, 4, 5, 6, 7, and 8 (core functionality).
+-   **In Progress**: Phase 8 outstanding TODOs (folder structure simplification).
+-   **Next**: Phase 9.
 
 ## Implementation Phases
 
@@ -75,24 +76,30 @@
 - [x] **Document usage patterns** - Added "Common Scenarios" section to CLAUDE.md
 
 ### Phase 8: NDK Camera2 + OpenXR + Vulkan Tutorial
-**Status**: 🔧 In Progress
+**Status**: ✅ Core Functionality Complete
 -   Build a minimal, full-screen Camera2 passthrough feed using the NDK Camera2 API (C++).
 -   **Note**: An NDK C++ Camera2 tutorial does not exist; this will be built from first principles.
 -   Use the existing OpenXR + Vulkan tutorial foundation for rendering and swapchain management.
 -   **Location**: `openxr/camera2_tutorial/` (render loop, Vulkan setup, XR session lifecycle)
 
-**Major Steps**:
--   Create a new tutorial module with Gradle/CMake wiring and Android permissions.
--   Add manifest features/permissions (`CAMERA`, `horizonos.permission.HEADSET_CAMERA`) and Quest 3/3S device gating.
--   Implement NDK Camera2 device enumeration and select the headset passthrough camera.
--   Create a capture session with a native output target (`ANativeWindow` or `AImageReader`).
--   Define frame format/size and confirm expected FPS/latency on device.
--   Implement frame ingestion: acquire images, handle stride/format, and manage backpressure.
--   Upload frames into a Vulkan image (staging + layout transitions) or use external memory if supported.
--   Wire the Vulkan texture into the OpenXR render loop via the existing tutorial swapchain flow.
--   Render a full-screen quad with a simple fragment shader (no zoom yet).
--   Add lifecycle handling (pause/resume), permission prompts, and error recovery.
--   Validate on Quest 3/3S (API 34+, Horizon OS v76+) and document limitations.
+**Completed**:
+-   [x] Create a new tutorial module with Gradle/CMake wiring and Android permissions.
+-   [x] Add manifest features/permissions (`CAMERA`, `horizonos.permission.HEADSET_CAMERA`) and Quest 3/3S device gating.
+-   [x] Implement NDK Camera2 device enumeration and select the headset passthrough camera.
+-   [x] Create a capture session with a native output target (`AImageReader`).
+-   [x] Define frame format/size (YUV 420 888 → RGBA conversion).
+-   [x] Implement frame ingestion: acquire images, handle stride/format, and manage backpressure.
+-   [x] Upload frames into a Vulkan image (staging buffer + layout transitions).
+-   [x] Wire the Vulkan texture into OpenXR render loop using **Quad Layer** (head-locked, stereo-correct).
+-   [x] Render full-screen camera feed with proper stereo fusion (both eyes see same image).
+
+**Outstanding TODOs**:
+
+| Priority | Issue | Description |
+|----------|-------|-------------|
+| Minor | Avatar body at startup | An avatar body briefly shows up at the beginning of the app |
+| Nice-to-have | Video quality/latency | Low video quality and small delay; consider switching to "Vulkan YCbCr sampling + sampler conversion" if not too complex |
+| **Must** | Simplify folder structure | Tutorial folder structure needs cleanup/simplification |
 
 ### Phase 9: CI/CD Scripts
 **Status**: ⏳ Planned
