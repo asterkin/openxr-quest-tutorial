@@ -56,10 +56,14 @@ add_library(${PROJECT_NAME} SHARED
 # Android libraries
 find_library(ANDROID_LIBRARY android)
 find_library(ANDROID_LOG_LIBRARY log)
+find_library(ANDROID_CAMERA2_LIBRARY camera2ndk)
+find_library(ANDROID_MEDIA_LIBRARY mediandk)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${ANDROID_LIBRARY}
     ${ANDROID_LOG_LIBRARY}
+    ${ANDROID_CAMERA2_LIBRARY}
+    ${ANDROID_MEDIA_LIBRARY}
     native_app_glue
 )
 

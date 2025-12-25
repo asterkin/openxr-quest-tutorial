@@ -64,7 +64,7 @@ This repo is often used from a Windows `cmd` shell in agent harnesses. Prefer th
 - `type`
 - `copy`
 - `mkdir`
-- `rg` / `rg --files`
+- `rg` / `rg --files` (fast content search)
 
 **Known-unavailable commands in this environment:**
 - `powershell`

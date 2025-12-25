@@ -1260,6 +1260,256 @@ void GraphicsAPI_Vulkan::ClearDepth(void *imageView, float d) {
     vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, VkDependencyFlagBits(0), 0, nullptr, 0, nullptr, 1, &imageBarrier);
 }
 
+void GraphicsAPI_Vulkan::UploadRgbaToImage(void *imageView, uint32_t width, uint32_t height, const uint8_t *data, size_t size) {
+    if (!imageView || !data || size == 0) {
+        return;
+    }
+
+    const ImageViewCreateInfo &imageViewCI = imageViewResources[(VkImageView)imageView];
+    VkImage vkImage = (VkImage)(imageViewCI.image);
+
+    VkBuffer stagingBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
+
+    VkBufferCreateInfo bufferCI{};
+    bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCI.pNext = nullptr;
+    bufferCI.flags = 0;
+    bufferCI.size = size;
+    bufferCI.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    bufferCI.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    VULKAN_CHECK(vkCreateBuffer(device, &bufferCI, nullptr, &stagingBuffer), "Failed to create staging buffer.");
+
+    VkMemoryRequirements memoryRequirements{};
+    vkGetBufferMemoryRequirements(device, stagingBuffer, &memoryRequirements);
+
+    VkPhysicalDeviceMemoryProperties memoryProperties{};
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+    uint32_t memoryTypeIndex = 0;
+    if (!MemoryTypeFromProperties(memoryProperties, memoryRequirements.memoryTypeBits,
+                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                  &memoryTypeIndex)) {
+        std::cout << "ERROR: VULKAN: Failed to find staging memory type." << std::endl;
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        return;
+    }
+
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.pNext = nullptr;
+    allocInfo.allocationSize = memoryRequirements.size;
+    allocInfo.memoryTypeIndex = memoryTypeIndex;
+    VULKAN_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &stagingMemory), "Failed to allocate staging memory.");
+    VULKAN_CHECK(vkBindBufferMemory(device, stagingBuffer, stagingMemory, 0), "Failed to bind staging memory.");
+
+    void *mappedData = nullptr;
+    VULKAN_CHECK(vkMapMemory(device, stagingMemory, 0, size, 0, &mappedData), "Failed to map staging memory.");
+    if (mappedData) {
+        memcpy(mappedData, data, size);
+    }
+    vkUnmapMemory(device, stagingMemory);
+
+    BeginRendering();
+
+    VkImageLayout oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    auto imageStateIt = imageStates.find(vkImage);
+    if (imageStateIt != imageStates.end()) {
+        oldLayout = imageStateIt->second;
+    }
+
+    VkImageMemoryBarrier barrier{};
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.pNext = nullptr;
+    barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.oldLayout = oldLayout;
+    barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = vkImage;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VkDependencyFlagBits(0),
+                         0, nullptr, 0, nullptr, 1, &barrier);
+
+    VkBufferImageCopy region{};
+    region.bufferOffset = 0;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+    region.imageOffset = {0, 0, 0};
+    region.imageExtent = {width, height, 1};
+
+    vkCmdCopyBufferToImage(cmdBuffer, stagingBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VkDependencyFlagBits(0),
+                         0, nullptr, 0, nullptr, 1, &barrier);
+    imageStates[vkImage] = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    EndRendering();
+
+    VULKAN_CHECK(vkWaitForFences(device, 1, &fence, true, UINT64_MAX), "Failed to wait for Fence after upload.");
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingMemory, nullptr);
+}
+
+void GraphicsAPI_Vulkan::UploadRgbaToImageCentered(void *imageView,
+                                                    uint32_t dstWidth, uint32_t dstHeight,
+                                                    const uint8_t *srcData,
+                                                    uint32_t srcWidth, uint32_t srcHeight) {
+    if (!imageView || !srcData || srcWidth == 0 || srcHeight == 0) {
+        return;
+    }
+
+    const ImageViewCreateInfo &imageViewCI = imageViewResources[(VkImageView)imageView];
+    VkImage vkImage = (VkImage)(imageViewCI.image);
+
+    // Clamp source to destination if larger (prevent buffer overrun)
+    uint32_t copyWidth = (srcWidth > dstWidth) ? dstWidth : srcWidth;
+    uint32_t copyHeight = (srcHeight > dstHeight) ? dstHeight : srcHeight;
+
+    // Calculate centered offset
+    int32_t offsetX = static_cast<int32_t>((dstWidth - copyWidth) / 2);
+    int32_t offsetY = static_cast<int32_t>((dstHeight - copyHeight) / 2);
+
+    // Calculate source data size for the region we'll copy
+    size_t srcRowBytes = static_cast<size_t>(srcWidth) * 4;
+    size_t copyRowBytes = static_cast<size_t>(copyWidth) * 4;
+    size_t stagingSize = static_cast<size_t>(copyWidth) * copyHeight * 4;
+
+    // Create staging buffer
+    VkBuffer stagingBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
+
+    VkBufferCreateInfo bufferCI{};
+    bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCI.pNext = nullptr;
+    bufferCI.flags = 0;
+    bufferCI.size = stagingSize;
+    bufferCI.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    bufferCI.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    VULKAN_CHECK(vkCreateBuffer(device, &bufferCI, nullptr, &stagingBuffer), "Failed to create staging buffer.");
+
+    VkMemoryRequirements memoryRequirements{};
+    vkGetBufferMemoryRequirements(device, stagingBuffer, &memoryRequirements);
+
+    VkPhysicalDeviceMemoryProperties memoryProperties{};
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+    uint32_t memoryTypeIndex = 0;
+    if (!MemoryTypeFromProperties(memoryProperties, memoryRequirements.memoryTypeBits,
+                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                  &memoryTypeIndex)) {
+        std::cout << "ERROR: VULKAN: Failed to find staging memory type." << std::endl;
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        return;
+    }
+
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.pNext = nullptr;
+    allocInfo.allocationSize = memoryRequirements.size;
+    allocInfo.memoryTypeIndex = memoryTypeIndex;
+    VULKAN_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &stagingMemory), "Failed to allocate staging memory.");
+    VULKAN_CHECK(vkBindBufferMemory(device, stagingBuffer, stagingMemory, 0), "Failed to bind staging memory.");
+
+    // Copy source data to staging buffer (handle potential source stride mismatch)
+    void *mappedData = nullptr;
+    VULKAN_CHECK(vkMapMemory(device, stagingMemory, 0, stagingSize, 0, &mappedData), "Failed to map staging memory.");
+    if (mappedData) {
+        if (copyWidth == srcWidth) {
+            // Source width matches copy width - straight copy
+            memcpy(mappedData, srcData, stagingSize);
+        } else {
+            // Need to copy row by row (when source is wider than destination)
+            uint8_t *dst = static_cast<uint8_t *>(mappedData);
+            for (uint32_t y = 0; y < copyHeight; ++y) {
+                memcpy(dst + y * copyRowBytes, srcData + y * srcRowBytes, copyRowBytes);
+            }
+        }
+    }
+    vkUnmapMemory(device, stagingMemory);
+
+    BeginRendering();
+
+    VkImageLayout oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    auto imageStateIt = imageStates.find(vkImage);
+    if (imageStateIt != imageStates.end()) {
+        oldLayout = imageStateIt->second;
+    }
+
+    // Transition to transfer destination
+    VkImageMemoryBarrier barrier{};
+    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.pNext = nullptr;
+    barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.oldLayout = oldLayout;
+    barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = vkImage;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VkDependencyFlagBits(0),
+                         0, nullptr, 0, nullptr, 1, &barrier);
+
+    // Clear entire image to black (for letterboxing/pillarboxing)
+    VkClearColorValue clearColor = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    VkImageSubresourceRange clearRange{};
+    clearRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    clearRange.baseMipLevel = 0;
+    clearRange.levelCount = 1;
+    clearRange.baseArrayLayer = 0;
+    clearRange.layerCount = 1;
+    vkCmdClearColorImage(cmdBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clearColor, 1, &clearRange);
+
+    // Copy camera frame to centered region
+    VkBufferImageCopy region{};
+    region.bufferOffset = 0;
+    region.bufferRowLength = copyWidth;  // Tightly packed in staging buffer
+    region.bufferImageHeight = copyHeight;
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+    region.imageOffset = {offsetX, offsetY, 0};
+    region.imageExtent = {copyWidth, copyHeight, 1};
+
+    vkCmdCopyBufferToImage(cmdBuffer, stagingBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+    // Transition back to color attachment
+    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VkDependencyFlagBits(0),
+                         0, nullptr, 0, nullptr, 1, &barrier);
+    imageStates[vkImage] = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    EndRendering();
+
+    VULKAN_CHECK(vkWaitForFences(device, 1, &fence, true, UINT64_MAX), "Failed to wait for Fence after upload.");
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingMemory, nullptr);
+}
+
 void GraphicsAPI_Vulkan::SetRenderAttachments(void **colorViews, size_t colorViewCount, void *depthStencilView, uint32_t width, uint32_t height, void *pipeline) {
     if (inRenderPass) {
         vkCmdEndRenderPass(cmdBuffer);

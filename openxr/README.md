@@ -42,7 +42,7 @@ For detailed build and troubleshooting instructions, see **[Build Guidelines](Bu
 | [hello_world - Minimal OpenXR Application](hello_world/) | ⭐ Beginner | Demonstrates basic Quest 3 setup with OpenXR session initialization and rendering loop. Focuses on instance/session creation, Vulkan binding, and basic rendering. |
 | [hello_xr - Khronos OpenXR Conformance Sample](hello_xr/) | ⭐⭐ Intermediate | Adapted for Quest 3, this sample demonstrates standard OpenXR API usage including swapchain management, view configuration, input handling, and reference spaces. |
 | [openxr-tutorial - Progressive OpenXR Tutorial Series](tutorial/) | ⭐⭐⭐ Advanced | A step-by-step tutorial series covering OpenXR instance/extension management, session lifecycle, event polling, Vulkan integration, swapchain, and frame rendering. |
-| [camera2_tutorial - Camera2 + OpenXR Scaffold](camera2_tutorial/) | ⭐⭐⭐ Advanced | Standalone OpenXR + Vulkan scaffold intended for a full-screen Camera2 passthrough tutorial. |
+| [camera2_tutorial - Camera2 + OpenXR Tutorial](camera2_tutorial/) | ⭐⭐⭐ Advanced | Standalone OpenXR + Vulkan sample with full-screen Camera2 (CPU YUV to RGBA) passthrough. |
 
 ---
 

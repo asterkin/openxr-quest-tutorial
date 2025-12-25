@@ -1,14 +1,19 @@
 # OpenXR Camera2 Tutorial (Scaffold)
 
-Standalone tutorial scaffold that initializes OpenXR + Vulkan on Quest 3 as a starting point for a full-screen Camera2 passthrough example.
+Standalone tutorial that initializes OpenXR + Vulkan on Quest 3 and displays a full-screen Camera2 feed via CPU YUV conversion.
 
 ## Build
 
 ```bash
-./gradlew.bat assembleDebug
+./gradlew.bat installDebug
 ```
 
 ## Status
 
 - OpenXR instance/session lifecycle with Vulkan graphics binding.
-- No rendering yet; Camera2 capture and full-screen quad will be added next.
+- Runtime CAMERA permission via a minimal NativeActivity subclass.
+- Camera2 capture with CPU YUV_420_888 to RGBA conversion, uploaded to swapchain images.
+
+## Notes
+
+- Requires user approval for `android.permission.CAMERA`.

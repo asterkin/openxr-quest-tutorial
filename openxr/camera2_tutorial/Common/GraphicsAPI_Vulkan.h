@@ -6,6 +6,7 @@
 
 #pragma once
 #include <GraphicsAPI.h>
+#include <cstdint>
 
 #if defined(XR_USE_GRAPHICS_API_VULKAN)
 class GraphicsAPI_Vulkan : public GraphicsAPI {
@@ -61,6 +62,18 @@ public:
 
     virtual void ClearColor(void* imageView, float r, float g, float b, float a) override;
     virtual void ClearDepth(void* imageView, float d) override;
+
+    void UploadRgbaToImage(void* imageView, uint32_t width, uint32_t height, const uint8_t* data, size_t size);
+
+    // Upload RGBA data centered within a destination image (for dimension mismatch handling and future zoom)
+    // - Clears destination to black first (letterboxing/pillarboxing)
+    // - Centers source within destination if dimensions differ
+    // - srcWidth/srcHeight: dimensions of the source RGBA buffer
+    // - dstWidth/dstHeight: actual swapchain/destination dimensions
+    void UploadRgbaToImageCentered(void* imageView,
+                                   uint32_t dstWidth, uint32_t dstHeight,
+                                   const uint8_t* srcData,
+                                   uint32_t srcWidth, uint32_t srcHeight);
 
     virtual void SetRenderAttachments(void** colorViews, size_t colorViewCount, void* depthStencilView, uint32_t width, uint32_t height, void* pipeline) override;
     virtual void SetViewports(Viewport* viewports, size_t count) override;
