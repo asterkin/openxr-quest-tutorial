@@ -72,6 +72,7 @@ For more detailed information, refer to the following documents:
 
 - **[Environment Setup Guide](docs/Environment_Setup.md)**: Detailed workstation and toolchain prerequisites.
 - **[Repository Structure](docs/Repository_Structure.md)**: An overview of the directory layout.
+- **[Glossary](docs/GLOSSARY.md)**: Definitions of key terms and concepts.
 - **AI Agent Instructions**: Canonical entry points by tool — Claude Code: [CLAUDE.md](CLAUDE.md), Codex: [AGENTS.md](AGENTS.md), Gemini: [GEMINI.md](GEMINI.md).
 
 ---
