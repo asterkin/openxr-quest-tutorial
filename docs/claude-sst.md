@@ -78,11 +78,14 @@ Using SST's four connection types as universal vocabulary improves signal-to-noi
 | Layer | Media Type | Load Pattern | Token Cost |
 |-------|-----------|--------------|------------|
 | 0 | ~/CLAUDE.md | Always full read | Fixed baseline |
+| 0.5 | Rules (.claude/rules/*.md) | Auto-loaded, path-conditional | Variable (use `paths:` frontmatter to limit) |
 | 1 | Skills YAML prefixes | Conditional, prefix only | Low |
 | 2 | Parsed structures (AST, sections) | On-demand fragments | Variable, optimized |
 | 3 | Backend servers (GitHub, etc.) | Query-response | Similar to Layer 2 |
 
 **Key principle:** CLAUDE.md serves as routing table defining how to traverse into deeper layers economically, not as content container.
+
+**Rules optimization:** Use `paths:` frontmatter in rules to limit when they load. A rule with `paths: src/api/**/*.ts` only loads when working on API files, saving tokens when working elsewhere.
 
 ## Graph Representation Format
 
@@ -178,7 +181,8 @@ claude-code:
 .claude/:
   contains:
     - settings.json, settings.local.json  # permissions
-    - skills/    # SKILL.md per skill
+    - rules/     # *.md context-triggered headers (auto-loaded)
+    - skills/    # SKILL.md per skill (on-demand invocation)
     - agents/    # sub-agents
     - commands/  # slash commands
     - servers/   # MCP services
@@ -261,6 +265,7 @@ An alternative conceptual framework: Claude Code CLI as a **non-deterministic VM
 | Claude Code Concept | VM Equivalent | Notes |
 |---------------------|---------------|-------|
 | CLAUDE.md | `main()` entry point | Establishes execution context, imports parent configs |
+| Rules (.claude/rules/*.md) | Header files / includes | Auto-loaded, path-conditional via frontmatter `paths:` glob |
 | Skills | Runtime library | Pre-loaded, always available, invoked by name |
 | Context window | Limited RAM | Hard ceiling, no virtual memory equivalent |
 | Context compaction | Lossy GC / cache eviction | Unlike GC, information is permanently lost |
