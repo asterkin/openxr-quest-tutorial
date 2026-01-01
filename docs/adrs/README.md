@@ -43,6 +43,7 @@ Each ADR follows this structure:
 | [ADR-0013](adr-0013-activity-model-gameactivity-for-openxr-nativeactivity-for-meta.md) | Activity Model - GameActivity for OpenXR Tutorials, NativeActivity for Meta Samples | Rejected |
 | [ADR-0014](adr-0014-disable-auto-compact-for-token-economy.md) | Disable Auto-Compact for Token Economy | Accepted |
 | [ADR-0015](adr-0015-project-level-claude-permissions.md) | Project-Level Claude Permissions | Accepted |
+| [ADR-0016](adr-0016-project-level-status-line-configuration.md) | Project-Level Status Line Configuration | Accepted |
 
 ## Creating New ADRs
 
