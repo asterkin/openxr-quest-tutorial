@@ -32,6 +32,15 @@ Implementation via Claude Code skills (`doc-query`, `add-doc`) with TOML-based c
 - Skills execute locally via Python scripts
 - Configuration maintained in `.claude/doc-sources.toml`
 
+### Out of Scope: Claude Documentation
+
+Claude Code, Agent SDK, and Anthropic API documentation do **not** require Context7 access. Claude Code includes a built-in `claude-code-guide` subagent that automatically handles documentation queries about:
+- Claude Code CLI (hooks, skills, MCP servers, settings)
+- Claude Agent SDK (building custom agents)
+- Anthropic API (tool use, SDK usage)
+
+This subagent uses web search internally and requires no configuration.
+
 ## References
 - [Context7](https://context7.com) - Documentation access service
 - [Reference implementation](https://github.com/asterkin/claude-taew-py/tree/main/.claude/skills)

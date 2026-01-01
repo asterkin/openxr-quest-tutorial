@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code Status Line Script
-# Shows: git branch | ctx:XX% ses:XX%
+# Shows: git branch | ctx:XX% ses:XX% (both show remaining/free)
 
 # Use Python for JSON parsing (jq not available)
 python -c "
@@ -31,11 +31,11 @@ if usage:
 else:
     ctx_pct = 100
 
-# Calculate session time percentage (of 5h = 18,000,000ms)
+# Calculate session time remaining percentage (of 5h = 18,000,000ms)
 cost = data.get('cost', {})
 duration_ms = cost.get('total_duration_ms', 0)
 session_limit_ms = 5 * 60 * 60 * 1000  # 5 hours
-ses_pct = min(100, duration_ms * 100 // session_limit_ms) if session_limit_ms else 0
+ses_pct = max(0, 100 - (duration_ms * 100 // session_limit_ms)) if session_limit_ms else 100
 
 print(f'{branch} | ctx:{ctx_pct}% ses:{ses_pct}%', end='')
 "
