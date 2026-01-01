@@ -383,3 +383,142 @@ Key difference: measured in **tokens** (semantic units) rather than **time** (co
 ---
 
 *Added from Claude Code CLI VM analogy discussion, January 2026*
+
+---
+
+## Session-to-Repository Mapping: Cross-Graph Traceability
+
+Claude Code execution and Git version control form two independent SST graphs that intersect at tool boundaries. This section models both graphs and their connection points.
+
+### Graph 1: Claude Code Execution Hierarchy
+
+```yaml
+ClaudeCodeRun:                    # from `claude` to `/quit`
+  represented-by: start_time, end_time, duration, tokens_consumed
+  followed-by: ClaudeCodeRun      # next invocation
+  connects-to: GitRepository      # 1-2 repos typically
+  contains:
+    ClaudeCodeSession:            # from start or `/clear` to `/clear`
+      represented-by: start_time, end_time, duration, tokens_consumed
+      followed-by: ClaudeCodeSession
+      contains:
+        ClaudeCodeContext:        # from start or `/compact` to `/compact`
+          represented-by: start_time, end_time, duration, tokens_consumed
+          followed-by: ClaudeCodeContext
+          contains:
+            Interaction:          # user prompt → assistant response
+              represented-by: start_time, end_time, duration, tokens_consumed, prompt, response
+              followed-by: Interaction
+              contains:
+                Step:             # single tool invocation
+                  represented-by: start_time, end_time, duration, tokens_consumed, tool, args, result, error
+                  followed-by: Step
+                  produces: GitCommit  # when tool=git_commit
+```
+
+### Graph 2: Git/GitHub Artifact Hierarchy
+
+```yaml
+GitRepository:
+  represented-by: name, owner, url
+  contains:
+    GitBranch:
+      represented-by: name, head_sha
+      followed-by: GitBranch      # branch succession (rebases, merges)
+      contains:
+        GitPush:                  # remote synchronization event
+          represented-by: timestamp, submitter, pr_message
+          followed-by: GitPush
+          contains:
+            GitCommit:
+              represented-by: sha, timestamp, author, message
+              followed-by: GitCommit  # parent chain
+              produced-by: Step       # back-link to Claude execution
+              contains:
+                FileChange:
+                  represented-by: path, change_type, additions, deletions
+```
+
+### Cross-Graph Connection Points
+
+| Claude Code Element | Git Element | Relation | Enables |
+|---------------------|-------------|----------|---------|
+| Run | Repository | CONNECTS_TO | Scope binding |
+| Step (git commit) | Commit | PRODUCES | Token cost attribution |
+| Step (git push) | Push | PRODUCES | Aggregate cost per push |
+| Interaction | Commit(s) | PRODUCES (0..N) | Change provenance |
+
+**Key Insight:** The graphs have different temporal grains and persistence:
+- Claude Code: milliseconds to hours, ephemeral (lost on `/quit`)
+- Git: permanent record, survives indefinitely
+
+**Lossy Projection:** When Claude activity crosses into Git, context is lost:
+- Token costs → invisible in commit
+- Failed attempts → invisible
+- Exploration paths → invisible
+- Only final artifact survives
+
+### Token Cost Attribution
+
+With cross-graph traceability, we can compute:
+
+```
+commit_cost = Σ(tokens) for Steps between previous_commit and this_commit
+push_cost = Σ(commit_cost) for all commits in push
+session_efficiency = push_count / tokens_consumed
+```
+
+### Optimization Heuristics
+
+| Heuristic | Rationale | Implementation |
+|-----------|-----------|----------------|
+| End Context with Commit | Commit = durable checkpoint before `/compact` loses context | Manual discipline; potential hook |
+| Intermediate Interactions = Checkpoints | Recovery points within a Context | Mental model, no tooling needed |
+| Maximize Pushes per Session | Complete, deployable units of work | Plan work to natural boundaries |
+| Align breaks to off-hours | Natural pause points, async review windows | Schedule sessions around limits |
+| Commit before risky operations | Safety net before refactors, large changes | Manual discipline |
+
+### Safety Net Hierarchy
+
+Durability levels from strongest to weakest:
+
+| Level | Mechanism | Survives |
+|-------|-----------|----------|
+| 1 (strongest) | Git Push | Machine loss, account issues |
+| 2 | Git Commit | Session loss, `/quit`, crashes |
+| 3 | Claude Checkpoint | Within-context recovery only |
+| 4 (weakest) | Unsaved edits | Nothing—lost on any interruption |
+
+**Practical Rule:** Never let valuable work sit at Level 4. Promote to Level 2 (commit) frequently, Level 1 (push) at logical boundaries.
+
+### Session Planning Template
+
+Align Claude Code sessions with Git workflow:
+
+```
+Session Start
+├── Context 1
+│   ├── Interaction: Understand task
+│   ├── Interaction: Implement change
+│   └── Interaction: git commit ←── checkpoint
+│   └── /compact (if needed)
+├── Context 2
+│   ├── Interaction: Continue work
+│   └── Interaction: git commit ←── checkpoint
+└── Session End
+    └── git push ←── durable boundary
+```
+
+### Future Tooling Considerations
+
+When patterns stabilize, potential tooling (SSTtimeline or similar):
+- Automatic token tracking per commit
+- Session efficiency metrics
+- Heuristic violation warnings
+- Cross-graph visualization
+
+For now: manual application of heuristics, document learnings.
+
+---
+
+*Added from Session-to-Repository mapping discussion, January 2026*
