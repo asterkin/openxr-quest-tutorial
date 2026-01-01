@@ -1,2 +1,24 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(./gradlew:*)",
+      "Bash(gradlew.bat:*)",
+      "Bash(python:*)",
+      "Bash(cp:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(unzip:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:context7.com)",
+      "WebSearch",
+      "Skill(adr)"
+    ],
+    "deny": [],
+    "ask": [
+      "Bash(rm:*)"
+    ]
+  }
 }
