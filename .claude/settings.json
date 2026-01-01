@@ -18,7 +18,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:context7.com)",
       "WebSearch",
-      "Skill(adr)"
+      "Skill(adr)",
+      "Skill(doc-query)"
     ],
     "deny": [],
     "ask": [
