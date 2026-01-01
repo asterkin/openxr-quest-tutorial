@@ -8,7 +8,7 @@
 
 This is a **tutorial and learning repository** containing consolidated OpenXR samples for **Meta Quest 3** development using **NDK + OpenXR**. This is NOT a production development repository.
 
-**Production development** (InnoVision SDK, customer applications) happens in separate repositories.
+**Production development** (customer applications) happens in separate repositories.
 
 ---
 ## Interactive Session Guidelines
