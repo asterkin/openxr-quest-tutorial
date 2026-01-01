@@ -17,14 +17,15 @@ The status line can be configured at user level (`~/.claude/settings.json`) or p
 Configure a project-level status line in `.claude/settings.json` that displays:
 
 1. **Current git branch** - Shows which branch is checked out
-2. **Context free percentage** - Shows remaining context window capacity
+2. **Context free percentage** - Remaining context window capacity
+3. **Session time percentage** - Time used of 5-hour session limit
 
-Format: `main | 85% free`
+Format: `main | ctx:87% ses:12%`
 
 Implementation:
 - Status line script at `.claude/scripts/statusline.sh`
 - Uses Python for JSON parsing (jq not available in standard Git Bash)
-- Reads workspace and context data from Claude Code's stdin JSON
+- Reads workspace, context, and cost data from Claude Code's stdin JSON
 
 ### Field Justifications
 
@@ -33,11 +34,21 @@ Implementation:
 - Immediate awareness when switching between feature/main branches
 - Low overhead - simple git command
 
-**Context Free Percentage:**
+**Context Free Percentage (`ctx`):**
 - Supports SST-Claude token economy strategy (ADR-0014)
 - "Free" rather than "used" because remaining capacity is the actionable metric
 - Enables proactive decisions: compact before running out, or start fresh session
 - Critical for Opus model where context is expensive
+
+**Session Time Percentage (`ses`):**
+- Pro subscription has 5-hour session time limit
+- Even token-cheap operations consume session time
+- Awareness prevents unexpected session exhaustion mid-task
+- Calculated from `cost.total_duration_ms` / 18,000,000ms (5h)
+
+### TBD: Weekly Budget
+
+Weekly budget (as shown by `/usage` command) is not currently exposed to status line scripts. When Claude Code exposes this data, the format will be extended to: `main | ctx:87% ses:12% wk:45%`
 
 ## Consequences
 
@@ -45,6 +56,7 @@ Implementation:
 - Consistent status line across all project contributors
 - Immediate awareness of git branch prevents branch-related mistakes
 - Context utilization visibility supports token-conscious workflow
+- Session time awareness prevents mid-task exhaustion of 5h limit
 - Configuration versioned with project, not lost on machine changes
 
 ### Negative
