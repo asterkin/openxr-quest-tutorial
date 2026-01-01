@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "bash .claude/scripts/statusline.sh"
+  },
   "permissions": {
     "allow": [
       "Bash(git:*)",
