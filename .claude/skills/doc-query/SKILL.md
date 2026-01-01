@@ -1,3 +1,8 @@
+---
+name: doc-query
+description: Query up-to-date documentation for tools and SDKs via Context7 API. Use for C++20, NDK, Gradle, CMake, OpenXR, and Meta XR SDK references.
+---
+
 # Documentation Query Skill
 
 Query up-to-date documentation for tools and SDKs via Context7 API.

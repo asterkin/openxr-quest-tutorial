@@ -1,3 +1,8 @@
+---
+name: add-doc
+description: Register new documentation sources for Context7-based queries. Use when adding tools or SDKs to the project.
+---
+
 # Add Documentation Source Skill
 
 Register new documentation sources for Context7-based queries.
