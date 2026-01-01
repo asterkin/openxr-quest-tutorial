@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code Status Line Script
-# Shows: git branch | ctx:XX% ses:XX% (both show remaining/free)
+# Shows: git branch | ctx:XX% (context utilization)
 
 # Use Python for JSON parsing (jq not available)
 python -c "
@@ -19,23 +19,21 @@ try:
 except:
     branch = '(no git)'
 
-# Calculate context free percentage
+# Calculate context usage percentage (USED, not remaining)
 ctx = data.get('context_window', {})
+size = ctx.get('context_window_size', 200000)
+
+# Try current_usage first, then fall back to total tokens
 usage = ctx.get('current_usage')
 if usage:
     current = (usage.get('input_tokens', 0) +
                usage.get('cache_creation_input_tokens', 0) +
                usage.get('cache_read_input_tokens', 0))
-    size = ctx.get('context_window_size', 200000)
-    ctx_pct = 100 - (current * 100 // size)
 else:
-    ctx_pct = 100
+    # Fallback: use total_input_tokens as approximation
+    current = ctx.get('total_input_tokens', 0)
 
-# Calculate session time remaining percentage (of 5h = 18,000,000ms)
-cost = data.get('cost', {})
-duration_ms = cost.get('total_duration_ms', 0)
-session_limit_ms = 5 * 60 * 60 * 1000  # 5 hours
-ses_pct = max(0, 100 - (duration_ms * 100 // session_limit_ms)) if session_limit_ms else 100
+ctx_pct = min(100, current * 100 // size) if size else 0
 
-print(f'{branch} | ctx:{ctx_pct}% ses:{ses_pct}%', end='')
+print(f'{branch} | ctx:{ctx_pct}%', end='')
 "

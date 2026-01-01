@@ -17,10 +17,9 @@ The status line can be configured at user level (`~/.claude/settings.json`) or p
 Configure a project-level status line in `.claude/settings.json` that displays:
 
 1. **Current git branch** - Shows which branch is checked out
-2. **Context free percentage** - Remaining context window capacity
-3. **Session time percentage** - Time used of 5-hour session limit
+2. **Context utilization percentage** - Current context window usage
 
-Format: `main | ctx:87% ses:12%`
+Format: `main | ctx:19%`
 
 Implementation:
 - Status line script at `.claude/scripts/statusline.sh`
@@ -34,21 +33,15 @@ Implementation:
 - Immediate awareness when switching between feature/main branches
 - Low overhead - simple git command
 
-**Context Free Percentage (`ctx`):**
+**Context Utilization Percentage (`ctx`):**
 - Supports SST-Claude token economy strategy (ADR-0014)
-- "Free" rather than "used" because remaining capacity is the actionable metric
+- Shows percentage used (matches `/context` output format)
 - Enables proactive decisions: compact before running out, or start fresh session
 - Critical for Opus model where context is expensive
 
-**Session Time Percentage (`ses`):**
-- Pro subscription has 5-hour session time limit
-- Even token-cheap operations consume session time
-- Awareness prevents unexpected session exhaustion mid-task
-- Calculated from `cost.total_duration_ms` / 18,000,000ms (5h)
+### TBD: Session and Weekly Budget
 
-### TBD: Weekly Budget
-
-Weekly budget (as shown by `/usage` command) is not currently exposed to status line scripts. When Claude Code exposes this data, the format will be extended to: `main | ctx:87% ses:12% wk:45%`
+Session time and weekly budget (as shown by `/status` and `/usage` commands) are not currently exposed to status line scripts. The required data is not available in the JSON passed to status line commands. When Claude Code exposes this data, the format may be extended to include these metrics.
 
 ## Consequences
 
@@ -56,7 +49,6 @@ Weekly budget (as shown by `/usage` command) is not currently exposed to status 
 - Consistent status line across all project contributors
 - Immediate awareness of git branch prevents branch-related mistakes
 - Context utilization visibility supports token-conscious workflow
-- Session time awareness prevents mid-task exhaustion of 5h limit
 - Configuration versioned with project, not lost on machine changes
 
 ### Negative
