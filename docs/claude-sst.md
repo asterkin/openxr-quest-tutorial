@@ -522,3 +522,172 @@ For now: manual application of heuristics, document learnings.
 ---
 
 *Added from Session-to-Repository mapping discussion, January 2026*
+
+---
+
+## CLAUDE.md as Agentic VM Program Entry Point
+
+**Status**: Conceptual framework for experimentation
+
+### Core Concept
+
+CLAUDE.md functions as the **main entry point** of an Agentic VM program. Like any program entry point, it:
+
+1. **Initializes runtime context** — builds initial SST graph describing current project state
+2. **Defines processing rules** — how to navigate and modify the graph based on user prompts
+
+When Claude Code CLI loads CLAUDE.md (at start or after `/clear`), it constructs an internal SST graph representing:
+- Where the project currently is (current node)
+- Where it can go from here (edges)
+- How to decide which path to take (navigation rules)
+
+### SST Graph Structure for Current Context
+
+#### REPRESENTED_BY (Current Node Attributes)
+
+Attributes defining the current point in project evolution:
+
+- **Current TODO step** (if in active work)
+- **Step metadata**: description, acceptance criteria, related files
+- **Relationships**: FOLLOWS (previous step), FOLLOWED_BY (next step)
+- **State indicators**: derived from git status, branch, recent commits
+
+**Open question**: How to persist/derive REPRESENTED_BY?
+- Explicit CONTEXT.md file tracking cursor position
+- Derived from git state (branch name conventions, commit messages)
+- Combination of both
+
+#### CONTAINED_IN (Lazy-Loading Hierarchy)
+
+Stack of upper layers providing context when needed:
+
+```
+Claude Account (budget constraints)
+    └── GitHub Repository (codebase scope)
+        └── Project Plan (roadmap, phases)
+            └── Current Phase
+                └── Current Task/Issue
+                    └── Current TODO Step  ← cursor
+```
+
+**Key insight**: CONTAINED_IN provides "pointers to context" rather than loading everything. Claude navigates upward only when needed. This is the primary **token efficiency mechanism**.
+
+Example: For a log filtering task, Claude doesn't need the full project vision loaded—just a pointer to find it if needed.
+
+#### FOLLOWED_BY (Available Transitions)
+
+What can be reached from current node:
+
+1. **Skills** (implicit) — loaded automatically, descriptions serve as "promises"
+   - Example: ADR skill promises "create ADR summarizing architectural decision"
+
+2. **Plan steps** (explicit) — next steps in project plan or TODO list
+
+3. **Issue-type workflows** — entry points based on GitHub issue labels:
+   - `enhancement` → feature implementation workflow
+   - `bug` → diagnosis and fix workflow
+   - `documentation` → doc update workflow
+   - Custom labels → need explicit mapping in CLAUDE.md
+
+4. **Navigation rules** — general guidelines for prompt processing
+
+### Navigation Model: Promise Matching
+
+```
+For each user prompt:
+  1. Extract "acceptance criteria" (what user wants)
+  2. Compare against "promises" of each FOLLOWED_BY node
+  3. Find best semantic overlap
+  4. Navigate to matching node (move cursor)
+  5. Zoom into CONTAINS to execute specific steps
+  6. Roll up via CONTAINED_IN when bigger picture needed
+  7. Ask clarifying questions if no suitable overlap found
+```
+
+This is **statistically reliable but non-deterministic**—Claude won't always choose the optimal path, but should choose a reasonable path most of the time.
+
+### The Einstein Analogy
+
+> "Matter moves through space and shapes it"
+
+User prompts both **navigate** the graph AND **modify** it:
+- **Navigation**: traversing existing structure (reading docs, following plan)
+- **Modification**: changing the graph (adding TODOs, completing steps, creating ADRs)
+
+**Open question**: How to distinguish/handle these two modes explicitly?
+
+### Persistent State: CONTEXT.md
+
+CLAUDE.md initializes the graph; CONTEXT.md maintains state across sessions.
+
+| Aspect | CLAUDE.md | CONTEXT.md |
+|--------|-----------|------------|
+| Purpose | Program code | Runtime heap |
+| Lifecycle | Checked into git | TBD (tracked or ignored) |
+| Content | Structure, rules | Cursor position, state |
+| Mutability | Rarely changes | Updates each session |
+
+#### CONTEXT.md Lifecycle (Unresolved)
+
+- **Creation**: First session? Per-branch? Manual initialization?
+- **Updates**: After each prompt? End of session? Explicit checkpoints?
+- **Recovery**: What if session terminates mid-task?
+- **Scope**: Per-repo? Per-branch? Per-user?
+
+#### What CONTEXT.md Tracks (Options)
+
+(a) **Cursor only**: which TODO step, which phase
+(b) **Execution trace**: what was done, decisions made
+(c) **Both**: cursor + recent trace with retention policy
+
+### Token Efficiency Mechanisms
+
+1. **Lazy loading via CONTAINED_IN** — don't load full project vision for trivial tasks
+2. **Minimal CLAUDE.md** — declarative structure, not verbose instructions
+3. **Pointer-worthy vs embed-worthy** calibration:
+   - Large docs (>100 lines) → pointer (reference in CONTAINED_IN)
+   - Small critical context (<50 lines) → embed directly
+4. **Skills as implicit edges** — descriptions already loaded, no duplication needed
+
+### Relationship to Existing Constructs
+
+| Construct | Role in SST Entry Point Model |
+|-----------|-------------------------------|
+| Skills | Implicit FOLLOWED_BY edges; descriptions = promises |
+| Rules (settings.json) | Additive navigation rules; CLAUDE.md extends/overrides |
+| ADRs | Static knowledge nodes; CLAUDE.md navigates to them |
+| Project Plan | CONTAINED_IN hierarchy; provides phase/task structure |
+
+### Open Questions
+
+1. **REPRESENTED_BY derivation**: How to reliably determine "current point"?
+2. **Navigation vs modification**: When does prompt navigate vs reshape graph?
+3. **Promise precision**: How to word descriptions for reliable matching?
+4. **Error recovery**: Dead ends, no matches, state divergence?
+5. **Graph topology**: DAG? Tree? Cycles allowed (iterative work)?
+6. **Reliability measurement**: Track navigation choice quality over time?
+
+### Experimental Plan
+
+#### Phase 1: Apply to openxr-quest-tutorial
+
+1. Refactor current CLAUDE.md using SST concepts
+2. Identify what's CONTAINED_IN (pointers) vs embedded
+3. Make FOLLOWED_BY explicit (skills, plan steps)
+4. Test with real tasks, observe navigation behavior
+
+#### Phase 2: Add CONTEXT.md
+
+1. Define minimal cursor-tracking format
+2. Implement manual update protocol
+3. Test state persistence across `/clear`
+
+#### Phase 3: Refine Navigation Rules
+
+1. Document which prompts lead to which paths
+2. Identify failure modes (wrong path chosen)
+3. Adjust promise wording for better matching
+
+---
+
+*Added from CLAUDE.md entry point framework discussion, January 2026*
