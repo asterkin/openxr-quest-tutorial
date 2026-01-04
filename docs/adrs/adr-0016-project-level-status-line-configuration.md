@@ -17,9 +17,11 @@ The status line can be configured at user level (`~/.claude/settings.json`) or p
 Configure a project-level status line in `.claude/settings.json` that displays:
 
 1. **Current git branch** - Shows which branch is checked out
-2. **Context utilization percentage** - Current context window usage
+2. **Context remaining percentage** - Free context window space
 
-Format: `main | ctx:19%`
+Format: `main | free:81.0%`
+
+When context usage data is unavailable (after `/clear` or session restart): `main | free:...`
 
 Implementation:
 - Status line script at `.claude/scripts/statusline.sh`
@@ -33,11 +35,12 @@ Implementation:
 - Immediate awareness when switching between feature/main branches
 - Low overhead - simple git command
 
-**Context Utilization Percentage (`ctx`):**
+**Context Remaining Percentage (`free`):**
 - Supports SST-Claude token economy strategy (ADR-0014)
-- Shows percentage used (matches `/context` output format)
+- Shows percentage remaining/free (matches `/context` output format)
 - Enables proactive decisions: compact before running out, or start fresh session
 - Critical for Opus model where context is expensive
+- Displays `free:...` when usage data unavailable (after `/clear` or restart)
 
 ### TBD: Session and Weekly Budget
 

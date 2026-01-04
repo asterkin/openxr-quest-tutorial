@@ -19,7 +19,7 @@ try:
 except:
     branch = '(no git)'
 
-# Calculate context usage percentage (USED, not remaining)
+# Calculate context FREE percentage (remaining, matches /context output)
 ctx = data.get('context_window', {})
 size = ctx.get('context_window_size', 200000)
 
