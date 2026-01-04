@@ -23,17 +23,13 @@ except:
 ctx = data.get('context_window', {})
 size = ctx.get('context_window_size', 200000)
 
-# Try current_usage first, then fall back to total tokens
-usage = ctx.get('current_usage')
-if usage:
-    current = (usage.get('input_tokens', 0) +
-               usage.get('cache_creation_input_tokens', 0) +
-               usage.get('cache_read_input_tokens', 0))
-else:
-    # Fallback: use total_input_tokens as approximation
-    current = ctx.get('total_input_tokens', 0)
+# Sum all input tokens from current_usage (includes cached)
+usage = ctx.get('current_usage', {})
+current = (usage.get('input_tokens', 0) +
+           usage.get('cache_creation_input_tokens', 0) +
+           usage.get('cache_read_input_tokens', 0))
 
-ctx_pct = min(100, current * 100 // size) if size else 0
+free_pct = max(0.0, 100 - (current * 100 / size)) if size else 100
 
-print(f'{branch} | ctx:{ctx_pct}%', end='')
+print(f'{branch} | free:{free_pct:.1f}%', end='')
 "
