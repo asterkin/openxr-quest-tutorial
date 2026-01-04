@@ -23,13 +23,14 @@ except:
 ctx = data.get('context_window', {})
 size = ctx.get('context_window_size', 200000)
 
-# Sum all input tokens from current_usage (includes cached)
-usage = ctx.get('current_usage', {})
-current = (usage.get('input_tokens', 0) +
-           usage.get('cache_creation_input_tokens', 0) +
-           usage.get('cache_read_input_tokens', 0))
-
-free_pct = max(0.0, 100 - (current * 100 / size)) if size else 100
-
-print(f'{branch} | free:{free_pct:.1f}%', end='')
+# Check if current_usage is available (null after /clear or restart)
+usage = ctx.get('current_usage')
+if usage is None:
+    print(f'{branch} | free:...', end='')
+else:
+    current = (usage.get('input_tokens', 0) +
+               usage.get('cache_creation_input_tokens', 0) +
+               usage.get('cache_read_input_tokens', 0))
+    free_pct = max(0.0, 100 - (current * 100 / size)) if size else 100
+    print(f'{branch} | free:{free_pct:.1f}%', end='')
 "
