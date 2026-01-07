@@ -58,6 +58,26 @@ When referencing documentation:
 
 ## Repository Navigation & Search Guidelines
 
+### SST Navigation Protocol (Micro-Kernel)
+
+**Concept**: Treat the repository as two complementary Semantic Spacetime (SST) graphs.
+**Rule**: Always traverse the graph to "Locate" before "Reading".
+
+#### 1. Documentation Graph (The Map)
+*   **Structure**: Headers = Containers, Links = Edges.
+*   **Protocol**:
+    1.  **Entry**: Check `docs/Project_Plan.md` (or `docs/plan/current.md` if available) for context.
+    2.  **Scan**: Use `read_file` (truncated) or `grep` on headers (`#`) to find relevant sections.
+    3.  **Follow**: Traverse links to specific ADRs or guides. **Do not read the whole library.**
+
+#### 2. Code Graph (The Territory)
+*   **Structure**: Symbols = Nodes, References = Edges.
+*   **Protocol (Simulated LSP)**:
+    1.  **Symbol Search**: Use `grep` to find definition (`class X`, `void func`).
+    2.  **In-Edges**: Use `grep` to find callers/usage.
+    3.  **Out-Edges**: Check `#include` or imports.
+    4.  **Action**: Only read the file once the specific "Node" (Symbol) is located.
+
 ### File Discovery Strategies
 
 **Use appropriate tools for different search patterns:**
